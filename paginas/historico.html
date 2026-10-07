@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico</title>
+    <link rel="stylesheet" href="../css/estilo.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📜 Histórico Completo</h1>
+            <p>Tudo que foi registrado</p>
+        </header>
+
+        <section class="secao">
+            <h3>📅 Aplicações Realizadas</h3>
+            <div id="lista-aplicacoes" class="lista-itens">
+                <p class="sem-dados">Nenhuma aplicação registrada.</p>
+            </div>
+        </section>
+
+        <section class="secao">
+            <h3>📦 Movimentações de Estoque</h3>
+            <div id="lista-estoque" class="lista-itens">
+                <p class="sem-dados">Nenhuma movimentação registrada.</p>
+            </div>
+        </section>
+
+        <button class="btn btn-voltar" onclick="window.location.href='../index.html'">← Voltar ao Início</button>
+    </div>
+
+    <script>
+        function carregar(chave) { return JSON.parse(localStorage.getItem(chave) || '[]'); }
+        
+        function renderizarAplicacoes() {
+            const lista = document.getElementById('lista-aplicacoes');
+            const itens = carregar('aplicacoes');
+            if (itens.length === 0) return;
+            lista.innerHTML = itens.reverse().map(item => `
+                <div class="item">
+                    <div class="item-titulo">📅 ${item.data}</div>
+                    <p>📍 ${item.local}</p>
+                    <p>🧪 ${item.produto} — ${item.quantidade}</p>
+                </div>
+            `).join('');
+        }
+        
+        function renderizarEstoque() {
+            const lista = document.getElementById('lista-estoque');
+            const itens = carregar('estoque');
+            if (itens.length === 0) return;
+            lista.innerHTML = itens.reverse().map(item => `
+                <div class="item">
+                    <div class="item-titulo">${item.operacao === 'entrada' ? '📥' : '📤'} ${item.nome}</div>
+                    <p>📅 ${item.data} | 📊 ${item.quantidade}</p>
+                </div>
+            `).join('');
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarAplicacoes();
+            renderizarEstoque();
+        });
+    </script>
+</body>
+</html>
