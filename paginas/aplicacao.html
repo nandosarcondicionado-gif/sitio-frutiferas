@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Aplicação</title>
+    <link rel="stylesheet" href="../css/estilo.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📅 Registrar Aplicação</h1>
+            <p>Anote o que foi aplicado no campo</p>
+        </header>
+
+        <section class="secao">
+            <h3>Nova Aplicação</h3>
+            <div class="campo">
+                <label>Data:</label>
+                <input type="date" id="data">
+            </div>
+            <div class="campo">
+                <label>Local/Fruta:</label>
+                <input type="text" id="local" placeholder="Ex: Pêssego - Talhão A">
+            </div>
+            <div class="campo">
+                <label>Produto Utilizado:</label>
+                <input type="text" id="produto" placeholder="Ex: Cupragin">
+            </div>
+            <div class="campo">
+                <label>Quantidade Usada (litros/ml):</label>
+                <input type="text" id="quantidade" placeholder="Ex: 200 ml">
+            </div>
+            <div class="campo">
+                <label>Observações:</label>
+                <textarea id="obs" placeholder="Tempo, clima, resultado esperado..."></textarea>
+            </div>
+            <button class="btn btn-sucesso" onclick="salvar()" style="width:100%;">✅ Registrar Aplicação</button>
+        </section>
+
+        <section class="secao">
+            <h3>Últimas Aplicações</h3>
+            <div id="lista" class="lista-itens">
+                <p class="sem-dados">Nenhuma aplicação registrada ainda.</p>
+            </div>
+        </section>
+
+        <button class="btn btn-voltar" onclick="window.location.href='../index.html'">← Voltar ao Início</button>
+    </div>
+
+    <script>
+        function carregar() { return JSON.parse(localStorage.getItem('aplicacoes') || '[]'); }
+        function salvarDados(dados) { localStorage.setItem('aplicacoes', JSON.stringify(dados)); }
+        
+        function renderizar() {
+            const lista = document.getElementById('lista');
+            const itens = carregar();
+            if (itens.length === 0) {
+                lista.innerHTML = '<p class="sem-dados">Nenhuma aplicação registrada ainda.</p>';
+                return;
+            }
+            lista.innerHTML = itens.reverse().map((item, i) => `
+                <div class="item">
+                    <div class="item-titulo">📅 ${item.data}</div>
+                    <p>📍 ${item.local}</p>
+                    <p>🧪 ${item.produto} — ${item.quantidade}</p>
+                    <p>📝 ${item.obs || 'Sem observações'}</p>
+                </div>
+            `).join('');
+        }
+        
+        function salvar() {
+            const data = document.getElementById('data').value;
+            const local = document.getElementById('local').value.trim();
+            const produto = document.getElementById('produto').value.trim();
+            const quantidade = document.getElementById('quantidade').value.trim();
+            const obs = document.getElementById('obs').value.trim();
+            
+            if (!data || !local || !produto) {
+                alert('Preencha Data, Local e Produto!');
+                return;
+            }
+            
+            const lista = carregar();
+            lista.push({ data, local, produto, quantidade, obs });
+            salvarDados(lista);
+            
+            alert('✅ Aplicação registrada com sucesso!');
+            document.getElementById('data').value = '';
+            document.getElementById('local').value = '';
+            document.getElementById('produto').value = '';
+            document.getElementById('quantidade').value = '';
+            document.getElementById('obs').value = '';
+            
+            renderizar();
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('data').valueAsDate = new Date();
+            renderizar();
+        });
+    </script>
+</body>
+</html>
