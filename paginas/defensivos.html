@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Defensivos</title>
+    <link rel="stylesheet" href="../css/estilo.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧪 Meus Defensivos</h1>
+            <p>Cadastro de Produtos Agrícolas</p>
+        </header>
+
+        <section class="secao">
+            <div class="cabecalho-secao">
+                <h2>Lista de Produtos</h2>
+                <button class="btn btn-sucesso" onclick="abrirModal()">+ Novo</button>
+            </div>
+            <div id="lista" class="lista-itens">
+                <p class="sem-dados">Nenhum produto cadastrado.</p>
+            </div>
+        </section>
+
+        <!-- MODAL -->
+        <div id="modal" class="modal">
+            <div class="modal-conteudo">
+                <span class="fechar" onclick="fecharModal()">&times;</span>
+                <h3>Adicionar Produto</h3>
+                <div class="campo">
+                    <label>Nome do Produto:</label>
+                    <input type="text" id="nome" placeholder="Ex: Cupragin">
+                </div>
+                <div class="campo">
+                    <label>Tipo:</label>
+                    <select id="tipo">
+                        <option value="fungicida">Fungicida</option>
+                        <option value="inseticida">Inseticida</option>
+                        <option value="herbicida">Herbicida</option>
+                        <option value="adubo">Adubo/Fertilizante</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label>Fabricante/Marca:</label>
+                    <input type="text" id="marca" placeholder="Ex: DuPont">
+                </div>
+                <div class="campo">
+                    <label>Observações:</label>
+                    <textarea id="obs" placeholder="Dosagem, carência, etc."></textarea>
+                </div>
+                <button class="btn btn-sucesso" onclick="salvar()" style="width:100%;">✅ Salvar</button>
+            </div>
+        </div>
+
+        <button class="btn btn-voltar" onclick="window.location.href='../index.html'">← Voltar ao Início</button>
+    </div>
+
+    <script>
+        function carregar() { return JSON.parse(localStorage.getItem('defensivos') || '[]'); }
+        function salvarDados(dados) { localStorage.setItem('defensivos', JSON.stringify(dados)); }
+        
+        function renderizar() {
+            const lista = document.getElementById('lista');
+            const itens = carregar();
+            if (itens.length === 0) {
+                lista.innerHTML = '<p class="sem-dados">Nenhum produto cadastrado. Clique em "+ Novo" para começar!</p>';
+                return;
+            }
+            lista.innerHTML = itens.map((p, i) => `
+                <div class="item">
+                    <div class="item-titulo">${p.nome}</div>
+                    <p>📌 Tipo: ${p.tipo.charAt(0).toUpperCase() + p.tipo.slice(1)}</p>
+                    <p>🏷️ Marca: ${p.marca || 'Não informado'}</p>
+                    <p>📝 ${p.obs || 'Sem observações'}</p>
+                    <button class="btn" style="margin-top:8px; background:#ff5252; color:white;" onclick="excluir(${i})">🗑️ Excluir</button>
+                </div>
+            `).join('');
+        }
+        
+        function abrirModal() { document.getElementById('modal').style.display = 'block'; }
+        function fecharModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('nome').value = '';
+            document.getElementById('marca').value = '';
+            document.getElementById('obs').value = '';
+        }
+        
+        function salvar() {
+            const nome = document.getElementById('nome').value.trim();
+            const tipo = document.getElementById('tipo').value;
+            const marca = document.getElementById('marca').value.trim();
+            const obs = document.getElementById('obs').value.trim();
+            if (!nome) { alert('Digite o nome do produto!'); return; }
+            
+            const lista = carregar();
+            lista.push({ nome, tipo, marca, obs });
+            salvarDados(lista);
+            fecharModal();
+            renderizar();
+        }
+        
+        function excluir(indice) {
+            if (confirm('Tem certeza que deseja excluir?')) {
+                const lista = carregar();
+                lista.splice(indice, 1);
+                salvarDados(lista);
+                renderizar();
+            }
+        }
+        
+        window.onclick = e => { if (e.target.id === 'modal') fecharModal(); };
+        document.addEventListener('DOMContentLoaded', renderizar);
+    </script>
+</body>
+</html>
