@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Estoque</title>
+    <link rel="stylesheet" href="../css/estilo.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📦 Controle de Estoque</h1>
+            <p>Controle de Produtos em Estoque</p>
+        </header>
+
+        <section class="secao">
+            <div class="cabecalho-secao">
+                <h2>Estoque Atual</h2>
+                <button class="btn btn-sucesso" onclick="abrirModal()">+ Adicionar</button>
+            </div>
+            <div id="lista" class="lista-itens">
+                <p class="sem-dados">Estoque vazio.</p>
+            </div>
+        </section>
+
+        <!-- MODAL -->
+        <div id="modal" class="modal">
+            <div class="modal-conteudo">
+                <span class="fechar" onclick="fecharModal()">&times;</span>
+                <h3>Movimentar Estoque</h3>
+                <div class="campo">
+                    <label>Nome do Produto:</label>
+                    <input type="text" id="nome" placeholder="Ex: Cupragin">
+                </div>
+                <div class="campo">
+                    <label>Tipo:</label>
+                    <select id="operacao">
+                        <option value="entrada">📥 Entrada (Comprado)</option>
+                        <option value="saida">📤 Saída (Usado)</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label>Quantidade:</label>
+                    <input type="text" id="quantidade" placeholder="Ex: 500 ml / 500 g">
+                </div>
+                <div class="campo">
+                    <label>Data:</label>
+                    <input type="date" id="data">
+                </div>
+                <div class="campo">
+                    <label>Observações:</label>
+                    <textarea id="obs" placeholder="Onde comprou ou onde usou"></textarea>
+                </div>
+                <button class="btn btn-sucesso" onclick="salvar()" style="width:100%;">✅ Salvar</button>
+            </div>
+        </div>
+
+        <button class="btn btn-voltar" onclick="window.location.href='../index.html'">← Voltar ao Início</button>
+    </div>
+
+    <script>
+        function carregar() { return JSON.parse(localStorage.getItem('estoque') || '[]'); }
+        function salvarDados(dados) { localStorage.setItem('estoque', JSON.stringify(dados)); }
+        
+        function renderizar() {
+            const lista = document.getElementById('lista');
+            const itens = carregar();
+            if (itens.length === 0) {
+                lista.innerHTML = '<p class="sem-dados">Estoque vazio. Clique em "+ Adicionar" para começar!</p>';
+                return;
+            }
+            lista.innerHTML = itens.reverse().map((item, i) => `
+                <div class="item">
+                    <div class="item-titulo">${item.operacao === 'entrada' ? '📥' : '📤'} ${item.nome}</div>
+                    <p>📅 ${item.data}</p>
+                    <p>📊 ${item.quantidade}</p>
+                    <p>📝 ${item.obs || ''}</p>
+                </div>
+            `).join('');
+        }
+        
+        function abrirModal() {
+            document.getElementById('modal').style.display = 'block';
+            document.getElementById('data').valueAsDate = new Date();
+        }
+        function fecharModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('nome').value = '';
+            document.getElementById('quantidade').value = '';
+            document.getElementById('obs').value = '';
+        }
+        
+        function salvar() {
+            const nome = document.getElementById('nome').value.trim();
+            const operacao = document.getElementById('operacao').value;
+            const quantidade = document.getElementById('quantidade').value.trim();
+            const data = document.getElementById('data').value;
+            const obs = document.getElementById('obs').value.trim();
+            
+            if (!nome || !quantidade) { alert('Preencha nome e quantidade!'); return; }
+            
+            const lista = carregar();
+            lista.push({ nome, operacao, quantidade, data, obs });
+            salvarDados(lista);
+            fecharModal();
+            renderizar();
+        }
+        
+        window.onclick = e => { if (e.target.id === 'modal') fecharModal(); };
+        document.addEventListener('DOMContentLoaded', renderizar);
+    </script>
+</body>
+</html>
