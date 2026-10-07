@@ -1,6 +1,5 @@
 // ==========================================
-// SÍTIO FRUTÍFERAS — Controle de Defensivos
-// Versão COMPLETA com Reconhecimento de Fotos
+// SÍTIO FRUTÍFERAS — Código Completo
 // ==========================================
 
 // ========== BANCO DE DADOS LOCAL ==========
@@ -80,6 +79,7 @@ function voltarInicio() {
 function voltarParaListaFrutas() {
     document.getElementById('detalhes-fruta-tela').style.display = 'none';
     document.getElementById('lista-frutas-tela').style.display = 'block';
+    document.getElementById('camera-secao').style.display = 'none';
     renderizarListaFrutas();
 }
 
@@ -87,7 +87,7 @@ function voltarParaListaFrutas() {
 function renderizarListaFrutas() {
     const lista = document.getElementById('lista-frutas-conteudo');
     if (frutas.length === 0) {
-        lista.innerHTML = '<p class="sem-dados">Nenhuma fruta cadastrada.</p>';
+        lista.innerHTML = '<p class="sem-dados">Nenhuma fruta cadastrada. Clique em "+ Nova Fruta" para começar!</p>';
         return;
     }
     lista.innerHTML = frutas.map(f => `
@@ -95,7 +95,7 @@ function renderizarListaFrutas() {
             <div class="item-titulo">${f.nome}</div>
             <p>🌳 ${f.quantidade} pés | 📍 ${f.talhao}</p>
             <p>📅 ${f.obs}</p>
-            <p style="color: #1976d2; font-size:14px;">🧪 ${f.produtos.length} produtos → Clique para ver</p>
+            <p style="color: #2e7d32; font-size:14px; margin-top:5px;">🧪 ${f.produtos.length} produtos → Clique para ver</p>
         </div>
     `).join('');
 }
@@ -111,6 +111,7 @@ function abrirDetalhesFruta(id) {
     renderizarProdutosFruta(fruta.produtos);
     document.getElementById('lista-frutas-tela').style.display = 'none';
     document.getElementById('detalhes-fruta-tela').style.display = 'block';
+    document.getElementById('camera-secao').style.display = 'none';
 }
 
 function renderizarProdutosFruta(produtos) {
@@ -207,10 +208,10 @@ async function processarFoto(input) {
     if (!arquivo) return;
     
     const preview = document.getElementById('preview-foto');
-    preview.innerHTML = `<img src="${URL.createObjectURL(arquivo)}" style="max-width:100%; border-radius:8px;">`;
+    preview.innerHTML = `<img src="${URL.createObjectURL(arquivo)}" style="max-width:100%; border-radius:6px;">`;
     
     const resultado = document.getElementById('resultado-reconhecimento');
-    resultado.innerHTML = `<p>🔄 Analisando a imagem... Aguarde um instante ⏳</p>`;
+    resultado.innerHTML = `<p style="color:#666;">🔄 Analisando a imagem... Aguarde um instante ⏳</p>`;
 
     try {
         const base64 = await lerArquivoComoBase64(arquivo);
@@ -227,36 +228,36 @@ async function processarFoto(input) {
             mostrarResultado(dados.results);
         } else {
             resultado.innerHTML = `
-                <p>❌ Não consegui identificar com clareza.</p>
+                <p style="color:#e65100;">❌ Não consegui identificar com clareza.</p>
                 <p>💡 Tente tirar a foto mais de perto, com boa luz e sem sombra.</p>
-                <p>📝 Você pode anotar manualmente abaixo:</p>
-                <input type="text" id="nome-identificado" placeholder="Digite o que você viu..." style="width:100%;padding:8px;margin-top:8px;">
+                <p style="margin-top:8px;">📝 Você pode anotar manualmente:</p>
+                <input type="text" id="nome-identificado" placeholder="Digite o que você viu..." style="width:100%;padding:8px;margin-top:4px;border:1px solid #ddd;border-radius:4px;">
             `;
         }
     } catch (erro) {
         resultado.innerHTML = `
-            <p>⚠️ Sem conexão com a internet ou limite atingido.</p>
-            <p>📝 Você pode anotar manualmente:</p>
-            <input type="text" id="nome-identificado" placeholder="Digite o nome..." style="width:100%;padding:8px;margin-top:8px;">
+            <p style="color:#e65100;">⚠️ Sem conexão com a internet ou limite atingido.</p>
+            <p style="margin-top:8px;">📝 Você pode anotar manualmente:</p>
+            <input type="text" id="nome-identificado" placeholder="Digite o nome..." style="width:100%;padding:8px;margin-top:4px;border:1px solid #ddd;border-radius:4px;">
         `;
     }
 }
 
 function mostrarResultado(resultados) {
     const resultado = document.getElementById('resultado-reconhecimento');
-    let html = `<h4>✅ Encontrei isto:</h4>`;
+    let html = `<h4 style="margin-bottom:10px;">✅ Encontrei isto:</h4>`;
     resultados.slice(0, 3).forEach((item, indice) => {
         const nome = item.species.commonNames[0] || item.species.scientificNameWithoutAuthor;
         const confianca = Math.round(item.score * 100);
         html += `
-            <div style="padding:10px; background:#e8f5e9; border-radius:6px; margin:5px 0;">
+            <div style="padding:10px; background:#e8f5e9; border-radius:6px; margin:6px 0;">
                 <strong>${indice + 1}.</strong> ${nome}
-                <span style="color:green; float:right;">${confianca}% certeza</span>
-                <button onclick="usarEsteResultado('${nome}')" style="margin-top:5px; padding:4px 8px; background:#4CAF50; color:white; border:none; border-radius:4px; cursor:pointer;">Usar este ✅</button>
+                <span style="color:green; float:right; font-size:14px;">${confianca}% certeza</span>
+                <button onclick="usarEsteResultado('${nome}')" style="margin-top:6px; padding:5px 10px; background:#4CAF50; color:white; border:none; border-radius:4px; cursor:pointer; font-size:14px;">Usar este ✅</button>
             </div>
         `;
     });
-    html += `<p style="margin-top:10px; font-size:12px; color:#666;">💡 Sempre confira com seu conhecimento também!</p>`;
+    html += `<p style="margin-top:12px; font-size:12px; color:#666;">💡 Sempre confira com seu conhecimento também!</p>`;
     resultado.innerHTML = html;
 }
 
