@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Frutas</title>
+    <link rel="stylesheet" href="../css/estilo.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌳 Sítio Frutíferas</h1>
+            <p>Minhas Frutas e Produtos</p>
+        </header>
+
+        <!-- TELA DE LISTA DE FRUTAS -->
+        <section id="lista-frutas-tela" class="secao">
+            <div class="cabecalho-secao">
+                <h2>🍃 Minhas Frutas</h2>
+                <button class="btn btn-sucesso" onclick="abrirModalFruta()">+ Nova Fruta</button>
+            </div>
+            <div id="lista-frutas-conteudo" class="lista-itens"></div>
+        </section>
+
+        <!-- TELA DE DETALHES DA FRUTA -->
+        <section id="detalhes-fruta-tela" class="secao" style="display:none;">
+            <div class="cabecalho-secao">
+                <h2 id="fruta-nome-detalhe">🍑 Pêssego</h2>
+                <button class="btn" onclick="voltarParaListaFrutas()">← Voltar</button>
+            </div>
+            <div id="fruta-dados">
+                <p>📍 <span id="fruta-talhao-detalhe">Talhão A</span></p>
+                <p>🌳 <span id="fruta-quantidade-detalhe">50 pés</span></p>
+                <p>📅 <span id="fruta-obs-detalhe">Época de colheita: Nov/Mar</span></p>
+            </div>
+
+            <h3>🧪 PRODUTOS ESPECÍFICOS PARA ESSA FRUTA</h3>
+            <div id="fruta-produtos" class="lista-itens"></div>
+
+            <button class="btn btn-sucesso" onclick="abrirModalProdutoFruta()">+ Adicionar Produto Específico</button>
+        </section>
+
+        <!-- MODAIS -->
+        <div id="modal-fruta" class="modal">
+            <div class="modal-conteudo">
+                <span class="fechar" onclick="fecharModal('fruta')">&times;</span>
+                <h3 id="titulo-modal-fruta">Adicionar Nova Fruta</h3>
+                <div class="campo">
+                    <label>Nome da Fruta:</label>
+                    <input type="text" id="fruta-nome" placeholder="Ex: Manga Palmer">
+                </div>
+                <div class="campo">
+                    <label>Quantidade de pés:</label>
+                    <input type="number" id="fruta-quantidade" placeholder="Ex: 50">
+                </div>
+                <div class="campo">
+                    <label>Talhão / Local:</label>
+                    <input type="text" id="fruta-talhao" placeholder="Ex: Talhão A">
+                </div>
+                <div class="campo">
+                    <label>Observações (época de colheita):</label>
+                    <textarea id="fruta-obs" placeholder="Ex: Época de colheita: Nov/Mar"></textarea>
+                </div>
+                <button class="btn btn-sucesso" onclick="salvarFruta()">✅ Salvar</button>
+            </div>
+        </div>
+
+        <div id="modal-produto-fruta" class="modal">
+            <div class="modal-conteudo">
+                <span class="fechar" onclick="fecharModal('produto-fruta')">&times;</span>
+                <h3 id="titulo-modal-produto">Adicionar Produto Específico</h3>
+                <input type="hidden" id="produto-fruta-id">
+                <div class="campo">
+                    <label>Nome do Produto:</label>
+                    <input type="text" id="produto-nome" placeholder="Ex: Cupragin">
+                </div>
+                <div class="campo">
+                    <label>Para que serve:</label>
+                    <input type="text" id="produto-funcao" placeholder="Ex: Ferrugem, Podridão">
+                </div>
+                <div class="campo">
+                    <label>Dose por litro:</label>
+                    <input type="number" id="produto-dose" step="0.1" placeholder="Ex: 2.0">
+                </div>
+                <div class="campo">
+                    <label>Unidade da dose:</label>
+                    <select id="produto-unidade">
+                        <option value="ml">ml</option>
+                        <option value="g">g</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label>Carência (dias):</label>
+                    <input type="number" id="produto-carencia" placeholder="Ex: 21">
+                </div>
+                <button class="btn btn-sucesso" onclick="salvarProdutoFruta()">✅ Salvar</button>
+            </div>
+        </div>
+
+        <button class="btn-voltar" id="btn-voltar" onclick="voltarInicio()" style="display:block;">← Início</button>
+    </div>
+
+    <script src="../js/app.js"></script>
+</body>
+</html>
