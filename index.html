@@ -4,59 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sítio Frutíferas</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        body {
-            background: linear-gradient(180deg, #2e7d32 0%, #1b5e20 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        header {
-            text-align: center;
-            color: white;
-            margin: 40px 0 50px;
-        }
-        header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-        header p {
-            font-size: 16px;
-            opacity: 0.9;
-        }
-        .menu-btn {
-            width: 100%;
-            padding: 18px;
-            margin-bottom: 15px;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: transform 0.2s;
-            background: white;
-            color: #333;
-            text-align: left;
-        }
-        .menu-btn:hover {
-            transform: scale(1.02);
-        }
-        .btn-destaque {
-            background: linear-gradient(135deg, #ff9800, #e65100);
-            color: white;
-            text-align: center;
-            margin-top: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body>
     <div class="container">
@@ -68,20 +16,20 @@
         <button class="menu-btn" onclick="window.location.href='paginas/frutas.html'">
             🌿 Minhas Frutas
         </button>
-        <button class="menu-btn" disabled style="opacity: 0.6; cursor: not-allowed;">
-            🧪 Meus Defensivos — Em breve
+        <button class="menu-btn" onclick="window.location.href='paginas/defensivos.html'">
+            🧪 Meus Defensivos
         </button>
-        <button class="menu-btn" disabled style="opacity: 0.6; cursor: not-allowed;">
-            📅 Registrar Aplicação — Em breve
+        <button class="menu-btn" onclick="window.location.href='paginas/aplicacao.html'">
+            📅 Registrar Aplicação
         </button>
-        <button class="menu-btn" disabled style="opacity: 0.6; cursor: not-allowed;">
-            📦 Controle de Estoque — Em breve
+        <button class="menu-btn" onclick="window.location.href='paginas/estoque.html'">
+            📦 Controle de Estoque
         </button>
-        <button class="menu-btn" disabled style="opacity: 0.6; cursor: not-allowed;">
-            📜 Histórico — Em breve
+        <button class="menu-btn" onclick="window.location.href='paginas/historico.html'">
+            📜 Histórico
         </button>
-        <button class="menu-btn btn-destaque" disabled style="opacity: 0.6; cursor: not-allowed;">
-            🌱 Super Ajuda Agricultor — Em breve
+        <button class="menu-btn btn-destaque" onclick="window.location.href='paginas/ajuda.html'">
+            🌱 Super Ajuda Agricultor
         </button>
     </div>
 </body>
