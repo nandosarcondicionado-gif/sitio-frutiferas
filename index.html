@@ -4,8 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sítio Frutíferas</title>
-    <link rel="stylesheet" href="css/estilo.css">
-    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: linear-gradient(180deg, #2e7d32 0%, #1b5e20 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            color: white;
+            margin: 40px 0 50px;
+        }
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .menu-btn {
+            width: 100%;
+            padding: 18px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s;
+            background: white;
+            color: #333;
+            text-align: left;
+        }
+        .menu-btn:hover {
+            transform: scale(1.02);
+        }
+        .btn-destaque {
+            background: linear-gradient(135deg, #ff9800, #e65100);
+            color: white;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -14,294 +65,24 @@
             <p>Controle de Defensivos Agrícolas</p>
         </header>
 
-        <nav class="menu-principal">
-            <button class="btn btn-grande" onclick="mostrarSecao('frutas')">
-                🍃 Minhas Frutas
-            </button>
-            <button class="btn btn-grande" onclick="mostrarSecao('defensivos')">
-                🧪 Meus Defensivos
-            </button>
-            <button class="btn btn-grande" onclick="mostrarSecao('aplicar')">
-                📅 Registrar Aplicação
-            </button>
-            <button class="btn btn-grande" onclick="mostrarSecao('estoque')">
-                📦 Controle de Estoque
-            </button>
-            <button class="btn btn-grande" onclick="mostrarSecao('historico')">
-                📋 Histórico
-            </button>
-            <button class="btn btn-ajuda" onclick="mostrarSecao('ajuda')">
-                🌱 Super Ajuda Agricultor
-            </button>
-        </nav>
-
-        <!-- SEÇÃO FRUTAS -->
-        <section id="frutas" class="secao">
-            <div class="cabecalho-secao">
-                <h2>🍃 Minhas Frutas</h2>
-                <button class="btn btn-sucesso" onclick="abrirModalFruta()">+ Nova Fruta</button>
-            </div>
-            <div id="lista-frutas" class="lista-itens"></div>
-        </section>
-
-        <!-- SEÇÃO DEFENSIVOS -->
-        <section id="defensivos" class="secao">
-            <div class="cabecalho-secao">
-                <h2>🧪 Meus Defensivos</h2>
-                <button class="btn btn-sucesso" onclick="abrirModalDefensivo()">+ Novo Produto</button>
-            </div>
-            
-            <div class="caixa-calculadora">
-                <h3>🧮 Calculadora de Dose</h3>
-                <div class="campo">
-                    <label>Quantos litros de calda vai preparar?</label>
-                    <input type="number" id="calc-litros" placeholder="Ex: 20">
-                </div>
-                <div class="campo">
-                    <label>Dose do produto (ml por litro):</label>
-                    <input type="number" id="calc-dose" step="0.1" placeholder="Ex: 2.5">
-                </div>
-                <button class="btn" onclick="calcularDose()">Calcular</button>
-                <div id="resultado-calculo" class="resultado"></div>
-            </div>
-
-            <h3>📦 Produtos Cadastrados</h3>
-            <div id="lista-defensivos" class="lista-itens"></div>
-        </section>
-
-        <!-- SEÇÃO APLICAR -->
-        <section id="aplicar" class="secao">
-            <h2>📅 Registrar Aplicação</h2>
-            <div class="formulario">
-                <div class="campo">
-                    <label>Data:</label>
-                    <input type="date" id="aplicar-data">
-                </div>
-                <div class="campo">
-                    <label>Fruta:</label>
-                    <select id="aplicar-fruta"></select>
-                </div>
-                <div class="campo">
-                    <label>Produto:</label>
-                    <select id="aplicar-produto"></select>
-                </div>
-                <div class="campo">
-                    <label>Quantidade de calda (Litros):</label>
-                    <input type="number" id="aplicar-calda" step="0.1" placeholder="Ex: 15">
-                </div>
-                <div class="campo">
-                    <label>Observações:</label>
-                    <textarea id="aplicar-obs" placeholder="Clima, talhão, etc."></textarea>
-                </div>
-                <button class="btn btn-sucesso" onclick="registrarAplicacao()">✅ Salvar Aplicação</button>
-            </div>
-        </section>
-
-        <!-- SEÇÃO ESTOQUE -->
-        <section id="estoque" class="secao">
-            <div class="cabecalho-secao">
-                <h2>📦 Controle de Estoque</h2>
-                <button class="btn btn-sucesso" onclick="abrirModalEntrada()">+ Entrada (Comprar)</button>
-            </div>
-            <div id="lista-estoque" class="lista-itens"></div>
-        </section>
-
-        <!-- SEÇÃO HISTÓRICO -->
-        <section id="historico" class="secao">
-            <h2>📋 Histórico de Aplicações</h2>
-            <div id="lista-historico" class="lista-itens"></div>
-        </section>
-
-        <!-- SEÇÃO AJUDA -->
-        <section id="ajuda" class="secao">
-            <h2>🌱 Super Ajuda Agricultor</h2>
-            
-            <div class="ajuda-opcoes">
-                <div class="cartao-ajuda" onclick="window.open('https://plantix.net/pt-br/', '_blank')">
-                    <h3>📷 Identificar Praga por Foto</h3>
-                    <p>Tire uma foto e descubra o que é e como tratar</p>
-                </div>
-                <div class="cartao-ajuda" onclick="window.open('http://agrofit.agricultura.gov.br/agrofit_cons/principal_agrofit_cons', '_blank')">
-                    <h3>🔍 Consultar Produto (Agrofit)</h3>
-                    <p>Site oficial do Ministério da Agricultura</p>
-                </div>
-                <div class="cartao-ajuda" onclick="mostrarSecao('galeria')">
-                    <h3>📸 Minha Galeria de Fotos</h3>
-                    <p>Salvar fotos de venenos, pragas e aplicações</p>
-                </div>
-                <div class="cartao-ajuda" onclick="abrirModalDuvida()">
-                    <h3>💬 Anotar Dúvida</h3>
-                    <p>Escreva sua dúvida para perguntar depois</p>
-                </div>
-            </div>
-
-            <div class="guia-rapido">
-                <h3>📖 Guia Rápido — Suas Frutas</h3>
-                <div class="guia-item">
-                    <strong>🍑 Pêssego</strong>
-                    <p>Principais: Podridão, Ferrugem, Pulgão. Sempre confira no Agrofit o produto autorizado.</p>
-                </div>
-                <div class="guia-item">
-                    <strong>🍍 Abacaxi</strong>
-                    <p>Principais: Podridão da base, Cochonilha. Consulte sempre o período de carência.</p>
-                </div>
-                <div class="guia-item">
-                    <strong>🍓 Morango</strong>
-                    <p>Principais: Oídio, Mofo Cinzento, Ácaro. Cuidado com produtos próximos à colheita.</p>
-                </div>
-                <div class="guia-item">
-                    <strong>🍋 Limão</strong>
-                    <p>Principais: Ferrugem, Podridão Radicular. Respeite sempre o intervalo entre aplicações.</p>
-                </div>
-                <div class="guia-item">
-                    <strong>🫐 Goiaba</strong>
-                    <p>Principais: Antracnose, Broca-do-fruto. Consulte sempre o que é registrado para goiaba.</p>
-                </div>
-                <div class="guia-item">
-                    <strong>🍒 Lichia</strong>
-                    <p>Principais: Antracnose, Podridão Floral. Atenção ao período de floração.</p>
-                </div>
-            </div>
-
-            <div class="aviso-seguranca">
-                ⚠️ <strong>Importante:</strong> Sempre confira se o produto é autorizado para a cultura. Consulte o Agrofit ou pergunte a um técnico.
-            </div>
-        </section>
-
-        <!-- SEÇÃO GALERIA DE FOTOS -->
-        <section id="galeria" class="secao">
-            <div class="cabecalho-secao">
-                <h2>📸 Minha Galeria de Fotos</h2>
-                <button class="btn btn-sucesso" onclick="abrirModalFoto()">+ Adicionar Foto</button>
-                <button class="btn" onclick="mostrarSecao('ajuda')">← Voltar Ajuda</button>
-            </div>
-            <div class="upload-area">
-                <input type="file" id="input-foto" accept="image/*" onchange="previewFoto(this)">
-                <img id="preview-imagem" src="" alt="Pré-visualização">
-            </div>
-            <div id="lista-fotos" class="galeria-grid"></div>
-        </section>
-
-        <!-- BOTÃO VOLTAR -->
-        <button class="btn-voltar" id="btn-voltar" onclick="voltarInicio()" style="display:none;">← Início</button>
+        <button class="menu-btn" onclick="window.location.href='paginas/frutas.html'">
+            🌿 Minhas Frutas
+        </button>
+        <button class="menu-btn" disabled style="opacity: 0.6; cursor: not-allowed;">
+            🧪 Meus Defensivos — Em breve
+        </button>
+        <button class="menu-btn" disabled style="opacity: 0.6; cursor: not-allowed;">
+            📅 Registrar Aplicação — Em breve
+        </button>
+        <button class="menu-btn" disabled style="opacity: 0.6; cursor: not-allowed;">
+            📦 Controle de Estoque — Em breve
+        </button>
+        <button class="menu-btn" disabled style="opacity: 0.6; cursor: not-allowed;">
+            📜 Histórico — Em breve
+        </button>
+        <button class="menu-btn btn-destaque" disabled style="opacity: 0.6; cursor: not-allowed;">
+            🌱 Super Ajuda Agricultor — Em breve
+        </button>
     </div>
-
-    <!-- MODAIS -->
-    <div id="modal-fruta" class="modal">
-        <div class="modal-conteudo">
-            <span class="fechar" onclick="fecharModal('fruta')">&times;</span>
-            <h3 id="titulo-modal-fruta">Adicionar Nova Fruta</h3>
-            <div class="campo">
-                <label>Nome da Fruta:</label>
-                <input type="text" id="fruta-nome" placeholder="Ex: Manga Palmer">
-            </div>
-            <div class="campo">
-                <label>Quantidade de pés:</label>
-                <input type="number" id="fruta-quantidade" placeholder="Ex: 50">
-            </div>
-            <div class="campo">
-                <label>Talhão / Local:</label>
-                <input type="text" id="fruta-talhao" placeholder="Ex: Talhão A">
-            </div>
-            <div class="campo">
-                <label>Observações:</label>
-                <textarea id="fruta-obs" placeholder="Época de colheita, variedade..."></textarea>
-            </div>
-            <button class="btn btn-sucesso" onclick="salvarFruta()">✅ Salvar</button>
-        </div>
-    </div>
-
-    <div id="modal-defensivo" class="modal">
-        <div class="modal-conteudo">
-            <span class="fechar" onclick="fecharModal('defensivo')">&times;</span>
-            <h3>Adicionar Produto</h3>
-            <div class="campo">
-                <label>Nome do Produto:</label>
-                <input type="text" id="def-nome" placeholder="Ex: Cupragin">
-            </div>
-            <div class="campo">
-                <label>Dose (ml por litro de água):</label>
-                <input type="number" id="def-dose" step="0.1" placeholder="Ex: 2">
-            </div>
-            <div class="campo">
-                <label>Período de Carência (dias):</label>
-                <input type="number" id="def-carencia" placeholder="Ex: 21">
-            </div>
-            <div class="campo">
-                <label>Unidade:</label>
-                <select id="def-unidade">
-                    <option value="ml">ml</option>
-                    <option value="L">Litros</option>
-                    <option value="g">gramas</option>
-                    <option value="kg">quilos</option>
-                </select>
-            </div>
-            <div class="campo">
-                <label>Quantidade em Estoque:</label>
-                <input type="number" id="def-quantidade" step="0.01" placeholder="Ex: 500">
-            </div>
-            <button class="btn btn-sucesso" onclick="salvarDefensivo()">✅ Salvar</button>
-        </div>
-    </div>
-
-    <div id="modal-entrada" class="modal">
-        <div class="modal-conteudo">
-            <span class="fechar" onclick="fecharModal('entrada')">&times;</span>
-            <h3>Entrada de Estoque</h3>
-            <div class="campo">
-                <label>Produto:</label>
-                <select id="entrada-produto"></select>
-            </div>
-            <div class="campo">
-                <label>Quantidade adicionada:</label>
-                <input type="number" id="entrada-quantidade" step="0.01" placeholder="Ex: 1000">
-            </div>
-            <div class="campo">
-                <label>Data da compra:</label>
-                <input type="date" id="entrada-data">
-            </div>
-            <button class="btn btn-sucesso" onclick="salvarEntrada()">✅ Salvar</button>
-        </div>
-    </div>
-
-    <div id="modal-foto" class="modal">
-        <div class="modal-conteudo">
-            <span class="fechar" onclick="fecharModal('foto')">&times;</span>
-            <h3>Adicionar Foto</h3>
-            <div class="campo">
-                <label>Tipo:</label>
-                <select id="foto-tipo">
-                    <option value="veneno">🧪 Veneno / Produto</option>
-                    <option value="praga">🐛 Praga / Doença</option>
-                    <option value="aplicacao">📅 Aplicação</option>
-                    <option value="outro">📷 Outro</option>
-                </select>
-            </div>
-            <div class="campo">
-                <label>Fruta relacionada:</label>
-                <select id="foto-fruta">
-                    <option value="">— Nenhuma / Geral</option>
-                </select>
-            </div>
-            <div class="campo">
-                <label>Descrição:</label>
-                <textarea id="foto-descricao" placeholder="Descreva o que está na foto..."></textarea>
-            </div>
-            <button class="btn" onclick="salvarFoto()">✅ Salvar Foto</button>
-        </div>
-    </div>
-
-    <div id="modal-duvida" class="modal">
-        <div class="modal-conteudo">
-            <span class="fechar" onclick="fecharModal('duvida')">&times;</span>
-            <h3>💬 Minha Dúvida</h3>
-            <p>Anote aqui sua dúvida para perguntar depois:</p>
-            <textarea id="duvida-texto" placeholder="Ex: Minhas folhas estão amarelas, o que pode ser?"></textarea>
-            <button class="btn btn-sucesso" onclick="salvarDuvida()">✅ Salvar Dúvida</button>
-            <div id="lista-duvidas"></div>
-        </div>
-    </div>
-
-    <script src="js/app.js"></script>
 </body>
 </html>
