@@ -38,9 +38,22 @@
             <div id="fruta-produtos" class="lista-itens"></div>
 
             <button class="btn btn-sucesso" onclick="abrirModalProdutoFruta()">+ Adicionar Produto Específico</button>
+            
+            <!-- 📷 BOTÃO DA CÂMERA -->
+            <button class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32); margin-top: 10px;" onclick="abrirCamera()">
+                📷 Identificar pela Foto
+            </button>
+
+            <!-- Área da Câmera e Resultado -->
+            <div id="camera-secao" style="display:none; margin-top: 20px; padding: 15px; background:#f5f5f5; border-radius:10px;">
+                <h4>📷 Tire a foto da praga, doença ou rótulo</h4>
+                <input type="file" id="entrada-foto" accept="image/*" capture="environment" onchange="processarFoto(this)">
+                <div id="preview-foto" style="margin:10px 0;"></div>
+                <div id="resultado-reconhecimento" style="margin-top:15px;"></div>
+            </div>
         </section>
 
-        <!-- MODAIS -->
+        <!-- MODAL NOVA FRUTA -->
         <div id="modal-fruta" class="modal">
             <div class="modal-conteudo">
                 <span class="fechar" onclick="fecharModal('fruta')">&times;</span>
@@ -65,6 +78,7 @@
             </div>
         </div>
 
+        <!-- MODAL NOVO PRODUTO -->
         <div id="modal-produto-fruta" class="modal">
             <div class="modal-conteudo">
                 <span class="fechar" onclick="fecharModal('produto-fruta')">&times;</span>
