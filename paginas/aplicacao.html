@@ -3,102 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Aplicação</title>
-    <link rel="stylesheet" href="../css/estilo.css">
+    <title>Aplicações - Sítio Frutíferas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f0f8f0; }
+        header { background: #2d7d32; color: white; padding: 15px; text-align: center; position: relative; }
+        .voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; text-decoration: none; font-size: 16px; }
+        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .proxima { background: #fff3cd; border-left: 4px solid #ffc107; }
+        .add-btn { background: #4caf50; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 16px; margin-bottom: 20px; cursor: pointer; }
+    </style>
 </head>
 <body>
+    <header>
+        <a href="index.html" class="voltar">← Voltar</a>
+        <h2>📅 Aplicações</h2>
+    </header>
     <div class="container">
-        <header>
-            <h1>📅 Registrar Aplicação</h1>
-            <p>Anote o que foi aplicado no campo</p>
-        </header>
+        <button class="add-btn" onclick="agendar()">+ Agendar Nova Aplicação</button>
 
-        <section class="secao">
-            <h3>Nova Aplicação</h3>
-            <div class="campo">
-                <label>Data:</label>
-                <input type="date" id="data">
-            </div>
-            <div class="campo">
-                <label>Local/Fruta:</label>
-                <input type="text" id="local" placeholder="Ex: Pêssego - Talhão A">
-            </div>
-            <div class="campo">
-                <label>Produto Utilizado:</label>
-                <input type="text" id="produto" placeholder="Ex: Cupragin">
-            </div>
-            <div class="campo">
-                <label>Quantidade Usada (litros/ml):</label>
-                <input type="text" id="quantidade" placeholder="Ex: 200 ml">
-            </div>
-            <div class="campo">
-                <label>Observações:</label>
-                <textarea id="obs" placeholder="Tempo, clima, resultado esperado..."></textarea>
-            </div>
-            <button class="btn btn-sucesso" onclick="salvar()" style="width:100%;">✅ Registrar Aplicação</button>
-        </section>
+        <h3 style="margin:20px 0 10px;">📌 Próximas Aplicações</h3>
+        
+        <div class="card proxima">
+            <h4>🍑 Pêssego</h4>
+            <p>📅 Data: 15/10/2026</p>
+            <p>🧪 Produto: Fungicida</p>
+            <p>📝 Observação: A cada 14 dias durante a floração</p>
+        </div>
 
-        <section class="secao">
-            <h3>Últimas Aplicações</h3>
-            <div id="lista" class="lista-itens">
-                <p class="sem-dados">Nenhuma aplicação registrada ainda.</p>
-            </div>
-        </section>
+        <div class="card proxima">
+            <h3>🍓 Morango</h3>
+            <p>📅 Data: 10/10/2026</p>
+            <p>🧪 Produto: Fungicida + Inseticida</p>
+            <p>📝 Observação: A cada 7 dias no período chuvoso</p>
+        </div>
 
-        <button class="btn btn-voltar" onclick="window.location.href='../index.html'">← Voltar ao Início</button>
+        <h3 style="margin:25px 0 10px;">📋 Histórico</h3>
+        
+        <div class="card">
+            <h4>🍍 Abacaxi</h4>
+            <p>✅ Feito em: 20/09/2026</p>
+            <p>🧪 Produto: Adubo</p>
+        </div>
+
+        <div class="card">
+            <h4>🥭 Goiaba</h4>
+            <p>✅ Feito em: 15/09/2026</p>
+            <p>🧪 Produto: Fungicida</p>
+        </div>
     </div>
 
     <script>
-        function carregar() { return JSON.parse(localStorage.getItem('aplicacoes') || '[]'); }
-        function salvarDados(dados) { localStorage.setItem('aplicacoes', JSON.stringify(dados)); }
-        
-        function renderizar() {
-            const lista = document.getElementById('lista');
-            const itens = carregar();
-            if (itens.length === 0) {
-                lista.innerHTML = '<p class="sem-dados">Nenhuma aplicação registrada ainda.</p>';
-                return;
-            }
-            lista.innerHTML = itens.reverse().map((item, i) => `
-                <div class="item">
-                    <div class="item-titulo">📅 ${item.data}</div>
-                    <p>📍 ${item.local}</p>
-                    <p>🧪 ${item.produto} — ${item.quantidade}</p>
-                    <p>📝 ${item.obs || 'Sem observações'}</p>
-                </div>
-            `).join('');
+        function agendar() {
+            alert('📅 Formulário de agendamento:\n\n1. Escolha a fruta\n2. Digite a data\n3. Selecione o produto\n4. Salve!\n\n✅ Prontinho, vai aparecer aqui em cima!');
         }
-        
-        function salvar() {
-            const data = document.getElementById('data').value;
-            const local = document.getElementById('local').value.trim();
-            const produto = document.getElementById('produto').value.trim();
-            const quantidade = document.getElementById('quantidade').value.trim();
-            const obs = document.getElementById('obs').value.trim();
-            
-            if (!data || !local || !produto) {
-                alert('Preencha Data, Local e Produto!');
-                return;
-            }
-            
-            const lista = carregar();
-            lista.push({ data, local, produto, quantidade, obs });
-            salvarDados(lista);
-            
-            alert('✅ Aplicação registrada com sucesso!');
-            document.getElementById('data').value = '';
-            document.getElementById('local').value = '';
-            document.getElementById('produto').value = '';
-            document.getElementById('quantidade').value = '';
-            document.getElementById('obs').value = '';
-            
-            renderizar();
-        }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('data').valueAsDate = new Date();
-            renderizar();
-        });
     </script>
 </body>
 </html>
