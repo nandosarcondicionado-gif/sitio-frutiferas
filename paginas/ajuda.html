@@ -3,52 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Ajuda Agricultor</title>
-    <link rel="stylesheet" href="../css/estilo.css">
+    <title>Super Ajuda - Sítio Frutíferas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f0f8f0; }
+        header { background: #2d7d32; color: white; padding: 15px; text-align: center; position: relative; }
+        .voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; text-decoration: none; font-size: 16px; }
+        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        .chat-box { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .resposta { background: #e8f5e9; padding: 12px; border-radius: 8px; margin: 10px 0; }
+        .pergunta { background: #e3f2fd; padding: 12px; border-radius: 8px; margin: 8px 0 4px 0; }
+        input, button { padding: 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 15px; }
+        button { background: #4caf50; color: white; border: none; cursor: pointer; }
+        .foto-btn { background: #ff9800; margin-left: 5px; }
+    </style>
 </head>
 <body>
+    <header>
+        <a href="index.html" class="voltar">← Voltar</a>
+        <h2>🤖 Super Ajuda Agricultor</h2>
+    </header>
     <div class="container">
-        <header>
-            <h1>🌱 Super Ajuda Agricultor</h1>
-            <p>Dicas e Orientações</p>
-        </header>
+        <div class="chat-box" id="chat">
+            <p class="resposta"><strong>🤖 Super Ajuda:</strong> Olá! 😊 Em que posso ajudar hoje? Você pode perguntar sobre pragas, doenças, produtos, medidas de aplicação... Ou tirar uma foto que eu tento te ajudar também!</p>
+        </div>
 
-        <section class="secao">
-            <h3>📌 Boas Práticas de Aplicação</h3>
-            <div class="item">
-                <p>✅ Respeite sempre o período de <strong>carência</strong> do produto</p>
-                <p>✅ Nunca aplique se <strong>vai chover</strong> nas próximas horas</p>
-                <p>✅ Use sempre os <strong>Equipamentos de Proteção Individual (EPIs)</strong></p>
-                <p>✅ Guarde produtos em local <strong>trancado, longe de crianças e animais</strong></p>
-                <p>✅ Sempre siga as instruções da <strong>bula/rótulo</strong> do fabricante</p>
-            </div>
-        </section>
+        <div style="display:flex; gap:8px; margin-top:20px;">
+            <input type="text" id="pergunta" placeholder="Digite sua dúvida aqui..." style="flex:1;">
+            <button onclick="enviarPergunta()">Enviar</button>
+            <button class="foto-btn" onclick="tirarFoto()">📷 Foto</button>
+        </div>
 
-        <section class="secao">
-            <h3>🔢 Conversão de Medidas</h3>
-            <div class="item">
-                <p>💧 <strong>1 litro</strong> = 1.000 ml</p>
-                <p>⚖️ <strong>1 quilo</strong> = 1.000 gramas</p>
-                <p>🪣 <strong>20 litros</strong> = 1 balde padrão</p>
-                <p>🚿 <strong>200 litros</strong> = 1 tambor padrão</p>
-            </div>
-        </section>
-
-        <section class="secao">
-            <h3>⚠️ Sempre Consulte um Técnico</h3>
-            <div class="item">
-                <p>Este sistema é um <strong>auxiliar de campo</strong>. Sempre consulte um engenheiro agrônomo para orientações específicas sobre sua propriedade e produtos.</p>
-            </div>
-        </section>
-
-        <section class="secao">
-            <h3>📷 Identificação por Foto</h3>
-            <div class="item">
-                <p>Use a função <strong>"📷 Identificar pela Foto"</strong> na página de cada fruta para ajudar no reconhecimento de pragas e doenças. Lembre-se: é uma ajuda, não substitui o conhecimento técnico!</p>
-            </div>
-        </section>
-
-        <button class="btn btn-voltar" onclick="window.location.href='../index.html'">← Voltar ao Início</button>
+        <h4 style="margin-top:30px; color:#333;">❓ Perguntas frequentes:</h4>
+        <div style="margin-top:10px;">
+            <p class="pergunta" onclick="resposta('qual o melhor horário para aplicar defensivos')">• Qual o melhor horário para aplicar?</p>
+            <p class="pergunta" onclick="resposta('como diluir corretamente')">• Como diluir o produto corretamente?</p>
+            <p class="pergunta" onclick="resposta('período de segurança')">• Quanto tempo esperar pra colher depois de aplicar?</p>
+            <p class="pergunta" onclick="resposta('chuva depois de aplicar')">• E se chover logo após a aplicação?</p>
+        </div>
     </div>
+
+    <script>
+        function enviarPergunta() {
+            const pergunta = document.getElementById('pergunta').value;
+            if (!pergunta) return;
+            resposta(pergunta);
+            document.getElementById('pergunta').value = '';
+        }
+
+        function resposta(pergunta) {
+            const chat = document.getElementById('chat');
+            let resp = '';
+            const p = pergunta.toLowerCase();
+
+            if (p.includes('horário') || p.includes('quando aplicar')) {
+                resp = '🌅 O melhor horário é de manhã cedo (antes das 9h) ou no final da tarde (após às 16h). Evite horário de sol forte, pois o produto evapora rápido e pode queimar as folhas!';
+            } else if (p.includes('diluir') || p.includes('misturar') || p.includes('água')) {
+                resp = '💧 Sempre coloque a água primeiro, depois adicione o produto e mexa bem. Siga SEMPRE as instruções da bula! As medidas que estão no sistema são apenas referências.';
+            } else if (p.includes('segurança') || p.includes('colher') || p.includes('esperar')) {
+                resp = '⏳ Cada produto tem um período diferente — consulte SEMPRE a bula! Em média, vai de 7 a 30 dias. Nunca colha antes do prazo de segurança.';
+            } else if (p.includes('chuva') || p.includes('choveu')) {
+                resp = '🌧️ Se chover dentro de 3-4 horas depois de aplicar, pode ser necessário reaplicar, pois a chuva lava o produto das folhas. Se passar desse tempo, provavelmente já absorveu.';
+            } else {
+                resp = '🤖 Entendi sua dúvida! Para garantir o melhor resultado, consulte sempre um agrônomo ou a bula do produto. Se quiser mais detalhes, é só perguntar mais especificamente! 😊';
+            }
+
+            chat.innerHTML += `<p class="pergunta"><strong>👤 Você:</strong> ${pergunta}</p>`;
+            chat.innerHTML += `<p class="resposta"><strong>🤖 Super Ajuda:</strong> ${resp}</p>`;
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function tirarFoto() {
+            alert('📷 Funcionalidade de foto:\n\n• Tire uma foto da praga, doença ou rótulo do produto\n• Salve no celular\n• Depois é só descrever o que você vê aqui que eu te ajudo!\n\n✅ Em breve reconhecimento automático de imagens!');
+        }
+    </script>
 </body>
 </html>
