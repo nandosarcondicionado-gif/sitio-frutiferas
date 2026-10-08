@@ -3,114 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Defensivos</title>
-    <link rel="stylesheet" href="../css/estilo.css">
+    <title>Defensivos - Sítio Frutíferas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f0f8f0; }
+        header { background: #2d7d32; color: white; padding: 15px; text-align: center; position: relative; }
+        .voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; text-decoration: none; font-size: 16px; }
+        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .estoque-baixo { border-left: 4px solid #f44336; }
+        .estoque-bom { border-left: 4px solid #4caf50; }
+        .add-btn { background: #4caf50; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 16px; margin-bottom: 20px; cursor: pointer; }
+        .usado-btn { background: #ff9800; color: white; border: none; padding: 6px 12px; border-radius: 4px; margin-top: 8px; cursor: pointer; }
+    </style>
 </head>
 <body>
+    <header>
+        <a href="index.html" class="voltar">← Voltar</a>
+        <h2>🧪 Meus Defensivos</h2>
+    </header>
     <div class="container">
-        <header>
-            <h1>🧪 Meus Defensivos</h1>
-            <p>Cadastro de Produtos Agrícolas</p>
-        </header>
+        <button class="add-btn" onclick="adicionarDefensivo()">+ Cadastrar Produto</button>
 
-        <section class="secao">
-            <div class="cabecalho-secao">
-                <h2>Lista de Produtos</h2>
-                <button class="btn btn-sucesso" onclick="abrirModal()">+ Novo</button>
-            </div>
-            <div id="lista" class="lista-itens">
-                <p class="sem-dados">Nenhum produto cadastrado.</p>
-            </div>
-        </section>
-
-        <!-- MODAL -->
-        <div id="modal" class="modal">
-            <div class="modal-conteudo">
-                <span class="fechar" onclick="fecharModal()">&times;</span>
-                <h3>Adicionar Produto</h3>
-                <div class="campo">
-                    <label>Nome do Produto:</label>
-                    <input type="text" id="nome" placeholder="Ex: Cupragin">
-                </div>
-                <div class="campo">
-                    <label>Tipo:</label>
-                    <select id="tipo">
-                        <option value="fungicida">Fungicida</option>
-                        <option value="inseticida">Inseticida</option>
-                        <option value="herbicida">Herbicida</option>
-                        <option value="adubo">Adubo/Fertilizante</option>
-                    </select>
-                </div>
-                <div class="campo">
-                    <label>Fabricante/Marca:</label>
-                    <input type="text" id="marca" placeholder="Ex: DuPont">
-                </div>
-                <div class="campo">
-                    <label>Observações:</label>
-                    <textarea id="obs" placeholder="Dosagem, carência, etc."></textarea>
-                </div>
-                <button class="btn btn-sucesso" onclick="salvar()" style="width:100%;">✅ Salvar</button>
-            </div>
+        <div class="card estoque-bom">
+            <h4>Fungicida X</h4>
+            <p>📦 Estoque: 500 ml</p>
+            <p>📝 Para que serve: Prevenção e controle de doenças causadas por fungos nas plantas.</p>
+            <button class="usado-btn" onclick="usarProduto('Fungicida X')">✅ Foi usado</button>
         </div>
 
-        <button class="btn btn-voltar" onclick="window.location.href='../index.html'">← Voltar ao Início</button>
+        <div class="card estoque-bom">
+            <h4>Inseticida Y</h4>
+            <p>📦 Estoque: 800 ml</p>
+            <p>📝 Para que serve: Elimina e previne pragas e insetos prejudiciais às plantas e frutos.</p>
+            <button class="usado-btn" onclick="usarProduto('Inseticida Y')">✅ Foi usado</button>
+        </div>
+
+        <div class="card estoque-baixo">
+            <h4>Adubo NPK</h4>
+            <p>📦 Estoque: 150 ml ⚠️ Acabando!</p>
+            <p>📝 Para que serve: Nutrientes essenciais para crescimento, floração e frutificação.</p>
+            <button class="usado-btn" onclick="usarProduto('Adubo NPK')">✅ Foi usado</button>
+        </div>
+
+        <div class="card estoque-bom">
+            <h4>Herbicida Z</h4>
+            <p>📦 Estoque: 1000 ml</p>
+            <p>📝 Para que serve: Controle de ervas daninhas que competem com as fruteiras.</p>
+            <button class="usado-btn" onclick="usarProduto('Herbicida Z')">✅ Foi usado</button>
+        </div>
     </div>
 
     <script>
-        function carregar() { return JSON.parse(localStorage.getItem('defensivos') || '[]'); }
-        function salvarDados(dados) { localStorage.setItem('defensivos', JSON.stringify(dados)); }
-        
-        function renderizar() {
-            const lista = document.getElementById('lista');
-            const itens = carregar();
-            if (itens.length === 0) {
-                lista.innerHTML = '<p class="sem-dados">Nenhum produto cadastrado. Clique em "+ Novo" para começar!</p>';
-                return;
-            }
-            lista.innerHTML = itens.map((p, i) => `
-                <div class="item">
-                    <div class="item-titulo">${p.nome}</div>
-                    <p>📌 Tipo: ${p.tipo.charAt(0).toUpperCase() + p.tipo.slice(1)}</p>
-                    <p>🏷️ Marca: ${p.marca || 'Não informado'}</p>
-                    <p>📝 ${p.obs || 'Sem observações'}</p>
-                    <button class="btn" style="margin-top:8px; background:#ff5252; color:white;" onclick="excluir(${i})">🗑️ Excluir</button>
-                </div>
-            `).join('');
-        }
-        
-        function abrirModal() { document.getElementById('modal').style.display = 'block'; }
-        function fecharModal() {
-            document.getElementById('modal').style.display = 'none';
-            document.getElementById('nome').value = '';
-            document.getElementById('marca').value = '';
-            document.getElementById('obs').value = '';
-        }
-        
-        function salvar() {
-            const nome = document.getElementById('nome').value.trim();
-            const tipo = document.getElementById('tipo').value;
-            const marca = document.getElementById('marca').value.trim();
-            const obs = document.getElementById('obs').value.trim();
-            if (!nome) { alert('Digite o nome do produto!'); return; }
-            
-            const lista = carregar();
-            lista.push({ nome, tipo, marca, obs });
-            salvarDados(lista);
-            fecharModal();
-            renderizar();
-        }
-        
-        function excluir(indice) {
-            if (confirm('Tem certeza que deseja excluir?')) {
-                const lista = carregar();
-                lista.splice(indice, 1);
-                salvarDados(lista);
-                renderizar();
+        function adicionarDefensivo() {
+            const nome = prompt('Nome do produto:');
+            if (nome) {
+                alert(`✅ "${nome}" cadastrado com sucesso!`);
             }
         }
-        
-        window.onclick = e => { if (e.target.id === 'modal') fecharModal(); };
-        document.addEventListener('DOMContentLoaded', renderizar);
+        function usarProduto(nome) {
+            const qtd = prompt(`Quanto de ${nome} foi usado? (ex: 50ml):`);
+            if (qtd) {
+                alert(`✅ ${qtd} de ${nome} registrado! Estoque atualizado.`);
+            }
+        }
     </script>
 </body>
 </html>
