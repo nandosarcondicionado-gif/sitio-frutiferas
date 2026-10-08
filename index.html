@@ -6,44 +6,52 @@
     <title>Controle Agrícola - Sítio Frutíferas</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: #f0f8f0; min-height: 100vh; }
-        header { background: linear-gradient(135deg, #2d7d32, #4caf50); color: white; padding: 20px; text-align: center; }
-        .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; }
-        .menu-card { background: white; border-radius: 12px; padding: 25px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.3s; text-decoration: none; color: #333; }
-        .menu-card:hover { transform: translateY(-5px); }
-        .menu-card span { font-size: 40px; display: block; margin-bottom: 10px; }
-        h1 { font-size: 22px; }
+        body { 
+            background: linear-gradient(135deg, #2d6b2e, #4caf50); 
+            min-height: 100vh; 
+            padding: 40px 20px;
+        }
+        .container { max-width: 500px; margin: 0 auto; text-align: center; }
+        .logo { color: white; margin-bottom: 40px; }
+        .logo h1 { font-size: 28px; margin-bottom: 8px; }
+        .logo p { font-size: 16px; opacity: 0.9; }
+        .menu-btn {
+            display: block;
+            background: white;
+            color: #2d6b2e;
+            text-decoration: none;
+            padding: 18px 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 500;
+            text-align: left;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .menu-btn:hover { transform: translateY(-2px); }
+        .ajuda-btn {
+            background: #ff9800;
+            color: white;
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <h1>🌳 Sítio Frutíferas</h1>
-        <p>Sistema de Controle Agrícola</p>
-    </header>
     <div class="container">
-        <div class="menu-grid">
-            <a href="frutas.html" class="menu-card">
-                <span>🍎</span>
-                <h3>Frutas</h3>
-                <p>Lista e aplicações</p>
-            </a>
-            <a href="defensivos.html" class="menu-card">
-                <span>🧪</span>
-                <h3>Defensivos</h3>
-                <p>Estoque e medidas</p>
-            </a>
-            <a href="aplicacoes.html" class="menu-card">
-                <span>📅</span>
-                <h3>Aplicações</h3>
-                <p>Calendário e histórico</p>
-            </a>
-            <a href="ajuda.html" class="menu-card">
-                <span>🤖</span>
-                <h3>Super Ajuda</h3>
-                <p>Dúvidas e fotos</p>
-            </a>
+        <div class="logo">
+            <h1>🌳 Sítio Frutíferas</h1>
+            <p>Controle de Defensivos Agrícolas</p>
         </div>
+
+        <a href="frutas.html" class="menu-btn">🌿 Minhas Frutas</a>
+        <a href="defensivos.html" class="menu-btn">🧪 Meus Defensivos</a>
+        <a href="aplicacoes.html" class="menu-btn">📅 Registrar Aplicação</a>
+        <a href="defensivos.html" class="menu-btn">📦 Controle de Estoque</a>
+        <a href="aplicacoes.html" class="menu-btn">📋 Histórico</a>
+        <a href="ajuda.html" class="menu-btn ajuda-btn">🌱 Super Ajuda Agricultor</a>
     </div>
 </body>
 </html>
