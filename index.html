@@ -3,34 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sítio Frutíferas</title>
-    <link rel="stylesheet" href="css/estilo.css">
+    <title>Controle Agrícola - Sítio Frutíferas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f0f8f0; min-height: 100vh; }
+        header { background: linear-gradient(135deg, #2d7d32, #4caf50); color: white; padding: 20px; text-align: center; }
+        .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px; }
+        .menu-card { background: white; border-radius: 12px; padding: 25px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.3s; text-decoration: none; color: #333; }
+        .menu-card:hover { transform: translateY(-5px); }
+        .menu-card span { font-size: 40px; display: block; margin-bottom: 10px; }
+        h1 { font-size: 22px; }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>🌳 Sítio Frutíferas</h1>
+        <p>Sistema de Controle Agrícola</p>
+    </header>
     <div class="container">
-        <header>
-            <h1>🌳 Sítio Frutíferas</h1>
-            <p>Controle de Defensivos Agrícolas</p>
-        </header>
-
-        <button class="menu-btn" onclick="window.location.href='paginas/frutas.html'">
-            🌿 Minhas Frutas
-        </button>
-        <button class="menu-btn" onclick="window.location.href='paginas/defensivos.html'">
-            🧪 Meus Defensivos
-        </button>
-        <button class="menu-btn" onclick="window.location.href='paginas/aplicacao.html'">
-            📅 Registrar Aplicação
-        </button>
-        <button class="menu-btn" onclick="window.location.href='paginas/estoque.html'">
-            📦 Controle de Estoque
-        </button>
-        <button class="menu-btn" onclick="window.location.href='paginas/historico.html'">
-            📜 Histórico
-        </button>
-        <button class="menu-btn btn-destaque" onclick="window.location.href='paginas/ajuda.html'">
-            🌱 Super Ajuda Agricultor
-        </button>
+        <div class="menu-grid">
+            <a href="frutas.html" class="menu-card">
+                <span>🍎</span>
+                <h3>Frutas</h3>
+                <p>Lista e aplicações</p>
+            </a>
+            <a href="defensivos.html" class="menu-card">
+                <span>🧪</span>
+                <h3>Defensivos</h3>
+                <p>Estoque e medidas</p>
+            </a>
+            <a href="aplicacoes.html" class="menu-card">
+                <span>📅</span>
+                <h3>Aplicações</h3>
+                <p>Calendário e histórico</p>
+            </a>
+            <a href="ajuda.html" class="menu-card">
+                <span>🤖</span>
+                <h3>Super Ajuda</h3>
+                <p>Dúvidas e fotos</p>
+            </a>
+        </div>
     </div>
 </body>
 </html>
