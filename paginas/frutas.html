@@ -3,116 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minhas Frutas</title>
-    <link rel="stylesheet" href="../css/estilo.css">
+    <title>Frutas - Sítio Frutíferas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f0f8f0; }
+        header { background: #2d7d32; color: white; padding: 15px; text-align: center; position: relative; }
+        .voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; text-decoration: none; font-size: 16px; }
+        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        .fruta-card { background: white; border-radius: 10px; padding: 18px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; }
+        .fruta-card h3 { color: #2d7d32; }
+        .fruta-detalhes { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; }
+        .fruta-card.aberta .fruta-detalhes { display: block; }
+        .add-btn { background: #4caf50; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 16px; margin-bottom: 20px; cursor: pointer; }
+        .medida { background: #e8f5e9; padding: 8px; border-radius: 5px; margin: 5px 0; font-size: 14px; }
+    </style>
 </head>
 <body>
+    <header>
+        <a href="index.html" class="voltar">← Voltar</a>
+        <h2>🍎 Frutas</h2>
+    </header>
     <div class="container">
-        <header>
-            <h1>🌳 Sítio Frutíferas</h1>
-            <p>Minhas Frutas e Produtos</p>
-        </header>
+        <button class="add-btn" onclick="adicionarFruta()">+ Adicionar Nova Fruta</button>
 
-        <!-- LISTA DE FRUTAS -->
-        <section id="lista-frutas-tela" class="secao">
-            <div class="cabecalho-secao">
-                <h2>🍃 Minhas Frutas</h2>
-                <button class="btn btn-sucesso" onclick="abrirModalFruta()">+ Nova Fruta</button>
-            </div>
-            <div id="lista-frutas-conteudo" class="lista-itens"></div>
-        </section>
-
-        <!-- DETALHES DA FRUTA -->
-        <section id="detalhes-fruta-tela" class="secao" style="display:none;">
-            <div class="cabecalho-secao">
-                <h2 id="fruta-nome-detalhe">🍑 Pêssego</h2>
-                <button class="btn" onclick="voltarParaListaFrutas()">← Voltar</button>
-            </div>
-            <div id="fruta-dados" style="margin-bottom:20px;">
-                <p>📍 <span id="fruta-talhao-detalhe">Talhão A</span></p>
-                <p>🌳 <span id="fruta-quantidade-detalhe">50 pés</span></p>
-                <p>📅 <span id="fruta-obs-detalhe">Época de colheita: Nov/Mar</span></p>
-            </div>
-
-            <h3>🧪 PRODUTOS ESPECÍFICOS</h3>
-            <div id="fruta-produtos" class="lista-itens"></div>
-
-            <button class="btn btn-sucesso" onclick="abrirModalProdutoFruta()" style="margin-top:15px;">+ Adicionar Produto</button>
-
-            <!-- BOTÃO CÂMERA -->
-            <button class="btn" style="background: linear-gradient(135deg, #4CAF50, #2E7D32); color:white; margin-top:10px; width:100%;" onclick="abrirCamera()">
-                📷 Identificar pela Foto
-            </button>
-
-            <!-- ÁREA DA CÂMERA -->
-            <div id="camera-secao" style="display:none; margin-top:20px; padding:15px; background:#f5f5f5; border-radius:8px;">
-                <h4 style="margin-bottom:10px;">📷 Tire a foto da praga, doença ou rótulo</h4>
-                <input type="file" id="entrada-foto" accept="image/*" capture="environment" onchange="processarFoto(this)" style="width:100%;">
-                <div id="preview-foto" style="margin:10px 0;"></div>
-                <div id="resultado-reconhecimento" style="margin-top:15px;"></div>
-            </div>
-        </section>
-
-        <!-- MODAL NOVA FRUTA -->
-        <div id="modal-fruta" class="modal">
-            <div class="modal-conteudo">
-                <span class="fechar" onclick="fecharModal('fruta')">&times;</span>
-                <h3>Adicionar Nova Fruta</h3>
-                <div class="campo">
-                    <label>Nome da Fruta:</label>
-                    <input type="text" id="fruta-nome" placeholder="Ex: Manga Palmer">
-                </div>
-                <div class="campo">
-                    <label>Quantidade de pés:</label>
-                    <input type="number" id="fruta-quantidade" placeholder="Ex: 50">
-                </div>
-                <div class="campo">
-                    <label>Talhão / Local:</label>
-                    <input type="text" id="fruta-talhao" placeholder="Ex: Talhão A">
-                </div>
-                <div class="campo">
-                    <label>Observações:</label>
-                    <textarea id="fruta-obs" placeholder="Ex: Época de colheita: Nov/Mar"></textarea>
-                </div>
-                <button class="btn btn-sucesso" onclick="salvarFruta()" style="width:100%; margin-top:10px;">✅ Salvar</button>
+        <div class="fruta-card" onclick="toggleFruta(this)">
+            <h3>🍑 Pêssego</h3>
+            <div class="fruta-detalhes">
+                <p><strong>Defensivos recomendados:</strong></p>
+                <ul style="margin:10px 0 10px 20px;">
+                    <li>Fungicida: para prevenção de doenças</li>
+                    <li>Inseticida: controle de pragas</li>
+                    <li>Adubo: crescimento e frutificação</li>
+                </ul>
+                <p><strong>📏 Medidas por bomba:</strong></p>
+                <div class="medida">💧 Bomba 20L: 15ml a 20ml do produto</div>
+                <div class="medida">💧 Tanque 200L: 150ml a 200ml do produto</div>
+                <p style="margin-top:10px; font-size:13px; color:#666;">⚠️ Sempre siga a bula do produto!</p>
             </div>
         </div>
 
-        <!-- MODAL NOVO PRODUTO -->
-        <div id="modal-produto-fruta" class="modal">
-            <div class="modal-conteudo">
-                <span class="fechar" onclick="fecharModal('produto-fruta')">&times;</span>
-                <h3>Adicionar Produto</h3>
-                <div class="campo">
-                    <label>Nome do Produto:</label>
-                    <input type="text" id="produto-nome" placeholder="Ex: Cupragin">
-                </div>
-                <div class="campo">
-                    <label>Para que serve:</label>
-                    <input type="text" id="produto-funcao" placeholder="Ex: Ferrugem, Podridão">
-                </div>
-                <div class="campo">
-                    <label>Dose por litro:</label>
-                    <input type="number" id="produto-dose" step="0.1" placeholder="Ex: 2.0">
-                </div>
-                <div class="campo">
-                    <label>Unidade:</label>
-                    <select id="produto-unidade">
-                        <option value="ml">ml</option>
-                        <option value="g">g</option>
-                    </select>
-                </div>
-                <div class="campo">
-                    <label>Carência (dias):</label>
-                    <input type="number" id="produto-carencia" placeholder="Ex: 21">
-                </div>
-                <button class="btn btn-sucesso" onclick="salvarProdutoFruta()" style="width:100%; margin-top:10px;">✅ Salvar</button>
+        <div class="fruta-card" onclick="toggleFruta(this)">
+            <h3>🍍 Abacaxi</h3>
+            <div class="fruta-detalhes">
+                <p><strong>Defensivos recomendados:</strong></p>
+                <ul style="margin:10px 0 10px 20px;">
+                    <li>Fungicida: prevenção de podridões</li>
+                    <li>Herbicida: controle de ervas daninhas</li>
+                    <li>Adubo: desenvolvimento da fruta</li>
+                </ul>
+                <p><strong>📏 Medidas por bomba:</strong></p>
+                <div class="medida">💧 Bomba 20L: 12ml a 18ml do produto</div>
+                <div class="medida">💧 Tanque 200L: 120ml a 180ml do produto</div>
             </div>
         </div>
 
-        <button class="btn btn-voltar" onclick="voltarInicio()">← Voltar ao Início</button>
+        <div class="fruta-card" onclick="toggleFruta(this)">
+            <h3>🍓 Morango</h3>
+            <div class="fruta-detalhes">
+                <p><strong>Defensivos recomendados:</strong></p>
+                <ul style="margin:10px 0 10px 20px;">
+                    <li>Fungicida: muito importante! A cada 7-14 dias</li>
+                    <li>Inseticida: controle de pulgões e ácaros</li>
+                </ul>
+                <p><strong>📏 Medidas por bomba:</strong></p>
+                <div class="medida">💧 Bomba 20L: 10ml a 15ml do produto</div>
+                <div class="medida">💧 Tanque 200L: 100ml a 150ml do produto</div>
+            </div>
+        </div>
+
+        <div class="fruta-card" onclick="toggleFruta(this)">
+            <h3>🍋 Limão</h3>
+            <div class="fruta-detalhes">
+                <p><strong>Defensivos recomendados:</strong></p>
+                <ul style="margin:10px 0 10px 20px;">
+                    <li>Fungicida: ferrugem e doenças</li>
+                    <li>Inseticida: pulgões e cochonilhas</li>
+                </ul>
+                <p><strong>📏 Medidas por bomba:</strong></p>
+                <div class="medida">💧 Bomba 20L: 15ml a 25ml do produto</div>
+                <div class="medida">💧 Tanque 200L: 150ml a 250ml do produto</div>
+            </div>
+        </div>
+
+        <div class="fruta-card" onclick="toggleFruta(this)">
+            <h3>🥭 Goiaba</h3>
+            <div class="fruta-detalhes">
+                <p><strong>Defensivos recomendados:</strong></p>
+                <ul style="margin:10px 0 10px 20px;">
+                    <li>Fungicida: antracnose</li>
+                    <li>Inseticida: broca do fruto</li>
+                </ul>
+                <p><strong>📏 Medidas por bomba:</strong></p>
+                <div class="medida">💧 Bomba 20L: 15ml a 20ml do produto</div>
+                <div class="medida">💧 Tanque 200L: 150ml a 200ml do produto</div>
+            </div>
+        </div>
+
+        <div class="fruta-card" onclick="toggleFruta(this)">
+            <h3>🍒 Lichia</h3>
+            <div class="fruta-detalhes">
+                <p><strong>Defensivos recomendados:</strong></p>
+                <ul style="margin:10px 0 10px 20px;">
+                    <li>Fungicida: floração e frutificação</li>
+                    <li>Adubo: fósforo e potássio</li>
+                </ul>
+                <p><strong>📏 Medidas por bomba:</strong></p>
+                <div class="medida">💧 Bomba 20L: 12ml a 18ml do produto</div>
+                <div class="medida">💧 Tanque 200L: 120ml a 180ml do produto</div>
+            </div>
+        </div>
     </div>
 
-    <script src="../js/app.js"></script>
+    <script>
+        function toggleFruta(card) {
+            card.classList.toggle('aberta');
+        }
+        function adicionarFruta() {
+            const nome = prompt('Digite o nome da nova fruta:');
+            if (nome) {
+                alert(`✅ Fruta "${nome}" adicionada! Agora é só preencher os dados.`);
+            }
+        }
+    </script>
 </body>
 </html>
