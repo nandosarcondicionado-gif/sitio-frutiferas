@@ -3,65 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Histórico</title>
-    <link rel="stylesheet" href="../css/estilo.css">
+    <title>Histórico - Sítio Frutíferas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f0f8f0; padding: 20px; }
+        header { background: #2d7d32; color: white; padding: 15px; text-align: center; border-radius: 8px; position: relative; margin-bottom: 20px; }
+        .voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; text-decoration: none; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .data { font-size: 13px; color: #666; }
+        .vazio { text-align: center; color: #666; padding: 40px 20px; }
+    </style>
 </head>
 <body>
+    <header>
+        <a href="index.html" class="voltar">← Voltar</a>
+        <h2>📋 Histórico de Aplicações</h2>
+    </header>
     <div class="container">
-        <header>
-            <h1>📜 Histórico Completo</h1>
-            <p>Tudo que foi registrado</p>
-        </header>
-
-        <section class="secao">
-            <h3>📅 Aplicações Realizadas</h3>
-            <div id="lista-aplicacoes" class="lista-itens">
-                <p class="sem-dados">Nenhuma aplicação registrada.</p>
-            </div>
-        </section>
-
-        <section class="secao">
-            <h3>📦 Movimentações de Estoque</h3>
-            <div id="lista-estoque" class="lista-itens">
-                <p class="sem-dados">Nenhuma movimentação registrada.</p>
-            </div>
-        </section>
-
-        <button class="btn btn-voltar" onclick="window.location.href='../index.html'">← Voltar ao Início</button>
+        <div id="lista"></div>
     </div>
 
     <script>
-        function carregar(chave) { return JSON.parse(localStorage.getItem(chave) || '[]'); }
-        
-        function renderizarAplicacoes() {
-            const lista = document.getElementById('lista-aplicacoes');
-            const itens = carregar('aplicacoes');
-            if (itens.length === 0) return;
-            lista.innerHTML = itens.reverse().map(item => `
-                <div class="item">
-                    <div class="item-titulo">📅 ${item.data}</div>
-                    <p>📍 ${item.local}</p>
-                    <p>🧪 ${item.produto} — ${item.quantidade}</p>
+        function carregar() {
+            const historico = JSON.parse(localStorage.getItem('historico') || '[]');
+            const lista = document.getElementById('lista');
+            if (historico.length === 0) {
+                lista.innerHTML = '<p class="vazio">📋 Nenhuma aplicação registrada ainda.<br>Vá em "Registrar Aplicação" para começar!</p>';
+                return;
+            }
+            lista.innerHTML = historico.map(item => `
+                <div class="card">
+                    <strong>${item.fruta}</strong> — ${item.produto}<br>
+                    ${item.quantidade || ''}<br>
+                    <span class="data">📅 ${item.data || 'Sem data'}</span>
+                    ${item.obs ? `<br><em>${item.obs}</em>` : ''}
                 </div>
             `).join('');
         }
-        
-        function renderizarEstoque() {
-            const lista = document.getElementById('lista-estoque');
-            const itens = carregar('estoque');
-            if (itens.length === 0) return;
-            lista.innerHTML = itens.reverse().map(item => `
-                <div class="item">
-                    <div class="item-titulo">${item.operacao === 'entrada' ? '📥' : '📤'} ${item.nome}</div>
-                    <p>📅 ${item.data} | 📊 ${item.quantidade}</p>
-                </div>
-            `).join('');
-        }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            renderizarAplicacoes();
-            renderizarEstoque();
-        });
+        carregar();
     </script>
 </body>
 </html>
