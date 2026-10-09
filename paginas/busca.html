@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📷 Identificar Plantas e Frutas - Sítio Frutíferas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f0f8f0; padding: 20px; }
+        header { background: #2d7d32; color: white; padding: 15px; text-align: center; border-radius: 8px; position: relative; margin-bottom: 20px; }
+        .voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; text-decoration: none; }
+        .container { max-width: 500px; margin: 0 auto; text-align: center; }
+        .camera-box { background: white; border-radius: 12px; padding: 30px 20px; margin-bottom: 25px; box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
+        .icone-camera { font-size: 70px; margin-bottom: 15px; }
+        .btn-camera { background: #4285f4; color: white; border: none; padding: 16px 30px; font-size: 18px; border-radius: 30px; cursor: pointer; font-weight: bold; width: 100%; margin-bottom: 12px; }
+        .btn-camera:hover { background: #3367d6; }
+        .btn-galeria { background: #f1f3f4; color: #333; border: none; padding: 14px 25px; font-size: 16px; border-radius: 30px; cursor: pointer; width: 100%; }
+        .aviso { background: #e8f5e9; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 14px; color: #2e7d32; line-height: 1.6; border-left: 4px solid #4caf50; text-align: left; }
+        .aviso strong { display: block; margin-bottom: 6px; font-size: 15px; }
+        .dicas { margin-top: 25px; text-align: left; background: white; padding: 20px; border-radius: 10px; }
+        .dicas h3 { color: #2d7d32; margin-bottom: 12px; text-align: center; }
+        .dica-item { padding: 10px 0; border-bottom: 1px solid #eee; font-size: 15px; }
+        .dica-item span { color: #2d7d32; font-weight: bold; }
+        input[type="file"] { display: none; }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="../index.html" class="voltar">← Voltar</a>
+        <h2>📷 Identificar Plantas e Frutas</h2>
+    </header>
+
+    <div class="container">
+        <div class="camera-box">
+            <div class="icone-camera">🌿</div>
+            <h3 style="margin-bottom: 10px; color: #333;">Tire foto de: planta, folha ou fruto</h3>
+            <p style="color: #666; margin-bottom: 25px;">O Google vai te ajudar a identificar a planta, doença ou praga</p>
+            
+            <input type="file" id="camera-input" accept="image/*" capture="environment">
+            <button class="btn-camera" onclick="document.getElementById('camera-input').click()">📷 Tirar Foto Agora</button>
+            
+            <input type="file" id="gallery-input" accept="image/*">
+            <button class="btn-galeria" onclick="document.getElementById('gallery-input').click()">🖼️ Escolher da Galeria</button>
+        </div>
+
+        <div class="aviso">
+            <strong>🌿 Uso exclusivo — Plantas e Frutas do Sítio</strong>
+            ✅ Folhas, galhos, flores ou frutos<br>
+            ✅ Doenças, manchas e pragas nas plantas<br>
+            ❌ Não usar para outros fins
+        </div>
+
+        <div class="dicas">
+            <h3>📝 Dicas de como tirar a foto:</h3>
+            <div class="dica-item">☀️ <span>Luz natural</span> — tire de dia, na sombra, sem sol direto</div>
+            <div class="dica-item">🔍 <span>De perto</span> — aproxime o celular da folha, fruto ou mancha</div>
+            <div class="dica-item">🎯 <span>Foco no problema</span> — só a planta/fruto, sem muita bagunça ao redor</div>
+            <div class="dica-item">🌳 <span>Somente plantas e frutas</span> — mantenha o foco no que cultivamos no sítio</div>
+        </div>
+    </div>
+
+    <script>
+        const cameraInput = document.getElementById('camera-input');
+        const galleryInput = document.getElementById('gallery-input');
+
+        function abrirGoogleLens() {
+            window.open('https://lens.google.com/upload', '_blank');
+        }
+
+        cameraInput.addEventListener('change', abrirGoogleLens);
+        galleryInput.addEventListener('change', abrirGoogleLens);
+    </script>
+</body>
+</html>
