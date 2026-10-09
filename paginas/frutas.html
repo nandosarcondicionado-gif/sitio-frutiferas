@@ -3,125 +3,460 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frutas - Sítio Frutíferas</title>
+    <title>Minhas Frutas - Sítio Frutíferas</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: #f0f8f0; }
+        body { background: #f0f8f0; padding-bottom: 40px; }
         header { background: #2d7d32; color: white; padding: 15px; text-align: center; position: relative; }
         .voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; text-decoration: none; font-size: 16px; }
-        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
-        .fruta-card { background: white; border-radius: 10px; padding: 18px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; }
-        .fruta-card h3 { color: #2d7d32; }
-        .fruta-detalhes { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; }
-        .fruta-card.aberta .fruta-detalhes { display: block; }
-        .add-btn { background: #4caf50; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 16px; margin-bottom: 20px; cursor: pointer; }
-        .medida { background: #e8f5e9; padding: 8px; border-radius: 5px; margin: 5px 0; font-size: 14px; }
+        .container { max-width: 950px; margin: 20px auto; padding: 0 15px; }
+        .fruta-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 3px 8px rgba(0,0,0,0.08); }
+        .fruta-nome { font-size: 22px; font-weight: bold; color: #2e7d32; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+        .produto-item { padding: 14px; border-left: 3px solid #4caf50; margin-bottom: 12px; background: #f9f9f9; border-radius: 0 6px 6px 0; }
+        .prod-nome { font-weight: bold; font-size: 15px; margin-bottom: 6px; }
+        .prod-quando { font-size: 14px; color: #e65100; margin-bottom: 4px; }
+        .prod-ajuda { font-size: 14px; color: #333; margin-bottom: 8px; }
+        .dosagem { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+        .dosagem div { background: #e8f5e9; padding: 6px 10px; border-radius: 4px; font-size: 13px; text-align: center; }
+        .dosagem .tanque { background: #e3f2fd; }
+        .add-btn { background: #4caf50; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 16px; margin-bottom: 20px; cursor: pointer; font-weight: bold; }
+        .aviso { background: #fff3e0; border-left: 4px solid #ff9800; padding: 14px; border-radius: 4px; margin: 20px 0; font-size: 14px; line-height: 1.6; }
+        .aviso strong { color: #e65100; }
     </style>
 </head>
 <body>
     <header>
         <a href="index.html" class="voltar">← Voltar</a>
-        <h2>🍎 Frutas</h2>
+        <h2>🍎 Minhas Frutas</h2>
     </header>
     <div class="container">
         <button class="add-btn" onclick="adicionarFruta()">+ Adicionar Nova Fruta</button>
 
-        <div class="fruta-card" onclick="toggleFruta(this)">
-            <h3>🍑 Pêssego</h3>
-            <div class="fruta-detalhes">
-                <p><strong>Defensivos recomendados:</strong></p>
-                <ul style="margin:10px 0 10px 20px;">
-                    <li>Fungicida: para prevenção de doenças</li>
-                    <li>Inseticida: controle de pragas</li>
-                    <li>Adubo: crescimento e frutificação</li>
-                </ul>
-                <p><strong>📏 Medidas por bomba:</strong></p>
-                <div class="medida">💧 Bomba 20L: 15ml a 20ml do produto</div>
-                <div class="medida">💧 Tanque 200L: 150ml a 200ml do produto</div>
-                <p style="margin-top:10px; font-size:13px; color:#666;">⚠️ Sempre siga a bula do produto!</p>
+        <!-- 🍑 PÊSSEGO -->
+        <div class="fruta-card">
+            <div class="fruta-nome">🍑 Pêssego</div>
+            
+            <div class="produto-item">
+                <div class="prod-nome">🟢 FLORAFORTE-D</div>
+                <div class="prod-quando">⏰ Quando aplicar: Início da brotação e antes da florada</div>
+                <div class="prod-ajuda">💚 O que ajuda: Fortalece a floração e garante melhor pegamento dos frutos</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 20 a 30 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 200 a 300 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟢 EXPERTGROW</div>
+                <div class="prod-quando">⏰ Quando aplicar: Durante todo o ciclo, principalmente na brotação</div>
+                <div class="prod-ajuda">💚 O que ajuda: Fortalece a planta, reduz estresse e aumenta a produção</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 20 a 40 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 200 a 400 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟢 FORTGREEN CaBDry</div>
+                <div class="prod-quando">⏰ Quando aplicar: Frutos em formação</div>
+                <div class="prod-ajuda">💚 O que ajuda: Previne frutos rachados e deformados, mais qualidade</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 20 a 25 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 200 a 250 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟡 AZIMUT SC</div>
+                <div class="prod-quando">⏰ Quando aplicar: Pré-florada + início de chuvas + frutos pequenos — repetir a cada 15 dias</div>
+                <div class="prod-ajuda">🛡️ O que ajuda: Protege contra antracnose, oídio e ferrugem — sem manchas nos frutos</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 20 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 200 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟡 PRIORI XTRA</div>
+                <div class="prod-quando">⏰ Quando aplicar: Alternar com AZIMUT SC a cada aplicação</div>
+                <div class="prod-ajuda">🛡️ O que ajuda: Mesma proteção — alternar evita que o fungo crie resistência</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 20 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 200 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🔴 GALIL SC</div>
+                <div class="prod-quando">⏰ Quando aplicar: Apenas quando aparecer pragas — NUNCA na florada!</div>
+                <div class="prod-ajuda">🐛 O que ajuda: Controla pulgões, percevejos e insetos sugadores</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 20 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 200 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🔴 DECIS 25 EC</div>
+                <div class="prod-quando">⏰ Quando aplicar: Apenas quando houver lagartas ou pragas</div>
+                <div class="prod-ajuda">🐛 O que ajuda: Contato e ingestão — age rápido em lagartas e besouros</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 25 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 250 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🔴 BELT</div>
+                <div class="prod-quando">⏰ Quando aplicar: Lagartas presentes — efeito mais duradouro</div>
+                <div class="prod-ajuda">🐛 O que ajuda: Controla lagartas com efeito prolongado, mais seguro</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 10 a 15 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 100 a 150 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">⚪ SUPREME AGRO — Óleo Mineral</div>
+                <div class="prod-quando">⏰ Quando aplicar: SEMPRE misturado com outro produto</div>
+                <div class="prod-ajuda">💧 O que ajuda: Melhora aderência, reduz evaporação e escorrimento</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 20 a 30 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 200 a 300 ml</div>
+                </div>
             </div>
         </div>
 
-        <div class="fruta-card" onclick="toggleFruta(this)">
-            <h3>🍍 Abacaxi</h3>
-            <div class="fruta-detalhes">
-                <p><strong>Defensivos recomendados:</strong></p>
-                <ul style="margin:10px 0 10px 20px;">
-                    <li>Fungicida: prevenção de podridões</li>
-                    <li>Herbicida: controle de ervas daninhas</li>
-                    <li>Adubo: desenvolvimento da fruta</li>
-                </ul>
-                <p><strong>📏 Medidas por bomba:</strong></p>
-                <div class="medida">💧 Bomba 20L: 12ml a 18ml do produto</div>
-                <div class="medida">💧 Tanque 200L: 120ml a 180ml do produto</div>
+        <!-- 🍍 ABACAXI -->
+        <div class="fruta-card">
+            <div class="fruta-nome">🍍 Abacaxi</div>
+            
+            <div class="produto-item">
+                <div class="prod-nome">🟢 EXPERTGROW</div>
+                <div class="prod-quando">⏰ Quando aplicar: Crescimento vegetativo e antes da indução floral</div>
+                <div class="prod-ajuda">💚 O que ajuda: Crescimento mais rápido, frutos maiores e mais pesados</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 20 a 40 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 200 a 400 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟢 GLUTAMIN K LIBRE</div>
+                <div class="prod-quando">⏰ Quando aplicar: Frutos em formação</div>
+                <div class="prod-ajuda">💚 O que ajuda: Mais potássio = frutos maiores, mais doces e firmes</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 20 a 30 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 200 a 300 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟡 AZIMUT SC</div>
+                <div class="prod-quando">⏰ Quando aplicar: Aos 40 dias após indução floral — repetir 3 a 4x a cada 15 dias</div>
+                <div class="prod-ajuda">🛡️ O que ajuda: Previne podridão do fruto e manchas</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 20 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 200 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🔴 BULLDOCK 125 SC</div>
+                <div class="prod-quando">⏰ Quando aplicar: Apenas ao aparecer pragas ou ácaros</div>
+                <div class="prod-ajuda">🐛 O que ajuda: Protege folhas e frutos de insetos sugadores</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 25 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 250 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🔴 DECIS 25 EC</div>
+                <div class="prod-quando">⏰ Quando aplicar: Apenas quando houver lagartas ou insetos</div>
+                <div class="prod-ajuda">🐛 O que ajuda: Ação rápida contra lagartas e pragas</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 25 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 250 ml</div>
+                </div>
             </div>
         </div>
 
-        <div class="fruta-card" onclick="toggleFruta(this)">
-            <h3>🍓 Morango</h3>
-            <div class="fruta-detalhes">
-                <p><strong>Defensivos recomendados:</strong></p>
-                <ul style="margin:10px 0 10px 20px;">
-                    <li>Fungicida: muito importante! A cada 7-14 dias</li>
-                    <li>Inseticida: controle de pulgões e ácaros</li>
-                </ul>
-                <p><strong>📏 Medidas por bomba:</strong></p>
-                <div class="medida">💧 Bomba 20L: 10ml a 15ml do produto</div>
-                <div class="medida">💧 Tanque 200L: 100ml a 150ml do produto</div>
+        <!-- 🍓 MORANGO -->
+        <div class="fruta-card">
+            <div class="fruta-nome">🍓 Morango</div>
+            
+            <div class="produto-item">
+                <div class="prod-nome">🟢 FLORAFORTE-D</div>
+                <div class="prod-quando">⏰ Quando aplicar: Antes da florada e entre colheitas</div>
+                <div class="prod-ajuda">💚 O que ajuda: Mais flores, frutos mais doces e planta vigorosa</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 20 a 30 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 200 a 300 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟢 CRYSTAL LAYLAA</div>
+                <div class="prod-quando">⏰ Quando aplicar: Durante todo o ciclo, entre colheitas</div>
+                <div class="prod-ajuda">💚 O que ajuda: Nutrição completa — planta forte e produção contínua</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 30 a 40 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 300 a 400 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟡 PRIORI XTRA</div>
+                <div class="prod-quando">⏰ Quando aplicar: ANTES da florada — repetir a cada 7 a 10 dias nas chuvas</div>
+                <div class="prod-ajuda">🛡️ O que ajuda: PREVINE MOFO-BRANCO E ANTRACNOSE — sem isso perde tudo na chuva!</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 20 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 200 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟡 AZIMUT SC</div>
+                <div class="prod-quando">⏰ Quando aplicar: Alternar com PRIORI XTRA nas aplicações</div>
+                <div class="prod-ajuda">🛡️ O que ajuda: Mesma proteção — alternar evita resistência do fungo</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 20 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 200 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🔴 BELT</div>
+                <div class="prod-quando">⏰ Quando aplicar: No início da brotação — PARAR antes da florada!</div>
+                <div class="prod-ajuda">🐛 O que ajuda: Controla lagartas — seguro para as abelhas</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 10 a 15 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 100 a 150 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🔴 DECIS 25 EC</div>
+                <div class="prod-quando">⏰ Quando aplicar: Apenas antes da florada se houver pulgões</div>
+                <div class="prod-ajuda">🐛 O que ajuda: Contato rápido — usar só quando necessário</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 25 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 250 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">⚪ PÉROLA</div>
+                <div class="prod-quando">⏰ Quando aplicar: SEMPRE misturado aos produtos</div>
+                <div class="prod-ajuda">💧 O que ajuda: O morango tem folhas peludas — ajuda o produto a cobrir melhor sem escorrer</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 10 a 15 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 100 a 150 ml</div>
+                </div>
             </div>
         </div>
 
-        <div class="fruta-card" onclick="toggleFruta(this)">
-            <h3>🍋 Limão</h3>
-            <div class="fruta-detalhes">
-                <p><strong>Defensivos recomendados:</strong></p>
-                <ul style="margin:10px 0 10px 20px;">
-                    <li>Fungicida: ferrugem e doenças</li>
-                    <li>Inseticida: pulgões e cochonilhas</li>
-                </ul>
-                <p><strong>📏 Medidas por bomba:</strong></p>
-                <div class="medida">💧 Bomba 20L: 15ml a 25ml do produto</div>
-                <div class="medida">💧 Tanque 200L: 150ml a 250ml do produto</div>
+        <!-- 🍋 LIMÃO / CITROS -->
+        <div class="fruta-card">
+            <div class="fruta-nome">🍋 Limão (Citros)</div>
+            
+            <div class="produto-item">
+                <div class="prod-nome">🟢 FORTGREEN CaBDry</div>
+                <div class="prod-quando">⏰ Quando aplicar: Pré-florada e frutos em formação</div>
+                <div class="prod-ajuda">💚 O que ajuda: Frutos mais firmes, sem rachaduras e melhor qualidade</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 20 a 25 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 200 a 250 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟢 GLUTAMIN K LIBRE</div>
+                <div class="prod-quando">⏰ Quando aplicar: Frutos em crescimento</div>
+                <div class="prod-ajuda">💚 O que ajuda: Frutos mais pesados e com melhor sabor</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 20 a 30 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 200 a 300 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟡 AZIMUT SC</div>
+                <div class="prod-quando">⏰ Quando aplicar: Pré-florada + frutos pequenos — de 30 em 30 dias</div>
+                <div class="prod-ajuda">🛡️ O que ajuda: Controla pinta-preta e manchas nos frutos</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 20 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 200 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🔴 GALIL SC + ⚪ SUPREME AGRO</div>
+                <div class="prod-quando">⏰ Quando aplicar: Primavera e verão — usar com cuidado no calor intenso</div>
+                <div class="prod-ajuda">🐛 O que ajuda: Controla cochonilhas, ácaros e pulgões — óleo mineral potencializa a ação</div>
+                <div class="dosagem">
+                    <div>🔹 GALIL SC: 15 a 20 ml / 20L</div>
+                    <div class="tanque">🔹 Óleo Mineral: 20 a 30 ml / 20L</div>
+                </div>
             </div>
         </div>
 
-        <div class="fruta-card" onclick="toggleFruta(this)">
-            <h3>🥭 Goiaba</h3>
-            <div class="fruta-detalhes">
-                <p><strong>Defensivos recomendados:</strong></p>
-                <ul style="margin:10px 0 10px 20px;">
-                    <li>Fungicida: antracnose</li>
-                    <li>Inseticida: broca do fruto</li>
-                </ul>
-                <p><strong>📏 Medidas por bomba:</strong></p>
-                <div class="medida">💧 Bomba 20L: 15ml a 20ml do produto</div>
-                <div class="medida">💧 Tanque 200L: 150ml a 200ml do produto</div>
+        <!-- 🍐 GOIABA -->
+        <div class="fruta-card">
+            <div class="fruta-nome">🍐 Goiaba</div>
+            
+            <div class="produto-item">
+                <div class="prod-nome">🟢 FLORAFORTE-D</div>
+                <div class="prod-quando">⏰ Quando aplicar: Após a colheita e na brotação de primavera</div>
+                <div class="prod-ajuda">💚 O que ajuda: Recupera a árvore e prepara para a próxima safra</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 20 a 30 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 200 a 300 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟢 EXPERTGROW</div>
+                <div class="prod-quando">⏰ Quando aplicar: Brotação e desenvolvimento dos frutos</div>
+                <div class="prod-ajuda">💚 O que ajuda: Árvore mais forte e com mais frutos</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 20 a 40 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 200 a 400 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟡 AZIMUT SC</div>
+                <div class="prod-quando">⏰ Quando aplicar: Início das chuvas — repetir a cada 15 a 20 dias</div>
+                <div class="prod-ajuda">🛡️ O que ajuda: Previne antracnose que apodrece folhas e frutos jovens</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 20 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 200 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟡 PRIORI XTRA</div>
+                <div class="prod-quando">⏰ Quando aplicar: Alternar com AZIMUT SC nas chuvas</div>
+                <div class="prod-ajuda">🛡️ O que ajuda: Mesma proteção — alternar evita resistência</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 20 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 200 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🔴 DECIS 25 EC</div>
+                <div class="prod-quando">⏰ Quando aplicar: Frutos com metade do tamanho — monitorar mosca-das-frutas</div>
+                <div class="prod-ajuda">🐛 O que ajuda: A mosca é a maior praga da goiaba — põe ovos dentro e estraga tudo</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 25 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 250 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🔴 BULLDOCK 125 SC</div>
+                <div class="prod-quando">⏰ Quando aplicar: Apenas quando houver brocas ou insetos</div>
+                <div class="prod-ajuda">🐛 O que ajuda: Protege ramos e frutos de pragas mais resistentes</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 25 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 250 ml</div>
+                </div>
             </div>
         </div>
 
-        <div class="fruta-card" onclick="toggleFruta(this)">
-            <h3>🍒 Lichia</h3>
-            <div class="fruta-detalhes">
-                <p><strong>Defensivos recomendados:</strong></p>
-                <ul style="margin:10px 0 10px 20px;">
-                    <li>Fungicida: floração e frutificação</li>
-                    <li>Adubo: fósforo e potássio</li>
-                </ul>
-                <p><strong>📏 Medidas por bomba:</strong></p>
-                <div class="medida">💧 Bomba 20L: 12ml a 18ml do produto</div>
-                <div class="medida">💧 Tanque 200L: 120ml a 180ml do produto</div>
+        <!-- 🍈 LICHIA -->
+        <div class="fruta-card">
+            <div class="fruta-nome">🍈 Lichia</div>
+            
+            <div class="produto-item">
+                <div class="prod-nome">🟢 FORTGREEN CaBDry</div>
+                <div class="prod-quando">⏰ Quando aplicar: Após a colheita e antes da florada</div>
+                <div class="prod-ajuda">💚 O que ajuda: Evita que os frutos caiam antes de amadurecer — problema comum na lichia</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 20 a 25 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 200 a 250 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟢 GLUTAMIN K LIBRE</div>
+                <div class="prod-quando">⏰ Quando aplicar: Início da frutificação</div>
+                <div class="prod-ajuda">💚 O que ajuda: Frutos mais firmes e com menos queda</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 20 a 30 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 200 a 300 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🟡 PRIORI XTRA</div>
+                <div class="prod-quando">⏰ Quando aplicar: Pré-florada e início da frutificação</div>
+                <div class="prod-ajuda">🛡️ O que ajuda: Protege flores e frutos de podridão nos períodos úmidos</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 15 a 20 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 150 a 200 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🔴 BELT</div>
+                <div class="prod-quando">⏰ Quando aplicar: Apenas se houver lagartas — monitorar sempre</div>
+                <div class="prod-ajuda">🐛 O que ajuda: Seguro e eficaz sem prejudicar a polinização</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 10 a 15 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 100 a 150 ml</div>
+                </div>
             </div>
         </div>
+
+        <!-- 🌱 SOLO / GERAL -->
+        <div class="fruta-card">
+            <div class="fruta-nome">🌱 Para o Solo</div>
+            
+            <div class="produto-item">
+                <div class="prod-nome">🟢 Humic Flower — Turfa Gold</div>
+                <div class="prod-quando">⏰ Quando aplicar: No início de cada estação do ano, ao redor das plantas</div>
+                <div class="prod-ajuda">💚 O que ajuda: Melhora a terra, solta o solo, ajuda as raízes a crescerem melhor e absorverem nutrientes</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 50 a 100 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 500 a 1000 ml</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🟠 HERBICIDAS (Aplicar nas ervas, NÃO nas frutas!) -->
+        <div class="fruta-card">
+            <div class="fruta-nome">🟠 Ervas Daninhas</div>
+            
+            <div class="produto-item">
+                <div class="prod-nome">🪴 ARTY'S (Cletodim)</div>
+                <div class="prod-quando">⏰ Quando aplicar: Quando os capins estiverem ativos — sem vento, sem chuva</div>
+                <div class="prod-ajuda">⚠️ O que faz: Mata capins e gramíneas — NÃO prejudica as fruteiras se não encostar nas folhas</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 20 a 30 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 200 a 300 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🪴 FRENO 240 EC</div>
+                <div class="prod-quando">⏰ Quando aplicar: Capins em crescimento — sem vento</div>
+                <div class="prod-ajuda">⚠️ O que faz: Mesmo princípio do Arty's — Cletodim. Mata capins seletivamente</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 20 a 30 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 200 a 300 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🪴 KENNOX</div>
+                <div class="prod-quando">⏰ Quando aplicar: Ervas pequenas e ativas — MUITO cuidado para não atingir as frutas!</div>
+                <div class="prod-ajuda">⚠️ O que faz: Mata ervas de folha larga e estreita — pode afetar as fruteiras se cair nelas</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 25 a 35 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 250 a 350 ml</div>
+                </div>
+            </div>
+            <div class="produto-item">
+                <div class="prod-nome">🪴 Herbamov</div>
+                <div class="prod-quando">⏰ Quando aplicar: Apenas nas ervas ao redor — SEM vento, SEM chuva</div>
+                <div class="prod-ajuda">⚠️ O que faz: Controla ervas daninhas — PROTEGER as fruteiras com plástico ou papel antes de aplicar</div>
+                <div class="dosagem">
+                    <div>🔹 Bomba 20L: 30 a 50 ml</div>
+                    <div class="tanque">🔹 Tanque 200L: 300 a 500 ml</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="aviso">
+            ⚠️ <strong>REGRAS IMPORTANTES:</strong><br><br>
+            • 💧 SEMPRE coloque a água primeiro na bomba, DEPOIS o produto, mexa bem<br>
+            • 🔴 Inseticidas → NUNCA durante a florada! Mata as abelhas e não dá fruto!<br>
+            • 🟡 Fungicidas → SEMPRE alternar os produtos para não criar resistência<br>
+            • 🟠 Herbicidas → Aplicar com proteção! Sem vento, sem chuva. Não deixe cair nas folhas das frutas<br>
+            • 📏 As doses são referências — SEMPRE confira na bula do produto! Pode variar conforme a marca<br>
+            • ⏱️ Respeite o prazo de segurança — quantos dias esperar antes de colher
+        </div>
+
     </div>
 
     <script>
-        function toggleFruta(card) {
-            card.classList.toggle('aberta');
-        }
         function adicionarFruta() {
-            const nome = prompt('Digite o nome da nova fruta:');
+            const nome = prompt('Nome da nova fruta:');
             if (nome) {
-                alert(`✅ Fruta "${nome}" adicionada! Agora é só preencher os dados.`);
+                alert(`✅ "${nome}" adicionada! Para incluir produtos, é só atualizar o código.`);
             }
         }
     </script>
