@@ -3,111 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de Estoque</title>
-    <link rel="stylesheet" href="../css/estilo.css">
+    <title>Controle de Estoque - Sítio Frutíferas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f0f8f0; padding: 20px; }
+        header { background: #2d7d32; color: white; padding: 15px; text-align: center; border-radius: 8px; position: relative; margin-bottom: 20px; }
+        .voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; text-decoration: none; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .add-btn { background: #4caf50; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; margin-bottom: 20px; cursor: pointer; }
+        .usado-btn { background: #ff9800; color: white; border: none; padding: 6px 10px; border-radius: 4px; margin-left: 10px; cursor: pointer; }
+        .qtd { font-weight: bold; color: #2d7d32; }
+    </style>
 </head>
 <body>
+    <header>
+        <a href="index.html" class="voltar">← Voltar</a>
+        <h2>📦 Controle de Estoque</h2>
+    </header>
     <div class="container">
-        <header>
-            <h1>📦 Controle de Estoque</h1>
-            <p>Controle de Produtos em Estoque</p>
-        </header>
-
-        <section class="secao">
-            <div class="cabecalho-secao">
-                <h2>Estoque Atual</h2>
-                <button class="btn btn-sucesso" onclick="abrirModal()">+ Adicionar</button>
-            </div>
-            <div id="lista" class="lista-itens">
-                <p class="sem-dados">Estoque vazio.</p>
-            </div>
-        </section>
-
-        <!-- MODAL -->
-        <div id="modal" class="modal">
-            <div class="modal-conteudo">
-                <span class="fechar" onclick="fecharModal()">&times;</span>
-                <h3>Movimentar Estoque</h3>
-                <div class="campo">
-                    <label>Nome do Produto:</label>
-                    <input type="text" id="nome" placeholder="Ex: Cupragin">
-                </div>
-                <div class="campo">
-                    <label>Tipo:</label>
-                    <select id="operacao">
-                        <option value="entrada">📥 Entrada (Comprado)</option>
-                        <option value="saida">📤 Saída (Usado)</option>
-                    </select>
-                </div>
-                <div class="campo">
-                    <label>Quantidade:</label>
-                    <input type="text" id="quantidade" placeholder="Ex: 500 ml / 500 g">
-                </div>
-                <div class="campo">
-                    <label>Data:</label>
-                    <input type="date" id="data">
-                </div>
-                <div class="campo">
-                    <label>Observações:</label>
-                    <textarea id="obs" placeholder="Onde comprou ou onde usou"></textarea>
-                </div>
-                <button class="btn btn-sucesso" onclick="salvar()" style="width:100%;">✅ Salvar</button>
-            </div>
-        </div>
-
-        <button class="btn btn-voltar" onclick="window.location.href='../index.html'">← Voltar ao Início</button>
+        <button class="add-btn" onclick="adicionar()">+ Adicionar Produto ao Estoque</button>
+        <div id="lista"></div>
     </div>
 
     <script>
-        function carregar() { return JSON.parse(localStorage.getItem('estoque') || '[]'); }
-        function salvarDados(dados) { localStorage.setItem('estoque', JSON.stringify(dados)); }
-        
-        function renderizar() {
+        function carregar() {
+            const estoque = JSON.parse(localStorage.getItem('estoque') || '[]');
             const lista = document.getElementById('lista');
-            const itens = carregar();
-            if (itens.length === 0) {
-                lista.innerHTML = '<p class="sem-dados">Estoque vazio. Clique em "+ Adicionar" para começar!</p>';
+            if (estoque.length === 0) {
+                lista.innerHTML = '<p style="text-align:center; color:#666; padding:20px;">📦 Nenhum produto no estoque ainda. Clique em "+ Adicionar Produto".</p>';
                 return;
             }
-            lista.innerHTML = itens.reverse().map((item, i) => `
-                <div class="item">
-                    <div class="item-titulo">${item.operacao === 'entrada' ? '📥' : '📤'} ${item.nome}</div>
-                    <p>📅 ${item.data}</p>
-                    <p>📊 ${item.quantidade}</p>
-                    <p>📝 ${item.obs || ''}</p>
+            lista.innerHTML = estoque.map((item, i) => `
+                <div class="card">
+                    <strong>${item.nome}</strong><br>
+                    Quantidade: <span class="qtd">${item.qtd}</span>
+                    <button class="usado-btn" onclick="usar(${i})">✅ Usar</button>
                 </div>
             `).join('');
         }
-        
-        function abrirModal() {
-            document.getElementById('modal').style.display = 'block';
-            document.getElementById('data').valueAsDate = new Date();
+        function adicionar() {
+            const nome = prompt('Nome do produto:');
+            const qtd = prompt('Quantidade:');
+            if (nome && qtd) {
+                const estoque = JSON.parse(localStorage.getItem('estoque') || '[]');
+                estoque.push({ nome, qtd });
+                localStorage.setItem('estoque', JSON.stringify(estoque));
+                carregar();
+            }
         }
-        function fecharModal() {
-            document.getElementById('modal').style.display = 'none';
-            document.getElementById('nome').value = '';
-            document.getElementById('quantidade').value = '';
-            document.getElementById('obs').value = '';
+        function usar(i) {
+            const qtdUsada = prompt('Quanto foi usado?');
+            if (qtdUsada) {
+                const estoque = JSON.parse(localStorage.getItem('estoque') || '[]');
+                alert(`✅ ${qtdUsada} de ${estoque[i].nome} registrado! Atualize a quantidade manualmente.`);
+            }
         }
-        
-        function salvar() {
-            const nome = document.getElementById('nome').value.trim();
-            const operacao = document.getElementById('operacao').value;
-            const quantidade = document.getElementById('quantidade').value.trim();
-            const data = document.getElementById('data').value;
-            const obs = document.getElementById('obs').value.trim();
-            
-            if (!nome || !quantidade) { alert('Preencha nome e quantidade!'); return; }
-            
-            const lista = carregar();
-            lista.push({ nome, operacao, quantidade, data, obs });
-            salvarDados(lista);
-            fecharModal();
-            renderizar();
-        }
-        
-        window.onclick = e => { if (e.target.id === 'modal') fecharModal(); };
-        document.addEventListener('DOMContentLoaded', renderizar);
+        carregar();
     </script>
 </body>
 </html>
