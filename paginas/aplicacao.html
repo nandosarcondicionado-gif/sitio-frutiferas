@@ -3,60 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplicações - Sítio Frutíferas</title>
+    <title>Registrar Aplicação - Sítio Frutíferas</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: #f0f8f0; }
-        header { background: #2d7d32; color: white; padding: 15px; text-align: center; position: relative; }
-        .voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; text-decoration: none; font-size: 16px; }
-        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
-        .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .proxima { background: #fff3cd; border-left: 4px solid #ffc107; }
-        .add-btn { background: #4caf50; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 16px; margin-bottom: 20px; cursor: pointer; }
+        body { background: #f0f8f0; padding: 20px; }
+        header { background: #2d7d32; color: white; padding: 15px; text-align: center; border-radius: 8px; position: relative; margin-bottom: 20px; }
+        .voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; text-decoration: none; }
+        .container { max-width: 500px; margin: 0 auto; }
+        label { display: block; margin: 12px 0 4px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
+        button { background: #2d7d32; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; margin-top: 20px; cursor: pointer; }
+        .sucesso { background: #d4edda; color: #155724; padding: 15px; border-radius: 6px; margin-top: 20px; display: none; }
     </style>
 </head>
 <body>
     <header>
         <a href="index.html" class="voltar">← Voltar</a>
-        <h2>📅 Aplicações</h2>
+        <h2>📅 Registrar Aplicação</h2>
     </header>
     <div class="container">
-        <button class="add-btn" onclick="agendar()">+ Agendar Nova Aplicação</button>
+        <label>Fruta:</label>
+        <select id="fruta">
+            <option value="">Selecione...</option>
+            <option>Pêssego</option>
+            <option>Abacaxi</option>
+            <option>Morango</option>
+            <option>Limão</option>
+            <option>Goiaba</option>
+            <option>Lichia</option>
+        </select>
 
-        <h3 style="margin:20px 0 10px;">📌 Próximas Aplicações</h3>
-        
-        <div class="card proxima">
-            <h4>🍑 Pêssego</h4>
-            <p>📅 Data: 15/10/2026</p>
-            <p>🧪 Produto: Fungicida</p>
-            <p>📝 Observação: A cada 14 dias durante a floração</p>
-        </div>
+        <label>Produto usado:</label>
+        <input type="text" id="produto" placeholder="Nome do produto">
 
-        <div class="card proxima">
-            <h3>🍓 Morango</h3>
-            <p>📅 Data: 10/10/2026</p>
-            <p>🧪 Produto: Fungicida + Inseticida</p>
-            <p>📝 Observação: A cada 7 dias no período chuvoso</p>
-        </div>
+        <label>Quantidade usada:</label>
+        <input type="text" id="quantidade" placeholder="Ex: 30ml em 20L de água">
 
-        <h3 style="margin:25px 0 10px;">📋 Histórico</h3>
-        
-        <div class="card">
-            <h4>🍍 Abacaxi</h4>
-            <p>✅ Feito em: 20/09/2026</p>
-            <p>🧪 Produto: Adubo</p>
-        </div>
+        <label>Data:</label>
+        <input type="date" id="data">
 
-        <div class="card">
-            <h4>🥭 Goiaba</h4>
-            <p>✅ Feito em: 15/09/2026</p>
-            <p>🧪 Produto: Fungicida</p>
+        <label>Observação:</label>
+        <textarea id="obs" rows="3" placeholder="Ex: 1ª aplicação da safra"></textarea>
+
+        <button onclick="salvar()">✅ Salvar Registro</button>
+
+        <div class="sucesso" id="mensagem">
+            ✅ Aplicação registrada com sucesso!
         </div>
     </div>
 
     <script>
-        function agendar() {
-            alert('📅 Formulário de agendamento:\n\n1. Escolha a fruta\n2. Digite a data\n3. Selecione o produto\n4. Salve!\n\n✅ Prontinho, vai aparecer aqui em cima!');
+        function salvar() {
+            const fruta = document.getElementById('fruta').value;
+            const produto = document.getElementById('produto').value;
+            if (!fruta || !produto) { alert('⚠️ Preencha a fruta e o produto!'); return; }
+            
+            const registro = {
+                fruta,
+                produto: document.getElementById('produto').value,
+                quantidade: document.getElementById('quantidade').value,
+                data: document.getElementById('data').value,
+                obs: document.getElementById('obs').value
+            };
+            
+            const historico = JSON.parse(localStorage.getItem('historico') || '[]');
+            historico.unshift(registro);
+            localStorage.setItem('historico', JSON.stringify(historico));
+            
+            document.getElementById('mensagem').style.display = 'block';
+            setTimeout(() => window.location.href = 'historico.html', 1500);
         }
     </script>
 </body>
