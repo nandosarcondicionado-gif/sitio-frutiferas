@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Defensivos - Sítio Frutíferas</title>
+    <title>Meus Defensivos - Sítio Frutíferas</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
         body { background: #f0f8f0; }
@@ -13,8 +13,17 @@
         .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .estoque-baixo { border-left: 4px solid #f44336; }
         .estoque-bom { border-left: 4px solid #4caf50; }
-        .add-btn { background: #4caf50; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 16px; margin-bottom: 20px; cursor: pointer; }
+        .add-btn { background: #4caf50; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 16px; margin-bottom: 20px; cursor: pointer; font-weight: bold; }
         .usado-btn { background: #ff9800; color: white; border: none; padding: 6px 12px; border-radius: 4px; margin-top: 8px; cursor: pointer; }
+        .categoria { font-size: 13px; color: #666; background: #e8f5e9; display: inline-block; padding: 2px 8px; border-radius: 10px; margin: 4px 0; }
+        .qtd-input { padding: 6px; width: 120px; border: 1px solid #ccc; border-radius: 4px; margin: 8px 0; }
+        .salvar-btn { background: #4caf50; color: white; border: none; padding: 5px 10px; border-radius: 4px; margin-left: 5px; cursor: pointer; }
+        .grupo { margin-top: 30px; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid #ddd; font-size: 18px; }
+        .verde { color: #2e7d32; border-bottom-color: #4caf50; }
+        .amarelo { color: #f57c00; border-bottom-color: #ffc107; }
+        .vermelho { color: #d32f2f; border-bottom-color: #f44336; }
+        .laranja { color: #e65100; border-bottom-color: #ff9800; }
+        .cinza { color: #616161; border-bottom-color: #9e9e9e; }
     </style>
 </head>
 <body>
@@ -23,48 +32,239 @@
         <h2>🧪 Meus Defensivos</h2>
     </header>
     <div class="container">
-        <button class="add-btn" onclick="adicionarDefensivo()">+ Cadastrar Produto</button>
+        <button class="add-btn" onclick="adicionarDefensivo()">+ Cadastrar Novo Produto</button>
+
+        <!-- ====================================== -->
+        <h3 class="grupo verde">🟢 FERTILIZANTES E BIOESTIMULANTES</h3>
+        <!-- ====================================== -->
 
         <div class="card estoque-bom">
-            <h4>Fungicida X</h4>
-            <p>📦 Estoque: 500 ml</p>
-            <p>📝 Para que serve: Prevenção e controle de doenças causadas por fungos nas plantas.</p>
-            <button class="usado-btn" onclick="usarProduto('Fungicida X')">✅ Foi usado</button>
-        </div>
-
-        <div class="card estoque-bom">
-            <h4>Inseticida Y</h4>
-            <p>📦 Estoque: 800 ml</p>
-            <p>📝 Para que serve: Elimina e previne pragas e insetos prejudiciais às plantas e frutos.</p>
-            <button class="usado-btn" onclick="usarProduto('Inseticida Y')">✅ Foi usado</button>
-        </div>
-
-        <div class="card estoque-baixo">
-            <h4>Adubo NPK</h4>
-            <p>📦 Estoque: 150 ml ⚠️ Acabando!</p>
-            <p>📝 Para que serve: Nutrientes essenciais para crescimento, floração e frutificação.</p>
-            <button class="usado-btn" onclick="usarProduto('Adubo NPK')">✅ Foi usado</button>
+            <h4>1️⃣ FLORAFORTE-D</h4>
+            <span class="categoria">Fertilizante</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-1">—</span>
+            <input type="text" id="input-1" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('1')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Fortificante para melhorar a floração e frutificação das plantas.</p>
+            <button class="usado-btn" onclick="usarProduto('FLORAFORTE-D')">✅ Foi usado</button>
         </div>
 
         <div class="card estoque-bom">
-            <h4>Herbicida Z</h4>
-            <p>📦 Estoque: 1000 ml</p>
-            <p>📝 Para que serve: Controle de ervas daninhas que competem com as fruteiras.</p>
-            <button class="usado-btn" onclick="usarProduto('Herbicida Z')">✅ Foi usado</button>
+            <h4>2️⃣ EXPERTGROW</h4>
+            <span class="categoria">Bioestimulante</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-2">—</span>
+            <input type="text" id="input-2" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('2')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> À base de extrato de algas — fortalece a planta, melhora a florada e aumenta a produção.</p>
+            <button class="usado-btn" onclick="usarProduto('EXPERTGROW')">✅ Foi usado</button>
         </div>
+
+        <div class="card estoque-bom">
+            <h4>3️⃣ GLUTAMIN K LIBRE</h4>
+            <span class="categoria">Fertilizante / Aminoácido</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-3">—</span>
+            <input type="text" id="input-3" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('3')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Potássio + aminoácido L-Glutâmico — essencial para formação e enchimento de frutos, absorção rápida.</p>
+            <button class="usado-btn" onclick="usarProduto('GLUTAMIN K LIBRE')">✅ Foi usado</button>
+        </div>
+
+        <div class="card estoque-bom">
+            <h4>4️⃣ CRYSTAL LAYLAA</h4>
+            <span class="categoria">Fertilizante Foliar</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-4">—</span>
+            <input type="text" id="input-4" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('4')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Fertilizante foliar cristalizado — nutrição equilibrada para desenvolvimento geral da planta.</p>
+            <button class="usado-btn" onclick="usarProduto('CRYSTAL LAYLAA')">✅ Foi usado</button>
+        </div>
+
+        <div class="card estoque-bom">
+            <h4>5️⃣ FORTGREEN CaBDry</h4>
+            <span class="categoria">Adubo / Cálcio + Boro</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-5">—</span>
+            <input type="text" id="input-5" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('5')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Cálcio e Boro — previne frutos deformados, rachaduras e podridão, fortalece a parede do fruto.</p>
+            <button class="usado-btn" onclick="usarProduto('FORTGREEN CaBDry')">✅ Foi usado</button>
+        </div>
+
+        <div class="card estoque-bom">
+            <h4>🌿 Humic Flower — Turfa Gold</h4>
+            <span class="categoria">Adubo Organomineral</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-humic">5 L</span>
+            <input type="text" id="input-humic" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('humic')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Melhora a qualidade do solo, ajuda a planta a absorver nutrientes, fortalece raízes.</p>
+            <button class="usado-btn" onclick="usarProduto('Humic Flower')">✅ Foi usado</button>
+        </div>
+
+        <!-- ====================================== -->
+        <h3 class="grupo amarelo">🟡 FUNGICIDAS</h3>
+        <!-- ====================================== -->
+
+        <div class="card estoque-bom">
+            <h4>6️⃣ AZIMUT SC</h4>
+            <span class="categoria">Fungicida</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-6">—</span>
+            <input type="text" id="input-6" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('6')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Azoxistrobina + Tebuconazol — preventivo e curativo. Controla ferrugens, antracnose, oídio e manchas foliares.</p>
+            <button class="usado-btn" onclick="usarProduto('AZIMUT SC')">✅ Foi usado</button>
+        </div>
+
+        <div class="card estoque-bom">
+            <h4>7️⃣ PRIORI XTRA</h4>
+            <span class="categoria">Fungicida</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-7">—</span>
+            <input type="text" id="input-7" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('7')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Azoxistrobina + Ciproconazol — preventivo e curativo. Controla antracnose, ferrugem, oídio e manchas foliares.</p>
+            <button class="usado-btn" onclick="usarProduto('PRIORI XTRA')">✅ Foi usado</button>
+        </div>
+
+        <!-- ====================================== -->
+        <h3 class="grupo vermelho">🔴 INSETICIDAS</h3>
+        <!-- ====================================== -->
+
+        <div class="card estoque-bom">
+            <h4>8️⃣ GALIL SC</h4>
+            <span class="categoria">Inseticida</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-8">—</span>
+            <input type="text" id="input-8" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('8')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Imidacloprido + Bifentrina — controla percevejos, pulgões, lagartas e insetos sugadores.</p>
+            <button class="usado-btn" onclick="usarProduto('GALIL SC')">✅ Foi usado</button>
+        </div>
+
+        <div class="card estoque-bom">
+            <h4>9️⃣ DECIS 25 EC</h4>
+            <span class="categoria">Inseticida</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-9">—</span>
+            <input type="text" id="input-9" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('9')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Deltametrina — contato e ingestão. Controla lagartas, besouros e diversas pragas em geral.</p>
+            <button class="usado-btn" onclick="usarProduto('DECIS 25 EC')">✅ Foi usado</button>
+        </div>
+
+        <div class="card estoque-bom">
+            <h4>🔟 BELT</h4>
+            <span class="categoria">Inseticida</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-10">—</span>
+            <input type="text" id="input-10" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('10')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Flubendiamida — controla lagartas em geral, efeito prolongado, mais seguro para insetos benéficos.</p>
+            <button class="usado-btn" onclick="usarProduto('BELT')">✅ Foi usado</button>
+        </div>
+
+        <div class="card estoque-bom">
+            <h4>1️⃣1️⃣ BULLDOCK 125 SC</h4>
+            <span class="categoria">Inseticida</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-11">—</span>
+            <input type="text" id="input-11" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('11')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Beta-Ciflutrina — contato e ingestão. Controla lagartas, brocas e pragas em geral.</p>
+            <button class="usado-btn" onclick="usarProduto('BULLDOCK 125 SC')">✅ Foi usado</button>
+        </div>
+
+        <!-- ====================================== -->
+        <h3 class="grupo laranja">🟠 HERBICIDAS</h3>
+        <!-- ====================================== -->
+
+        <div class="card estoque-bom">
+            <h4>1️⃣2️⃣ ARTY'S (Cletodim)</h4>
+            <span class="categoria">Herbicida</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-12">—</span>
+            <input type="text" id="input-12" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('12')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Herbicida sistêmico — controla capins e gramíneas sem prejudicar a cultura.</p>
+            <button class="usado-btn" onclick="usarProduto('ARTYS')">✅ Foi usado</button>
+        </div>
+
+        <div class="card estoque-bom">
+            <h4>1️⃣3️⃣ FRENO 240 EC</h4>
+            <span class="categoria">Herbicida</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-13">—</span>
+            <input type="text" id="input-13" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('13')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Cletodim — herbicida graminicida, mata capins seletivamente.</p>
+            <button class="usado-btn" onclick="usarProduto('FRENO 240 EC')">✅ Foi usado</button>
+        </div>
+
+        <div class="card estoque-bom">
+            <h4>1️⃣4️⃣ KENNOX</h4>
+            <span class="categoria">Herbicida</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-14">—</span>
+            <input type="text" id="input-14" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('14')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Herbicida de amplo espectro — controle de diversas ervas daninhas.</p>
+            <button class="usado-btn" onclick="usarProduto('KENNOX')">✅ Foi usado</button>
+        </div>
+
+        <div class="card estoque-bom">
+            <h4>🪴 Herbamov</h4>
+            <span class="categoria">Herbicida</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-herbamov">5 L</span>
+            <input type="text" id="input-herbamov" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('herbamov')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Controla ervas daninhas ao redor das fruteiras. Aplicar com cuidado, sem encostar nas folhas das frutas.</p>
+            <button class="usado-btn" onclick="usarProduto('Herbamov')">✅ Foi usado</button>
+        </div>
+
+        <!-- ====================================== -->
+        <h3 class="grupo cinza">⚪ ADJUVANTES / ÓLEOS</h3>
+        <!-- ====================================== -->
+
+        <div class="card estoque-bom">
+            <h4>1️⃣5️⃣ SUPREME AGRO — ÓLEO MINERAL</h4>
+            <span class="categoria">Óleo Mineral / Adjuvante</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-15">—</span>
+            <input type="text" id="input-15" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('15')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Espalhante, aderente e penetrante — melhora a ação de defensivos, reduz evaporação e escorrimento.</p>
+            <button class="usado-btn" onclick="usarProduto('SUPREME AGRO')">✅ Foi usado</button>
+        </div>
+
+        <div class="card estoque-bom">
+            <h4>1️⃣6️⃣ PÉROLA</h4>
+            <span class="categoria">Adjuvante / Espalhante</span>
+            <p><strong>📦 Estoque:</strong> <span id="qtd-16">—</span>
+            <input type="text" id="input-16" class="qtd-input" placeholder="Quantidade">
+            <button class="salvar-btn" onclick="alterarQtd('16')">Salvar</button></p>
+            <p><strong>📝 Para que serve:</strong> Melhora a cobertura e aderência dos produtos nas folhas, evitando que escorra.</p>
+            <button class="usado-btn" onclick="usarProduto('PÉROLA')">✅ Foi usado</button>
+        </div>
+
+        <!-- ====================================== -->
+        <div style="margin-top: 40px; background: #e8f5e9; padding: 20px; border-radius: 10px;">
+            <h3 style="margin-bottom: 15px; color: #2e7d32;">📋 Tabela de Uso Geral</h3>
+            <div style="display: grid; gap: 10px; font-size: 14px;">
+                <div><strong>🟢 Fertilizantes:</strong> Durante todo o ciclo • Manhã cedo ou fim de tarde • Não aplicar sob sol forte</div>
+                <div><strong>🟡 Fungicidas:</strong> Preventivo + início de doença • Manhã cedo • Alternar produtos — evita resistência</div>
+                <div><strong>🔴 Inseticidas:</strong> Apenas quando houver praga • Final da tarde • ⚠️ NUNCA durante floração!</div>
+                <div><strong>🟠 Herbicidas:</strong> Quando as ervas crescerem • Sem vento, sem chuva • Cuidado para não atingir suas frutas!</div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        function adicionarDefensivo() {
-            const nome = prompt('Nome do produto:');
-            if (nome) {
-                alert(`✅ "${nome}" cadastrado com sucesso!`);
+        function alterarQtd(id) {
+            const valor = document.getElementById('input-' + id).value;
+            if (valor) {
+                document.getElementById('qtd-' + id).textContent = valor;
+                alert('✅ Quantidade atualizada!');
             }
         }
         function usarProduto(nome) {
-            const qtd = prompt(`Quanto de ${nome} foi usado? (ex: 50ml):`);
+            const qtd = prompt(`Quanto de ${nome} foi usado?`);
             if (qtd) {
-                alert(`✅ ${qtd} de ${nome} registrado! Estoque atualizado.`);
+                alert(`✅ ${qtd} de ${nome} registrado!`);
+            }
+        }
+        function adicionarDefensivo() {
+            const nome = prompt('Nome do produto:');
+            if (nome) {
+                alert(`✅ "${nome}" cadastrado! Agora é só atualizar a página e adicionar no código.`);
             }
         }
     </script>
