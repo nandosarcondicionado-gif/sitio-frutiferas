@@ -1,74 +1,87 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📷 Identificar Plantas e Frutas - Sítio Frutíferas</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: #f0f8f0; padding: 20px; }
-        header { background: #2d7d32; color: white; padding: 15px; text-align: center; border-radius: 8px; position: relative; margin-bottom: 20px; }
-        .voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; text-decoration: none; }
-        .container { max-width: 500px; margin: 0 auto; text-align: center; }
-        .camera-box { background: white; border-radius: 12px; padding: 30px 20px; margin-bottom: 25px; box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
-        .icone-camera { font-size: 70px; margin-bottom: 15px; }
-        .btn-camera { background: #4285f4; color: white; border: none; padding: 16px 30px; font-size: 18px; border-radius: 30px; cursor: pointer; font-weight: bold; width: 100%; margin-bottom: 12px; }
-        .btn-camera:hover { background: #3367d6; }
-        .btn-galeria { background: #f1f3f4; color: #333; border: none; padding: 14px 25px; font-size: 16px; border-radius: 30px; cursor: pointer; width: 100%; }
-        .aviso { background: #e8f5e9; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 14px; color: #2e7d32; line-height: 1.6; border-left: 4px solid #4caf50; text-align: left; }
-        .aviso strong { display: block; margin-bottom: 6px; font-size: 15px; }
-        .dicas { margin-top: 25px; text-align: left; background: white; padding: 20px; border-radius: 10px; }
-        .dicas h3 { color: #2d7d32; margin-bottom: 12px; text-align: center; }
-        .dica-item { padding: 10px 0; border-bottom: 1px solid #eee; font-size: 15px; }
-        .dica-item span { color: #2d7d32; font-weight: bold; }
-        input[type="file"] { display: none; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#236b36">
+<title>📷 Foto e diagnóstico — Sítio Frutíferas</title>
+<link rel="manifest" href="../manifest.json">
+<link rel="stylesheet" href="../css/estilo.css">
+<script defer src="../js/app.js"></script>
+<script defer src="../js/busca.js"></script>
 </head>
 <body>
-    <header>
-        <a href="../index.html" class="voltar">← Voltar</a>
-        <h2>📷 Identificar Plantas e Frutas</h2>
-    </header>
+<header><div class="head">
+<a href="../index.html">← Voltar</a>
+<h1>📷 Foto e diagnóstico</h1>
+<span>🌿 Sítio Frutíferas</span>
+</div></header>
+<main class="wrap">
+<nav id="nav" class="nav" aria-label="Navegação"></nav>
 
-    <div class="container">
-        <div class="camera-box">
-            <div class="icone-camera">🌿</div>
-            <h3 style="margin-bottom: 10px; color: #333;">Tire foto de: planta, folha ou fruto</h3>
-            <p style="color: #666; margin-bottom: 25px;">O Google vai te ajudar a identificar a planta, doença ou praga</p>
-            
-            <input type="file" id="camera-input" accept="image/*" capture="environment">
-            <button class="btn-camera" onclick="document.getElementById('camera-input').click()">📷 Tirar Foto Agora</button>
-            
-            <input type="file" id="gallery-input" accept="image/*">
-            <button class="btn-galeria" onclick="document.getElementById('gallery-input').click()">🖼️ Escolher da Galeria</button>
-        </div>
+<section class="card">
+<h2>1. Fotografe a planta</h2>
+<p class="muted">Prefira luz natural, foco nítido e fotos separadas da planta inteira, da folha e do sintoma. A câmera exige permissão do navegador.</p>
+<label for="camera">Tirar foto (celular)</label>
+<input id="camera" type="file" accept="image/*" capture="environment">
+<label for="galeria">Ou escolher da galeria</label>
+<input id="galeria" type="file" accept="image/*">
+<img id="preview" class="preview" alt="Prévia da imagem selecionada" hidden>
+<button id="limparFoto" type="button" class="secondary">Remover foto</button>
+</section>
 
-        <div class="aviso">
-            <strong>🌿 Uso exclusivo — Plantas e Frutas do Sítio</strong>
-            ✅ Folhas, galhos, flores ou frutos<br>
-            ✅ Doenças, manchas e pragas nas plantas<br>
-            ❌ Não usar para outros fins
-        </div>
+<section class="card">
+<h2>2. Contexto e sintomas</h2>
+<label for="fruta">Cultura/planta</label>
+<select id="fruta"><option value="">Não sei / não cadastrada</option></select>
 
-        <div class="dicas">
-            <h3>📝 Dicas de como tirar a foto:</h3>
-            <div class="dica-item">☀️ <span>Luz natural</span> — tire de dia, na sombra, sem sol direto</div>
-            <div class="dica-item">🔍 <span>De perto</span> — aproxime o celular da folha, fruto ou mancha</div>
-            <div class="dica-item">🎯 <span>Foco no problema</span> — só a planta/fruto, sem muita bagunça ao redor</div>
-            <div class="dica-item">🌳 <span>Somente plantas e frutas</span> — mantenha o foco no que cultivamos no sítio</div>
-        </div>
-    </div>
+<label for="parte">Parte fotografada</label>
+<select id="parte">
+<option>Folha</option><option>Fruto</option><option>Flor</option>
+<option>Tronco/ramo</option><option>Raiz</option>
+<option>Planta inteira</option><option>Inseto/praga</option>
+</select>
 
-    <script>
-        const cameraInput = document.getElementById('camera-input');
-        const galleryInput = document.getElementById('gallery-input');
+<label for="sintomas">O que você observou? *</label>
+<textarea id="sintomas" rows="3" required placeholder="Ex.: manchas redondas, folhas amarelas, pó branco, insetos, frutos apodrecendo..."></textarea>
 
-        function abrirGoogleLens() {
-            window.open('https://lens.google.com/upload', '_blank');
-        }
+<div class="two">
+<div>
+<label for="distribuicao">Onde ocorre?</label>
+<select id="distribuicao">
+<option>Uma planta</option><option>Algumas plantas</option>
+<option>Grande parte do talhão</option><option>Todo o pomar</option>
+<option>Não sei</option>
+</select>
+</div>
+<div>
+<label for="inicio">Quando começou?</label>
+<input id="inicio" placeholder="Ex.: há 5 dias">
+</div>
+</div>
 
-        cameraInput.addEventListener('change', abrirGoogleLens);
-        galleryInput.addEventListener('change', abrirGoogleLens);
-    </script>
+<label for="clima">Condições recentes</label>
+<select id="clima">
+<option>Não sei</option><option>Chuva/umidade alta</option>
+<option>Calor ou sol forte</option><option>Seca/pouca irrigação</option>
+<option>Excesso de irrigação</option>
+<option>Aplicação recente de produto</option>
+</select>
+
+<button id="analisar" type="button">Analisar foto e sintomas</button>
+<div id="status"></div>
+</section>
+
+<section class="card" id="resultado" hidden>
+<h2>Resultado da análise</h2>
+<div id="resultText"></div>
+<div class="actions"><button id="salvarDiagnostico">Salvar no histórico</button></div>
+</section>
+
+<section class="notice">
+<strong>Limite importante:</strong> a identificação da espécie e a análise visual são estimativas. O resultado não substitui avaliação agronômica e não recomenda automaticamente um defensivo. Se houver suspeita de doença regulamentada ou rápida disseminação, procure assistência técnica.
+</section>
+</main>
+<footer>Sítio Frutíferas • Registre observações e confirme recomendações técnicas antes de aplicar produtos.</footer>
 </body>
 </html>
