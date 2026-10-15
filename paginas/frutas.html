@@ -1,357 +1,57 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minhas Frutas - Sítio Frutíferas</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: #f0f8f0; padding-bottom: 50px; }
-        header { background: #2d7d32; color: white; padding: 15px; text-align: center; position: relative; }
-        .voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; text-decoration: none; font-size: 15px; }
-        .container { max-width: 680px; margin: 20px auto; padding: 0 15px; }
-        
-        /* Abas das frutas */
-        .abas-fruta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; position: sticky; top: 0; background: #f0f8f0; padding: 10px 0; z-index: 10; }
-        .aba-fruta { padding: 8px 12px; background: white; border-radius: 20px; cursor: pointer; font-size: 14px; border: 2px solid transparent; }
-        .aba-fruta.ativa { background: #2d7d32; color: white; border-color: #2d7d32; }
-        
-        .fruta-secao { display: none; }
-        .fruta-secao.ativa { display: block; }
-        
-        .fruta-titulo { font-size: 22px; font-weight: bold; color: #2e7d32; margin: 15px 0 20px; padding-bottom: 10px; border-bottom: 2px solid #c8e6c9; }
-        
-        .produto-card { background: white; border-radius: 10px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.06); }
-        .prod-titulo { font-size: 16px; font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .tipo-fung { color: #f57c00; }
-        .tipo-inset { color: #d32f2f; }
-        .tipo-nutri { color: #388e3c; }
-        
-        .bloco { margin-bottom: 8px; font-size: 14px; line-height: 1.6; }
-        .bloco strong { color: #444; display: inline-block; min-width: 110px; }
-        
-        .dosagem-box { display: flex; gap: 10px; margin: 8px 0; flex-wrap: wrap; }
-        .dose { flex: 1; min-width: 140px; background: #e8f5e9; padding: 8px 10px; border-radius: 6px; text-align: center; font-size: 14px; }
-        .dose.tanque { background: #e3f2fd; }
-        
-        .carencia-box { background: #fff3e0; border-left: 4px solid #ff9800; padding: 10px 12px; border-radius: 4px; margin-top: 10px; font-size: 14px; }
-        .carencia-box strong { color: #e65100; }
-        
-        .aviso-seguranca { background: #ffebee; border-left: 4px solid #f44336; padding: 14px; border-radius: 6px; margin: 20px 0; font-size: 14px; line-height: 1.7; }
-        .aviso-seguranca strong { color: #c62828; }
-        
-        .dica-mosca { background: #e3f2fd; border-left: 4px solid #1976d2; padding: 12px; border-radius: 6px; margin: 15px 0; font-size: 14px; line-height: 1.6; }
-        .dica-mosca strong { color: #1565c0; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#236b36">
+<title>🌱 Minhas Frutas — Sítio Frutíferas</title>
+<link rel="manifest" href="../manifest.json">
+<link rel="stylesheet" href="../css/estilo.css">
+<script defer src="../js/app.js"></script>
+<script defer src="../js/frutas.js"></script>
 </head>
 <body>
-    <header>
-        <a href="../index.html" class="voltar">← Voltar</a>
-        <h2>🍎 Minhas Frutas</h2>
-    </header>
-
-    <div class="container">
-        <!-- Abas -->
-        <div class="abas-fruta">
-            <div class="aba-fruta ativa" onclick="mostrarFruta('pessego')">🍑 Pêssego</div>
-            <div class="aba-fruta" onclick="mostrarFruta('morango')">🍓 Morango</div>
-            <div class="aba-fruta" onclick="mostrarFruta('goiaba')">🍐 Goiaba</div>
-            <div class="aba-fruta" onclick="mostrarFruta('limao')">🍋 Limão</div>
-            <div class="aba-fruta" onclick="mostrarFruta('abacaxi')">🍍 Abacaxi</div>
-            <div class="aba-fruta" onclick="mostrarFruta('lichia')">🍈 Lichia</div>
-        </div>
-
-        <!-- 🍑 PÊSSEGO -->
-        <div id="pessego" class="fruta-secao ativa">
-            <h2 class="fruta-titulo">🍑 Pêssego</h2>
-
-            <div class="dica-mosca">
-                <strong>🪰 MOSCA-DAS-FRUTAS NO PÊSSEGO:</strong><br>
-                • A mosca põe ovos dentro do fruto quando ele está crescendo<br>
-                • Aplique inseticida quando os frutos tiverem metade do tamanho<br>
-                • Colha e queime os frutos caídos com buracos — lá estão as larvas!<br>
-                • ⚠️ NÃO existe produto com carência de 2-3 dias — é perigoso! Respeite sempre o prazo da bula
-            </div>
-
-            <!-- AZIMUT SC -->
-            <div class="produto-card">
-                <div class="prod-titulo tipo-fungus">🟡 AZIMUT SC — Fungicida</div>
-                <div class="bloco"><strong>✅ Para que serve:</strong> Previne e cura antracnose, oídio e manchas nas folhas e frutos</div>
-                <div class="bloco"><strong>⏰ Quando aplicar:</strong> Pré-florada → início das chuvas → frutos pequenos. Repetir a cada 15 dias</div>
-                <div class="bloco"><strong>📏 Quantidade:</strong></div>
-                <div class="dosagem-box">
-                    <div class="dose">🔹 Bomba 20L: 15 a 20 ml</div>
-                    <div class="dose tanque">🔹 Tanque 200L: 150 a 200 ml</div>
-                </div>
-                <div class="carencia-box">⏳ <strong>Carência:</strong> 7 dias — NÃO colher antes disso!</div>
-            </div>
-
-            <!-- PRIORI XTRA -->
-            <div class="produto-card">
-                <div class="prod-titulo tipo-fungus">🟡 PRIORI XTRA — Fungicida</div>
-                <div class="bloco"><strong>✅ Para que serve:</strong> Mesmas doenças do AZIMUT — use ALTERNADO para o fungo não criar resistência</div>
-                <div class="bloco"><strong>⏰ Quando aplicar:</strong> Troque com AZIMUT — um mês um, outro mês outro</div>
-                <div class="bloco"><strong>📏 Quantidade:</strong></div>
-                <div class="dosagem-box">
-                    <div class="dose">🔹 Bomba 20L: 15 a 20 ml</div>
-                    <div class="dose tanque">🔹 Tanque 200L: 150 a 200 ml</div>
-                </div>
-                <div class="carencia-box">⏳ <strong>Carência:</strong> 14 dias — NÃO colher antes disso!</div>
-            </div>
-
-            <!-- DECIS 25 EC - MOSCA -->
-            <div class="produto-card">
-                <div class="prod-titulo tipo-inset">🔴 DECIS 25 EC — Inseticida (Mosca-das-frutas)</div>
-                <div class="bloco"><strong>✅ Para que serve:</strong> Mata mosca-das-frutas, lagartas e outros insetos</div>
-                <div class="bloco"><strong>⏰ Quando aplicar:</strong> Apenas quando os frutos estiverem com metade do tamanho. NUNCA durante a florada — mata as abelhas!</div>
-                <div class="bloco"><strong>📏 Quantidade:</strong></div>
-                <div class="dosagem-box">
-                    <div class="dose">🔹 Bomba 20L: 15 a 25 ml</div>
-                    <div class="dose tanque">🔹 Tanque 200L: 150 a 250 ml</div>
-                </div>
-                <div class="carencia-box">⏳ <strong>Carência:</strong> 15 dias — ⚠️ ESTE É O PRAZO MÍNIMO SEGURO! Não colha antes ou a fruta terá veneno!</div>
-            </div>
-
-            <!-- FLORAFORTE-D -->
-            <div class="produto-card">
-                <div class="prod-titulo tipo-nutri">🟢 FLORAFORTE-D — Fertilizante</div>
-                <div class="bloco"><strong>✅ Para que serve:</strong> Fortalece a florada e ajuda os frutos a pegarem melhor</div>
-                <div class="bloco"><strong>⏰ Quando aplicar:</strong> Início da brotação e antes da florada</div>
-                <div class="bloco"><strong>📏 Quantidade:</strong></div>
-                <div class="dosagem-box">
-                    <div class="dose">🔹 Bomba 20L: 20 a 30 ml</div>
-                    <div class="dose tanque">🔹 Tanque 200L: 200 a 300 ml</div>
-                </div>
-                <div class="carencia-box">⏳ <strong>Carência:</strong> Sem carência — pode colher a qualquer hora</div>
-            </div>
-        </div>
-
-        <!-- 🍐 GOIABA -->
-        <div id="goiaba" class="fruta-secao">
-            <h2 class="fruta-titulo">🍐 Goiaba</h2>
-
-            <div class="dica-mosca">
-                <strong>🪰 MOSCA-DAS-FRUTAS NA GOIABA — A PRAGAS MAIS COMUM:</strong><br>
-                • A mosca-das-frutas é o maior problema da goiaba<br>
-                • A fêmea pica o fruto jovem e põe ovos dentro → nascem larvas que estragam tudo<br>
-                • Colha os frutos caídos com buraco e QUEIME longe da árvore<br>
-                • Use armadilhas com feromônio — reduz muito a quantidade de moscas antes de precisar aplicar veneno<br>
-                • ⚠️ SEMPRE respeite a carência — não existe atalho seguro!
-            </div>
-
-            <!-- AZIMUT SC -->
-            <div class="produto-card">
-                <div class="prod-titulo tipo-fungus">🟡 AZIMUT SC — Fungicida</div>
-                <div class="bloco"><strong>✅ Para que serve:</strong> Antracnose — pontos pretos que apodrecem os frutos jovens</div>
-                <div class="bloco"><strong>⏰ Quando aplicar:</strong> Início das chuvas — repetir a cada 15-20 dias</div>
-                <div class="bloco"><strong>📏 Quantidade:</strong></div>
-                <div class="dosagem-box">
-                    <div class="dose">🔹 Bomba 20L: 15 a 20 ml</div>
-                    <div class="dose tanque">🔹 Tanque 200L: 150 a 200 ml</div>
-                </div>
-                <div class="carencia-box">⏳ <strong>Carência:</strong> 7 dias — NÃO colher antes disso!</div>
-            </div>
-
-            <!-- DECIS 25 EC - MOSCA -->
-            <div class="produto-card">
-                <div class="prod-titulo tipo-inset">🔴 DECIS 25 EC — Inseticida (Mosca-das-frutas)</div>
-                <div class="bloco"><strong>✅ Para que serve:</strong> Principal produto para mosca-das-frutas na goiaba</div>
-                <div class="bloco"><strong>⏰ Quando aplicar:</strong> Frutos com metade do tamanho. Repetir a cada 10-15 dias se tiver muita mosca. PARAR 15 dias antes de colher!</div>
-                <div class="bloco"><strong>📏 Quantidade:</strong></div>
-                <div class="dosagem-box">
-                    <div class="dose">🔹 Bomba 20L: 15 a 25 ml</div>
-                    <div class="dose tanque">🔹 Tanque 200L: 150 a 250 ml</div>
-                </div>
-                <div class="carencia-box">⏳ <strong>Carência:</strong> 15 dias — ⚠️ NÃO COLHER ANTES! Se precisar colher antes, colha os frutos que ainda não foram pulverizados!</div>
-            </div>
-        </div>
-
-        <!-- 🍓 MORANGO -->
-        <div id="morango" class="fruta-secao">
-            <h2 class="fruta-titulo">🍓 Morango</h2>
-
-            <div class="dica-mosca">
-                <strong>🪰 PRAGAS NO MORANGO:</strong><br>
-                • No morango o problema principal é pulgão e ácaro, não mosca-das-frutas<br>
-                • Mofo-branco é o maior inimigo — aparece quando chove e o ar está parado<br>
-                • Dê preferência aos fungicidas preventivos — é mais barato e mais seguro
-            </div>
-
-            <!-- PRIORI XTRA -->
-            <div class="produto-card">
-                <div class="prod-titulo tipo-fungus">🟡 PRIORI XTRA — Fungicida</div>
-                <div class="bloco"><strong>✅ Para que serve:</strong> Mofo-branco — o bolor que destrói os frutos maduros</div>
-                <div class="bloco"><strong>⏰ Quando aplicar:</strong> ANTES da florada — repetir a cada 7 dias nas chuvas</div>
-                <div class="bloco"><strong>📏 Quantidade:</strong></div>
-                <div class="dosagem-box">
-                    <div class="dose">🔹 Bomba 20L: 15 a 20 ml</div>
-                    <div class="dose tanque">🔹 Tanque 200L: 150 a 200 ml</div>
-                </div>
-                <div class="carencia-box">⏳ <strong>Carência:</strong> 14 dias — NÃO colher antes disso!</div>
-            </div>
-
-            <!-- AZIMUT SC -->
-            <div class="produto-card">
-                <div class="prod-titulo tipo-fungus">🟡 AZIMUT SC — Fungicida</div>
-                <div class="bloco"><strong>✅ Para que serve:</strong> Manchas nas folhas e antracnose nos frutos</div>
-                <div class="bloco"><strong>⏰ Quando aplicar:</strong> Alternar com PRIORI XTRA</div>
-                <div class="bloco"><strong>📏 Quantidade:</strong></div>
-                <div class="dosagem-box">
-                    <div class="dose">🔹 Bomba 20L: 15 a 20 ml</div>
-                    <div class="dose tanque">🔹 Tanque 200L: 150 a 200 ml</div>
-                </div>
-                <div class="carencia-box">⏳ <strong>Carência:</strong> 7 dias — NÃO colher antes disso!</div>
-            </div>
-
-            <!-- BELT -->
-            <div class="produto-card">
-                <div class="prod-titulo tipo-inset">🔴 BELT — Inseticida</div>
-                <div class="bloco"><strong>✅ Para que serve:</strong> Lagartas que comem folhas e flores</div>
-                <div class="bloco"><strong>⏰ Quando aplicar:</strong> Apenas ao ver lagartas — PARAR antes da florada!</div>
-                <div class="bloco"><strong>📏 Quantidade:</strong></div>
-                <div class="dosagem-box">
-                    <div class="dose">🔹 Bomba 20L: 10 a 15 ml</div>
-                    <div class="dose tanque">🔹 Tanque 200L: 100 a 150 ml</div>
-                </div>
-                <div class="carencia-box">⏳ <strong>Carência:</strong> 7 dias — NÃO colher antes disso!</div>
-            </div>
-        </div>
-
-        <!-- 🍋 LIMÃO -->
-        <div id="limao" class="fruta-secao">
-            <h2 class="fruta-titulo">🍋 Limão (Citros)</h2>
-
-            <div class="dica-mosca">
-                <strong>🪰 PRAGAS NO LIMÃO:</strong><br>
-                • Mosca-das-frutas também ataca limões, mas é menos comum<br>
-                • O maior problema é a Pinta-Preta (manchas pretas nos frutos) e cochonilhas<br>
-                • Óleo Mineral é excelente para cochonilhas e ácaros — tem carência curta, mas não é veneno forte
-            </div>
-
-            <!-- AZIMUT SC -->
-            <div class="produto-card">
-                <div class="prod-titulo tipo-fungus">🟡 AZIMUT SC — Fungicida</div>
-                <div class="bloco"><strong>✅ Para que serve:</strong> Pinta-Preta — manchas pretas que estragam a casca do fruto</div>
-                <div class="bloco"><strong>⏰ Quando aplicar:</strong> Pré-florada + frutos pequenos — de 30 em 30 dias</div>
-                <div class="bloco"><strong>📏 Quantidade:</strong></div>
-                <div class="dosagem-box">
-                    <div class="dose">🔹 Bomba 20L: 15 a 20 ml</div>
-                    <div class="dose tanque">🔹 Tanque 200L: 150 a 200 ml</div>
-                </div>
-                <div class="carencia-box">⏳ <strong>Carência:</strong> 7 dias — NÃO colher antes disso!</div>
-            </div>
-
-            <!-- GALIL SC + Óleo Mineral -->
-            <div class="produto-card">
-                <div class="prod-titulo tipo-inset">🔴 GALIL SC + ⚪ Óleo Mineral — Inseticida/Acaricida</div>
-                <div class="bloco"><strong>✅ Para que serve:</strong> Cochonilhas, pulgões e ácaros que sugam a seiva e enfraquecem a planta</div>
-                <div class="bloco"><strong>⏰ Quando aplicar:</strong> Primavera e verão — manhã cedo ou fim de tarde, nunca com sol forte</div>
-                <div class="bloco"><strong>📏 Quantidade:</strong></div>
-                <div class="dosagem-box">
-                    <div class="dose">🔹 GALIL SC: 15-20 ml / 20L</div>
-                    <div class="dose tanque">🔹 Óleo Mineral: 20-30 ml / 20L</div>
-                </div>
-                <div class="carencia-box">⏳ <strong>Carência:</strong> GALIL SC = 7 dias | Óleo Mineral = 3 dias (só o óleo sozinho, sem mistura)</div>
-            </div>
-        </div>
-
-        <!-- 🍍 ABACAXI -->
-        <div id="abacaxi" class="fruta-secao">
-            <h2 class="fruta-titulo">🍍 Abacaxi</h2>
-
-            <div class="dica-mosca">
-                <strong>🪰 PRAGAS NO ABACAXI:</strong><br>
-                • Mosca-das-frutas raramente ataca abacaxi<br>
-                • Cuidado com a podridão-do-coração — não jogue água no centro da planta!
-            </div>
-
-            <!-- AZIMUT SC -->
-            <div class="produto-card">
-                <div class="prod-titulo tipo-fungus">🟡 AZIMUT SC — Fungicida</div>
-                <div class="bloco"><strong>✅ Para que serve:</strong> Previne podridão do fruto e manchas nas folhas</div>
-                <div class="bloco"><strong>⏰ Quando aplicar:</strong> 40 dias após indução floral — repetir 3-4x a cada 15 dias</div>
-                <div class="bloco"><strong>📏 Quantidade:</strong></div>
-                <div class="dosagem-box">
-                    <div class="dose">🔹 Bomba 20L: 15 a 20 ml</div>
-                    <div class="dose tanque">🔹 Tanque 200L: 150 a 200 ml</div>
-                </div>
-                <div class="carencia-box">⏳ <strong>Carência:</strong> 7 dias — NÃO colher antes disso!</div>
-            </div>
-
-            <!-- BULLDOCK -->
-            <div class="produto-card">
-                <div class="prod-titulo tipo-inset">🔴 BULLDOCK 125 SC — Inseticida</div>
-                <div class="bloco"><strong>✅ Para que serve:</strong> Insetos que atacam folhas e frutos</div>
-                <div class="bloco"><strong>⏰ Quando aplicar:</strong> Apenas ao ver pragas — não use preventivamente</div>
-                <div class="bloco"><strong>📏 Quantidade:</strong></div>
-                <div class="dosagem-box">
-                    <div class="dose">🔹 Bomba 20L: 15 a 25 ml</div>
-                    <div class="dose tanque">🔹 Tanque 200L: 150 a 250 ml</div>
-                </div>
-                <div class="carencia-box">⏳ <strong>Carência:</strong> 14 dias — NÃO colher antes disso!</div>
-            </div>
-        </div>
-
-        <!-- 🍈 LICHIA -->
-        <div id="lichia" class="fruta-secao">
-            <h2 class="fruta-titulo">🍈 Lichia</h2>
-
-            <div class="dica-mosca">
-                <strong>🪰 PRAGAS NA LICHIA:</strong><br>
-                • Mosca-das-frutas pode atacar lichia quando o fruto amadurece<br>
-                • O problema maior é fruto caindo cedo por falta de Cálcio e Boro
-            </div>
-
-            <!-- PRIORI XTRA -->
-            <div class="produto-card">
-                <div class="prod-titulo tipo-fungus">🟡 PRIORI XTRA — Fungicida</div>
-                <div class="bloco"><strong>✅ Para que serve:</strong> Podridão de flores e frutos jovens em períodos úmidos</div>
-                <div class="bloco"><strong>⏰ Quando aplicar:</strong> Pré-florada e início da frutificação</div>
-                <div class="bloco"><strong>📏 Quantidade:</strong></div>
-                <div class="dosagem-box">
-                    <div class="dose">🔹 Bomba 20L: 15 a 20 ml</div>
-                    <div class="dose tanque">🔹 Tanque 200L: 150 a 200 ml</div>
-                </div>
-                <div class="carencia-box">⏳ <strong>Carência:</strong> 14 dias — NÃO colher antes disso!</div>
-            </div>
-
-            <!-- FORTGREEN CaBDry -->
-            <div class="produto-card">
-                <div class="prod-titulo tipo-nutri">🟢 FORTGREEN CaBDry — Cálcio + Boro</div>
-                <div class="bloco"><strong>✅ Para que serve:</strong> Evita que os frutos caiam antes de amadurecer — problema muito comum na lichia</div>
-                <div class="bloco"><strong>⏰ Quando aplicar:</strong> Após a florada enquanto os frutos estão crescendo</div>
-                <div class="bloco"><strong>📏 Quantidade:</strong></div>
-                <div class="dosagem-box">
-                    <div class="dose">🔹 Bomba 20L: 20 a 25 ml</div>
-                    <div class="dose tanque">🔹 Tanque 200L: 200 a 250 ml</div>
-                </div>
-                <div class="carencia-box">⏳ <strong>Carência:</strong> Sem carência — pode colher a qualquer hora</div>
-            </div>
-        </div>
-
-        <!-- AVISO GERAL DE SEGURANÇA -->
-        <div class="aviso-seguranca">
-            ⚠️ <strong>INFORMAÇÕES DE SEGURANÇA — LEIA SEMPRE!</strong><br><br>
-            • 💧 SEMPRE coloque água primeiro na bomba, DEPOIS o produto — mexa bem<br>
-            • 🔴 INSETICIDAS = NUNCA durante a florada! Mata as abelhas e você não terá fruto!<br>
-            • ⏳ CARÊNCIA = Tempo que DEVE esperar DEPOIS de aplicar ANTES de colher. Não existe atalho seguro! Se precisar colher antes, escolha frutos de árvores que NÃO foram pulverizadas<br>
-            • 🪰 MOSCA-DAS-FRUTAS = DECIS 25 EC é o principal produto. Carência mínima 15 dias. Use armadilhas com feromônio para reduzir a necessidade de aplicação<br>
-            • 📏 As doses são referências — SEMPRE confira a bula do produto que você comprou! As marcas podem mudar<br>
-            • 🧤 Use luvas, máscara e óculos ao aplicar. Não aplique com vento forte
-        </div>
-    </div>
-
-    <script>
-        function mostrarFruta(frutaId) {
-            // Esconde todos
-            document.querySelectorAll('.aba-fruta').forEach(aba => aba.classList.remove('ativa'));
-            document.querySelectorAll('.fruta-secao').forEach(div => div.classList.remove('ativa'));
-            
-            // Mostra o selecionado
-            event.target.classList.add('ativa');
-            document.getElementById(frutaId).classList.add('ativa');
-            window.scrollTo({ top: 120, behavior: 'smooth' });
-        }
-    </script>
+<header><div class="head">
+<a href="../index.html">← Voltar</a>
+<h1>🌱 Minhas Frutas</h1><span>🌿 Sítio Frutíferas</span>
+</div></header>
+<main class="wrap">
+<nav id="nav" class="nav" aria-label="Navegação"></nav>
+<section class="card">
+<h2>Cadastrar ou editar cultura</h2>
+<form id="formFruta">
+<input type="hidden" id="id">
+<label for="nome">Nome da fruta/cultura *</label>
+<input id="nome" required maxlength="100" placeholder="Ex.: Limoeiro, variedade Tahiti">
+<label for="variedade">Variedade</label>
+<input id="variedade" maxlength="100">
+<div class="two">
+<div><label for="quantidade">Quantidade de plantas</label><input id="quantidade" type="number" min="0" step="1"></div>
+<div><label for="idade">Idade aproximada</label><input id="idade" placeholder="Ex.: 2 anos"></div>
+</div>
+<label for="talhao">Talhão/local</label>
+<input id="talhao" placeholder="Ex.: Talhão A">
+<label for="fase">Fase atual</label>
+<select id="fase">
+<option value="">Selecione...</option>
+<option>Muda</option><option>Crescimento</option>
+<option>Floração</option><option>Frutificação</option>
+<option>Colheita</option><option>Pós-colheita</option>
+</select>
+<label for="obs">Observações</label>
+<textarea id="obs" rows="3"></textarea>
+<div class="actions">
+<button type="submit">Salvar cultura</button>
+<button type="button" class="secondary" id="limpar">Limpar</button>
+</div>
+</form>
+</section>
+<section class="card">
+<h2>Minhas culturas</h2>
+<input id="filtro" placeholder="Pesquisar por nome ou talhão">
+<div id="lista"></div>
+</section>
+</main>
+<footer>Sítio Frutíferas • Registre observações e confirme recomendações técnicas antes de aplicar produtos.</footer>
 </body>
 </html>
