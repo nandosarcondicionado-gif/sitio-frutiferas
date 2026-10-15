@@ -1,47 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Histórico - Sítio Frutíferas</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: #f0f8f0; padding: 20px; }
-        header { background: #2d7d32; color: white; padding: 15px; text-align: center; border-radius: 8px; position: relative; margin-bottom: 20px; }
-        .voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; text-decoration: none; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .data { font-size: 13px; color: #666; }
-        .vazio { text-align: center; color: #666; padding: 40px 20px; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#236b36">
+<title>📋 Histórico — Sítio Frutíferas</title>
+<link rel="manifest" href="../manifest.json">
+<link rel="stylesheet" href="../css/estilo.css">
+<script defer src="../js/app.js"></script>
+<script defer src="../js/historico.js"></script>
 </head>
 <body>
-    <header>
-        <a href="../index.html" class="voltar">← Voltar</a>
-        <h2>📋 Histórico de Aplicações</h2>
-    </header>
-    <div class="container">
-        <div id="lista"></div>
-    </div>
-
-    <script>
-        function carregar() {
-            const historico = JSON.parse(localStorage.getItem('historico') || '[]');
-            const lista = document.getElementById('lista');
-            if (historico.length === 0) {
-                lista.innerHTML = '<p class="vazio">📋 Nenhuma aplicação registrada ainda.<br>Vá em "Registrar Aplicação" para começar!</p>';
-                return;
-            }
-            lista.innerHTML = historico.map(item => `
-                <div class="card">
-                    <strong>${item.fruta}</strong> — ${item.produto}<br>
-                    ${item.quantidade || ''}<br>
-                    <span class="data">📅 ${item.data || 'Sem data'}</span>
-                    ${item.obs ? `<br><em>${item.obs}</em>` : ''}
-                </div>
-            `).join('');
-        }
-        carregar();
-    </script>
+<header><div class="head">
+<a href="../index.html">← Voltar</a>
+<h1>📋 Histórico</h1>
+<span>🌿 Sítio Frutíferas</span>
+</div></header>
+<main class="wrap">
+<nav id="nav" class="nav" aria-label="Navegação"></nav>
+<section class="card">
+<h2>Histórico do pomar</h2>
+<div class="two">
+<div>
+<label for="tipo">Tipo de registro</label>
+<select id="tipo">
+<option value="todos">Todos</option>
+<option value="aplicacoes">Aplicações</option>
+<option value="diagnosticos">Fotos e diagnósticos</option>
+</select>
+</div>
+<div>
+<label for="filtro">Pesquisar</label>
+<input id="filtro" placeholder="Cultura, produto ou sintoma">
+</div>
+</div>
+<div class="actions">
+<button id="backup">Exportar backup completo</button>
+<label class="button secondary" for="restore">Restaurar backup JSON</label>
+<input id="restore" type="file" accept="application/json" hidden>
+</div>
+<div id="lista"></div>
+</section>
+<div class="notice">
+Os registros e as fotos são guardados neste navegador. Limpar os dados do navegador ou trocar de aparelho pode apagá-los; exporte backups regularmente.
+</div>
+</main>
+<footer>Sítio Frutíferas • Registre observações e confirme recomendações técnicas antes de aplicar produtos.</footer>
 </body>
 </html>
