@@ -1,66 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle Agrícola - Sítio Frutíferas</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { 
-            background: linear-gradient(135deg, #2d6b2e, #4caf50); 
-            min-height: 100vh; 
-            padding: 40px 20px;
-        }
-        .container { max-width: 500px; margin: 0 auto; text-align: center; }
-        .logo { color: white; margin-bottom: 30px; }
-        .logo h1 { font-size: 28px; margin-bottom: 8px; }
-        .logo p { font-size: 16px; opacity: 0.9; }
-        .menu-btn {
-            display: block;
-            background: white;
-            color: #2d6b2e;
-            text-decoration: none;
-            padding: 18px 20px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: 500;
-            text-align: left;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-        .menu-btn:hover { transform: translateY(-2px); }
-        .ajuda-btn {
-            background: #ff9800;
-            color: white;
-            text-align: center;
-            font-weight: bold;
-        }
-        .divisor {
-            color: rgba(255,255,255,0.7);
-            margin: 25px 0 15px;
-            font-size: 15px;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#236b36">
+  <title>Sítio Frutíferas</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/estilo.css">
+  <script defer src="js/app.js"></script>
+  <script defer src="js/home.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">
-            <h1>🌳 Sítio Frutíferas</h1>
-            <p>Controle de Defensivos Agrícolas</p>
-        </div>
-
-        <a href="paginas/frutas.html" class="menu-btn">🌿 Minhas Frutas</a>
-        <a href="paginas/defensivos.html" class="menu-btn">🧪 Meus Defensivos</a>
-        <a href="paginas/aplicacao.html" class="menu-btn">📅 Registrar Aplicação</a>
-        <a href="paginas/estoque.html" class="menu-btn">📦 Controle de Estoque</a>
-        <a href="paginas/historico.html" class="menu-btn">📋 Histórico</a>
-
-        <div class="divisor">—————— Ajuda ——————————</div>
-
-        <a href="paginas/problemas.html" class="menu-btn">🔍 Guia de Problemas e Soluções</a>
-        <a href="paginas/busca.html" class="menu-btn">📷 Tirar Foto e Pesquisar</a>
-        <a href="paginas/ajuda.html" class="menu-btn ajuda-btn">🌱 Super Ajuda Agricultor</a>
+  <header>
+    <div class="head">
+      <h1>🌿 Sítio Frutíferas</h1>
+      <span>Controle do pomar</span>
     </div>
+  </header>
+  <main class="wrap">
+    <p class="sub">Cadastre suas culturas, fotografe sintomas e mantenha o histórico do pomar organizado.</p>
+    <nav id="nav" class="nav" aria-label="Navegação"></nav>
+    <section class="stats">
+      <div class="stat"><span>Culturas cadastradas</span><strong id="nfrutas">—</strong></div>
+      <div class="stat"><span>Registros de aplicação</span><strong id="napps">—</strong></div>
+      <div class="stat"><span>Diagnósticos registrados</span><strong id="ndiag">—</strong></div>
+      <div class="stat"><span>Produtos no estoque</span><strong id="nprod">—</strong></div>
+    </section>
+    <section class="card">
+      <h2>Comece por aqui</h2>
+      <p>Para investigar uma planta, fotografe uma folha, fruto ou ramo e informe os sintomas observados. O sistema pode ajudar a organizar hipóteses, mas uma foto isolada não confirma doença.</p>
+      <a class="button" href="paginas/busca.html">📷 Fotografar uma planta</a>
+      <a class="button secondary" href="paginas/frutas.html">Cadastrar culturas</a>
+    </section>
+    <section class="notice">
+      <strong>Importante:</strong> não aplique defensivos apenas com base em uma suspeita visual. Confira registro, cultura autorizada, bula, dose, EPI e intervalo de segurança; em caso de dúvida, consulte um profissional habilitado.
+    </section>
+  </main>
+  <footer>Sítio Frutíferas</footer>
 </body>
 </html>
