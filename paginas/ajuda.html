@@ -1,46 +1,53 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Ajuda Agricultor - Sítio Frutíferas</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: #fff8e1; padding: 20px; }
-        header { background: #e65100; color: white; padding: 15px; text-align: center; border-radius: 8px; position: relative; margin-bottom: 20px; }
-        .voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: white; text-decoration: none; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .pergunta { font-weight: bold; margin-bottom: 8px; color: #e65100; }
-        .resposta { color: #333; line-height: 1.5; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#236b36">
+<title>❓ Ajuda e segurança — Sítio Frutíferas</title>
+<link rel="manifest" href="../manifest.json">
+<link rel="stylesheet" href="../css/estilo.css">
+<script defer src="../js/app.js"></script>
+<script defer src="../js/vazio.js"></script>
 </head>
 <body>
-    <header>
-        <a href="index.html" class="voltar">← Voltar</a>
-        <h2>🌱 Super Ajuda Agricultor</h2>
-    </header>
-    <div class="container">
-        <div class="card">
-            <div class="pergunta">❓ Qual produto usar para pragas?</div>
-            <div class="resposta">Use os <strong>Inseticidas</strong> (GALIL SC, DECIS 25 EC, BELT, BULLDOCK). Aplique apenas quando houver pragas, de preferência no fim da tarde. ⚠️ NUNCA durante a florada!</div>
-        </div>
-        <div class="card">
-            <div class="pergunta">❓ Como prevenir fungos e doenças?</div>
-            <div class="resposta">Use os <strong>Fungicidas</strong> (AZIMUT SC e PRIORI XTRA) de forma preventiva, antes de aparecer a doença. Sempre alterne entre os dois para não criar resistência.</div>
-        </div>
-        <div class="card">
-            <div class="pergunta">❓ Como fortalecer as frutas?</div>
-            <div class="resposta">Use os <strong>Fertilizantes</strong>: FLORAFORTE-D na florada, FORTGREEN CaBDry nos frutos em formação, GLUTAMIN K LIBRE para engrossar os frutos e EXPERTGROW para fortalecer a planta toda.</div>
-        </div>
-        <div class="card">
-            <div class="pergunta">❓ Como calcular a dosagem?</div>
-            <div class="resposta">Na página <strong>"Minhas Frutas"</strong> tem a quantidade exata para cada produto, tanto para bomba de 20L quanto para tanque de 200L. Sempre coloque a água primeiro, depois o produto!</div>
-        </div>
-        <div class="card">
-            <div class="pergunta">❓ Como usar herbicidas com segurança?</div>
-            <div class="resposta">Aplique SEM vento e SEM chuva. Proteja as fruteiras com plástico ou papel antes de aplicar. Não deixe o produto cair nas folhas das frutas!</div>
-        </div>
-    </div>
+<header><div class="head">
+<a href="../index.html">← Voltar</a>
+<h1>❓ Ajuda e segurança</h1>
+<span>🌿 Sítio Frutíferas</span>
+</div></header>
+<main class="wrap">
+<nav id="nav" class="nav" aria-label="Navegação"></nav>
+
+<section class="card">
+<h2>Como usar o aplicativo</h2>
+<ol>
+<li>Cadastre suas culturas e talhões em <strong>Minhas frutas</strong>.</li>
+<li>Fotografe folhas, frutos, ramos e a planta inteira em <strong>Foto e diagnóstico</strong>.</li>
+<li>Descreva os sintomas e salve a triagem para acompanhar mudanças.</li>
+<li>Cadastre insumos e mantenha o estoque atualizado.</li>
+<li>Registre aplicações somente depois de verificar bula, autorização e medidas de segurança.</li>
+<li>Exporte backups regularmente na página Histórico.</li>
+</ol>
+</section>
+
+<section class="card">
+<h2>Limites da identificação</h2>
+<p>Uma fotografia pode ajudar a reconhecer a espécie e levantar hipóteses, mas não garante o diagnóstico de doenças. Iluminação, foco, idade da folha e sintomas parecidos influenciam o resultado. A confirmação pode exigir exame presencial ou laboratório.</p>
+<p>Não use o nome de uma doença como autorização para aplicar produto. Confira sempre a indicação oficial para cultura e alvo, a bula aprovada, dose, EPI, reentrada, intervalo de segurança e restrições ambientais.</p>
+</section>
+
+<section class="card">
+<h2>Privacidade e backup</h2>
+<p>Na configuração padrão, os dados ficam no armazenamento local do navegador deste dispositivo. Eles não são automaticamente enviados a um banco de dados nem sincronizados com outros aparelhos. A fotografia só é enviada para um serviço externo quando uma integração de análise estiver configurada no servidor.</p>
+<p>Não guarde informações pessoais desnecessárias nas observações. Exporte o backup JSON e mantenha uma cópia em local seguro.</p>
+</section>
+
+<section class="card">
+<h2>Configuração técnica</h2>
+<p>O pacote inclui endpoints de servidor para identificação botânica e análise de imagem. Eles exigem implantação compatível com funções serverless e configuração das variáveis secretas descritas no arquivo <code>LEIA-ME.md</code>. Em hospedagem estática pura do GitHub Pages, a pasta <code>api</code> não será executada.</p>
+</section>
+</main>
+<footer>Sítio Frutíferas • Registre observações e confirme recomendações técnicas antes de aplicar produtos.</footer>
 </body>
 </html>
