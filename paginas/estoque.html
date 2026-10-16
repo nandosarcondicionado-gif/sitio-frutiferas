@@ -1,64 +1,77 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#236b36">
-<title>📦 Controle de estoque — Sítio Frutíferas</title>
-<link rel="manifest" href="../manifest.json">
-<link rel="stylesheet" href="../css/estilo.css">
-<script defer src="../js/app.js"></script>
-<script defer src="../js/estoque.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#236b36">
+  <title>Controle de estoque — Sítio Frutíferas</title>
+  <link rel="manifest" href="../manifest.json">
+  <link rel="stylesheet" href="../css/estilo.css">
+  <script defer src="../js/app.js"></script>
+  <script defer src="../js/estoque.js"></script>
 </head>
 <body>
-<header><div class="head">
-<a href="../index.html">← Voltar</a>
-<h1>📦 Controle de estoque</h1>
-<span>🌿 Sítio Frutíferas</span>
-</div></header>
-<main class="wrap">
-<nav id="nav" class="nav" aria-label="Navegação"></nav>
-<section class="card">
-<h2>Adicionar produto ao estoque</h2>
-<form id="form">
-<label for="nome">Nome do produto/insumo *</label>
-<input id="nome" required maxlength="150">
-<div class="two">
-<div>
-<label for="qtd">Quantidade inicial *</label>
-<input id="qtd" type="number" required min="0" step="any">
-</div>
-<div>
-<label for="unidade">Unidade *</label>
-<select id="unidade">
-<option>ml</option><option>L</option><option>g</option>
-<option>kg</option><option>unidade</option><option>pacote</option>
-<option>litro</option>
-</select>
-</div>
-</div>
-<div class="two">
-<div><label for="min">Estoque mínimo</label><input id="min" type="number" min="0" step="any" value="0"></div>
-<div><label for="validade">Validade</label><input id="validade" type="date"></div>
-</div>
-<label for="lote">Lote</label>
-<input id="lote">
-<label for="obs">Observações</label>
-<textarea id="obs" rows="2"></textarea>
-<button type="submit">Adicionar ao estoque</button>
-</form>
-</section>
-<section class="card">
-<h2>Saldo atual</h2>
-<input id="filtro" placeholder="Pesquisar produto">
-<div id="lista"></div>
-</section>
-<section class="card">
-<h2>Movimentações</h2>
-<div id="movs"></div>
-<button class="secondary" id="exportar">Exportar estoque e movimentações (JSON)</button>
-</section>
-</main>
-<footer>Sítio Frutíferas • Registre observações e confirme recomendações técnicas antes de aplicar produtos.</footer>
+  <header>
+    <div class="head">
+      <a href="../index.html">← Voltar</a>
+      <h1>📦 Controle de estoque</h1>
+      <span>🌿 Sítio Frutíferas</span>
+    </div>
+  </header>
+  <main class="wrap">
+    <nav id="nav" class="nav" aria-label="Navegação"></nav>
+    <section class="card">
+      <h2>Adicionar produto ao estoque</h2>
+      <p class="muted">Os produtos pré-cadastrados começam com saldo zero. Ajuste a unidade conforme a embalagem real.</p>
+      <form id="form">
+        <label for="nome">Nome do produto/insumo *</label>
+        <input id="nome" required maxlength="150">
+        <div class="two">
+          <div>
+            <label for="qtd">Quantidade inicial *</label>
+            <input id="qtd" type="number" required min="0" step="any">
+          </div>
+          <div>
+            <label for="unidade">Unidade *</label>
+            <select id="unidade">
+              <option>ml</option>
+              <option>L</option>
+              <option>g</option>
+              <option>kg</option>
+              <option>unidade</option>
+              <option>pacote</option>
+              <option>litro</option>
+            </select>
+          </div>
+        </div>
+        <div class="two">
+          <div>
+            <label for="min">Estoque mínimo</label>
+            <input id="min" type="number" min="0" step="any" value="0">
+          </div>
+          <div>
+            <label for="validade">Validade</label>
+            <input id="validade" type="date">
+          </div>
+        </div>
+        <label for="lote">Lote</label>
+        <input id="lote">
+        <label for="obs">Observações</label>
+        <textarea id="obs" rows="2"></textarea>
+        <button type="submit">Adicionar ao estoque</button>
+      </form>
+    </section>
+    <section class="card">
+      <h2>Saldo atual</h2>
+      <input id="filtro" placeholder="Pesquisar produto">
+      <div id="lista"></div>
+    </section>
+    <section class="card">
+      <h2>Movimentações</h2>
+      <div id="movs"></div>
+      <button class="secondary" id="exportar">Exportar estoque e movimentações (JSON)</button>
+    </section>
+  </main>
+  <footer>Sítio Frutíferas</footer>
 </body>
 </html>
