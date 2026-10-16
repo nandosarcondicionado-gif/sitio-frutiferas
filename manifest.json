@@ -1,9 +1,10 @@
 {
   "name": "Sítio Frutíferas",
   "short_name": "Frutíferas",
+  "description": "Controle de culturas, produtos, estoque, aplicações e histórico do pomar.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f4f8f4",
   "theme_color": "#236b36",
-  "icons": []
+  "lang": "pt-BR"
 }
