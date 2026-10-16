@@ -1,62 +1,97 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#236b36">
-<title>🧪 Produtos e defensivos — Sítio Frutíferas</title>
-<link rel="manifest" href="../manifest.json">
-<link rel="stylesheet" href="../css/estilo.css">
-<script defer src="../js/app.js"></script>
-<script defer src="../js/defensivos.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#236b36">
+  <title>Produtos e defensivos — Sítio Frutíferas</title>
+  <link rel="manifest" href="../manifest.json">
+  <link rel="stylesheet" href="../css/estilo.css">
+  <script defer src="../js/app.js"></script>
+  <script defer src="../js/defensivos.js"></script>
 </head>
 <body>
-<header><div class="head">
-<a href="../index.html">← Voltar</a>
-<h1>🧪 Produtos e defensivos</h1>
-<span>🌿 Sítio Frutíferas</span>
-</div></header>
-<main class="wrap">
-<nav id="nav" class="nav" aria-label="Navegação"></nav>
-<section class="card">
-<h2>Cadastrar produto ou insumo</h2>
-<form id="form">
-<label for="nome">Nome comercial *</label>
-<input id="nome" required maxlength="150">
-<div class="two">
-<div>
-<label for="categoria">Categoria</label>
-<select id="categoria">
-<option>Defensivo</option><option>Fertilizante</option>
-<option>Adjuvante</option><option>Biológico</option>
-<option>Outro insumo</option>
-</select>
-</div>
-<div>
-<label for="ingrediente">Ingrediente ativo/composição</label>
-<input id="ingrediente">
-</div>
-</div>
-<label for="alvo">Finalidade indicada na bula</label>
-<textarea id="alvo" rows="2"></textarea>
-<label for="cultura">Culturas autorizadas (conforme rótulo/bula)</label>
-<input id="cultura" placeholder="Não presumir autorização">
-<label for="registro">Número de registro / referência da bula</label>
-<input id="registro">
-<label for="obs">Observações</label>
-<textarea id="obs" rows="2"></textarea>
-<button type="submit">Salvar produto</button>
-</form>
-</section>
-<section class="card">
-<h2>Produtos cadastrados</h2>
-<input id="filtro" placeholder="Pesquisar produto, ingrediente ou cultura">
-<div id="lista"></div>
-</section>
-<div class="notice">
-<strong>Segurança:</strong> este cadastro é para organização. Ele não certifica que um produto está autorizado. Antes de usar, confira a situação atual no sistema oficial e siga exatamente a bula aprovada para a cultura e o alvo.
-</div>
-</main>
-<footer>Sítio Frutíferas • Registre observações e confirme recomendações técnicas antes de aplicar produtos.</footer>
+  <header>
+    <div class="head">
+      <a href="../index.html">← Voltar</a>
+      <h1>🧪 Produtos e defensivos</h1>
+      <span>🌿 Sítio Frutíferas</span>
+    </div>
+  </header>
+  <main class="wrap">
+    <nav id="nav" class="nav" aria-label="Navegação"></nav>
+    <section class="card">
+      <h2 id="tituloForm">Cadastrar ou editar produto</h2>
+      <p class="muted">Os 17 produtos ficam no catálogo. Cultura, dose e modo de aplicação podem ser editados. “Pendente” significa que a indicação ainda precisa ser confirmada no rótulo ou na bula da formulação exata.</p>
+      <form id="form">
+        <input type="hidden" id="id">
+        <label for="nome">Nome comercial *</label>
+        <input id="nome" required maxlength="150">
+        <div class="two">
+          <div>
+            <label for="categoria">Categoria</label>
+            <select id="categoria">
+              <option>Defensivo</option>
+              <option>Fertilizante</option>
+              <option>Adjuvante</option>
+              <option>Bioestimulante</option>
+              <option>Biológico</option>
+              <option>Outro insumo</option>
+              <option>Classificação a confirmar</option>
+            </select>
+          </div>
+          <div>
+            <label for="ingrediente">Ingrediente ativo/composição</label>
+            <input id="ingrediente">
+          </div>
+        </div>
+        <label for="alvo">Finalidade / praga / doença indicada</label>
+        <textarea id="alvo" rows="2"></textarea>
+        <label for="cultura">Frutas/culturas e alvos indicados na documentação</label>
+        <textarea id="cultura" rows="3" placeholder="Preencha somente após conferir a documentação do produto exato"></textarea>
+        <div class="two">
+          <div>
+            <label for="dose">Dose conforme bula</label>
+            <textarea id="dose" rows="3" placeholder="Deixe em branco enquanto não confirmar a bula"></textarea>
+          </div>
+          <div>
+            <label for="modoAplicacao">Modo, época e intervalo de aplicação</label>
+            <textarea id="modoAplicacao" rows="3" placeholder="Preencha conforme a bula vigente"></textarea>
+          </div>
+        </div>
+        <div class="two">
+          <div>
+            <label for="statusIndicacao">Situação da indicação</label>
+            <select id="statusIndicacao">
+              <option>Pendente de conferência</option>
+              <option>Pendente de conferência para as nove frutíferas</option>
+              <option>Confirmado após conferência da bula vigente</option>
+            </select>
+          </div>
+          <div>
+            <label for="registro">Número de registro / referência</label>
+            <input id="registro">
+          </div>
+        </div>
+        <label for="fonte">Link da bula ou fonte consultada</label>
+        <input id="fonte" type="url" placeholder="https://...">
+        <label for="obs">Observações</label>
+        <textarea id="obs" rows="2"></textarea>
+        <div class="actions">
+          <button type="submit" id="salvar">Salvar produto</button>
+          <button type="button" class="secondary" id="limpar">Limpar formulário</button>
+        </div>
+      </form>
+    </section>
+    <section class="card">
+      <h2>Produtos cadastrados</h2>
+      <input id="filtro" placeholder="Pesquisar produto, ingrediente ou fruta">
+      <div id="lista"></div>
+    </section>
+    <div class="notice">
+      <strong>Importante:</strong> o cadastro organiza informações, mas não substitui a bula nem a orientação profissional. A autorização depende da cultura, do alvo e da formulação exata. Consulte o <a href="https://agrofit.agricultura.gov.br/" target="_blank" rel="noopener">AGROFIT oficial</a>.
+    </div>
+  </main>
+  <footer>Sítio Frutíferas</footer>
 </body>
 </html>
