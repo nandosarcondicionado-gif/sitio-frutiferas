@@ -1,53 +1,51 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#236b36">
-<title>❓ Ajuda e segurança — Sítio Frutíferas</title>
-<link rel="manifest" href="../manifest.json">
-<link rel="stylesheet" href="../css/estilo.css">
-<script defer src="../js/app.js"></script>
-<script defer src="../js/vazio.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#236b36">
+  <title>Ajuda e segurança — Sítio Frutíferas</title>
+  <link rel="manifest" href="../manifest.json">
+  <link rel="stylesheet" href="../css/estilo.css">
+  <script defer src="../js/app.js"></script>
+  <script defer src="../js/vazio.js"></script>
 </head>
 <body>
-<header><div class="head">
-<a href="../index.html">← Voltar</a>
-<h1>❓ Ajuda e segurança</h1>
-<span>🌿 Sítio Frutíferas</span>
-</div></header>
-<main class="wrap">
-<nav id="nav" class="nav" aria-label="Navegação"></nav>
-
-<section class="card">
-<h2>Como usar o aplicativo</h2>
-<ol>
-<li>Cadastre suas culturas e talhões em <strong>Minhas frutas</strong>.</li>
-<li>Fotografe folhas, frutos, ramos e a planta inteira em <strong>Foto e diagnóstico</strong>.</li>
-<li>Descreva os sintomas e salve a triagem para acompanhar mudanças.</li>
-<li>Cadastre insumos e mantenha o estoque atualizado.</li>
-<li>Registre aplicações somente depois de verificar bula, autorização e medidas de segurança.</li>
-<li>Exporte backups regularmente na página Histórico.</li>
-</ol>
-</section>
-
-<section class="card">
-<h2>Limites da identificação</h2>
-<p>Uma fotografia pode ajudar a reconhecer a espécie e levantar hipóteses, mas não garante o diagnóstico de doenças. Iluminação, foco, idade da folha e sintomas parecidos influenciam o resultado. A confirmação pode exigir exame presencial ou laboratório.</p>
-<p>Não use o nome de uma doença como autorização para aplicar produto. Confira sempre a indicação oficial para cultura e alvo, a bula aprovada, dose, EPI, reentrada, intervalo de segurança e restrições ambientais.</p>
-</section>
-
-<section class="card">
-<h2>Privacidade e backup</h2>
-<p>Na configuração padrão, os dados ficam no armazenamento local do navegador deste dispositivo. Eles não são automaticamente enviados a um banco de dados nem sincronizados com outros aparelhos. A fotografia só é enviada para um serviço externo quando uma integração de análise estiver configurada no servidor.</p>
-<p>Não guarde informações pessoais desnecessárias nas observações. Exporte o backup JSON e mantenha uma cópia em local seguro.</p>
-</section>
-
-<section class="card">
-<h2>Configuração técnica</h2>
-<p>O pacote inclui endpoints de servidor para identificação botânica e análise de imagem. Eles exigem implantação compatível com funções serverless e configuração das variáveis secretas descritas no arquivo <code>LEIA-ME.md</code>. Em hospedagem estática pura do GitHub Pages, a pasta <code>api</code> não será executada.</p>
-</section>
-</main>
-<footer>Sítio Frutíferas • Registre observações e confirme recomendações técnicas antes de aplicar produtos.</footer>
+  <header>
+    <div class="head">
+      <a href="../index.html">← Voltar</a>
+      <h1>❓ Ajuda e segurança</h1>
+      <span>🌿 Sítio Frutíferas</span>
+    </div>
+  </header>
+  <main class="wrap">
+    <nav id="nav" class="nav" aria-label="Navegação"></nav>
+    <section class="card">
+      <h2>Como usar o aplicativo</h2>
+      <ol>
+        <li>Cadastre suas culturas e talhões em <strong>Minhas frutas</strong>.</li>
+        <li>Fotografe folhas, frutos, ramos e a planta inteira em <strong>Foto e diagnóstico</strong>.</li>
+        <li>Descreva os sintomas e salve a triagem para acompanhar mudanças.</li>
+        <li>Cadastre insumos e mantenha o estoque atualizado.</li>
+        <li>Registre aplicações somente depois de verificar a bula, a autorização e as medidas de segurança.</li>
+        <li>Exporte backups regularmente na página Histórico.</li>
+      </ol>
+    </section>
+    <section class="card">
+      <h2>Limites da identificação</h2>
+      <p>Uma fotografia pode ajudar a reconhecer a espécie e levantar hipóteses, mas não garante o diagnóstico de doenças. Iluminação, foco, idade da folha e sintomas parecidos influenciam o resultado.</p>
+      <p>Não use o nome de uma doença como autorização para aplicar produto. Confira a indicação oficial para cultura e alvo, a bula aprovada, EPI, reentrada, intervalo de segurança e restrições ambientais.</p>
+    </section>
+    <section class="card">
+      <h2>Privacidade e backup</h2>
+      <p>Na configuração padrão, os dados ficam no armazenamento local do navegador deste dispositivo. Eles não são automaticamente sincronizados com outros aparelhos. As fotos são enviadas a serviços externos somente quando a integração de análise é utilizada.</p>
+      <p>Exporte o backup JSON e mantenha uma cópia em local seguro.</p>
+    </section>
+    <section class="card">
+      <h2>Configuração técnica</h2>
+      <p>Os endpoints de identificação botânica e análise de imagem exigem hospedagem compatível com funções serverless e configuração de chaves secretas no servidor. Em hospedagem estática pura do GitHub Pages, a pasta <code>api</code> não será executada.</p>
+    </section>
+  </main>
+  <footer>Sítio Frutíferas</footer>
 </body>
 </html>
