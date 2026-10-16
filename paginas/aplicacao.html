@@ -1,62 +1,75 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#236b36">
-<title>📝 Registrar aplicação — Sítio Frutíferas</title>
-<link rel="manifest" href="../manifest.json">
-<link rel="stylesheet" href="../css/estilo.css">
-<script defer src="../js/app.js"></script>
-<script defer src="../js/aplicacao.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#236b36">
+  <title>Registrar aplicação — Sítio Frutíferas</title>
+  <link rel="manifest" href="../manifest.json">
+  <link rel="stylesheet" href="../css/estilo.css">
+  <script defer src="../js/app.js"></script>
+  <script defer src="../js/aplicacao.js"></script>
 </head>
 <body>
-<header><div class="head">
-<a href="../index.html">← Voltar</a>
-<h1>📝 Registrar aplicação</h1>
-<span>🌿 Sítio Frutíferas</span>
-</div></header>
-<main class="wrap">
-<nav id="nav" class="nav" aria-label="Navegação"></nav>
-<section class="card">
-<h2>Registrar aplicação ou manejo</h2>
-<form id="form">
-<label for="fruta">Cultura *</label>
-<select id="fruta" required><option value="">Selecione...</option></select>
-<label for="produto">Produto ou manejo realizado *</label>
-<input id="produto" required maxlength="150" placeholder="Nome do produto ou manejo cultural">
-<div class="two">
-<div>
-<label for="qtd">Quantidade utilizada</label>
-<input id="qtd" type="number" min="0" step="any" placeholder="Ex.: 30">
-</div>
-<div>
-<label for="unidade">Unidade</label>
-<select id="unidade">
-<option>ml</option><option>L</option><option>g</option>
-<option>kg</option><option>unidade</option>
-<option>dose conforme bula</option><option>não informado</option>
-</select>
-</div>
-</div>
-<label for="area">Área/tratamento realizado</label>
-<input id="area" placeholder="Ex.: 20 L de calda; talhão A">
-<label for="data">Data *</label>
-<input id="data" type="date" required>
-<label for="motivo">Motivo / alvo observado</label>
-<input id="motivo" placeholder="Sintoma, praga ou manejo preventivo autorizado">
-<label for="responsavel">Responsável</label>
-<input id="responsavel">
-<label for="carencia">Intervalo de segurança (conforme bula)</label>
-<input id="carencia" placeholder="Não preencher por estimativa">
-<label for="obs">Observações</label>
-<textarea id="obs" rows="3"></textarea>
-<label><input type="checkbox" id="confirmacao"> Confirmei a bula, a cultura autorizada, a dose e os equipamentos de proteção aplicáveis.</label>
-<div class="actions"><button type="submit">Salvar registro</button></div>
-</form>
-</section>
-<div id="mensagem"></div>
-</main>
-<footer>Sítio Frutíferas • Registre observações e confirme recomendações técnicas antes de aplicar produtos.</footer>
+  <header>
+    <div class="head">
+      <a href="../index.html">← Voltar</a>
+      <h1>📝 Registrar aplicação</h1>
+      <span>🌿 Sítio Frutíferas</span>
+    </div>
+  </header>
+  <main class="wrap">
+    <nav id="nav" class="nav" aria-label="Navegação"></nav>
+    <section class="card">
+      <h2>Registrar aplicação ou manejo</h2>
+      <form id="form">
+        <label for="fruta">Cultura *</label>
+        <select id="fruta" required>
+          <option value="">Selecione...</option>
+        </select>
+        <label for="produto">Produto ou manejo realizado *</label>
+        <input id="produto" required maxlength="150" placeholder="Nome do produto ou manejo cultural">
+        <div class="two">
+          <div>
+            <label for="qtd">Quantidade utilizada</label>
+            <input id="qtd" type="number" min="0" step="any" placeholder="Ex.: 30">
+          </div>
+          <div>
+            <label for="unidade">Unidade</label>
+            <select id="unidade">
+              <option>ml</option>
+              <option>L</option>
+              <option>g</option>
+              <option>kg</option>
+              <option>unidade</option>
+              <option>dose conforme bula</option>
+              <option>não informado</option>
+            </select>
+          </div>
+        </div>
+        <label for="area">Área/tratamento realizado</label>
+        <input id="area" placeholder="Ex.: 20 L de calda; talhão A">
+        <label for="data">Data *</label>
+        <input id="data" type="date" required>
+        <label for="motivo">Motivo / alvo observado</label>
+        <input id="motivo" placeholder="Sintoma, praga ou manejo">
+        <label for="responsavel">Responsável</label>
+        <input id="responsavel">
+        <label for="carencia">Intervalo de segurança conforme bula</label>
+        <input id="carencia" placeholder="Não preencher por estimativa">
+        <label for="obs">Observações</label>
+        <textarea id="obs" rows="3"></textarea>
+        <label>
+          <input type="checkbox" id="confirmacao">
+          Confirmei a bula, a cultura autorizada, a dose e os equipamentos de proteção aplicáveis.
+        </label>
+        <div class="actions">
+          <button type="submit">Salvar registro</button>
+        </div>
+      </form>
+    </section>
+    <div id="mensagem"></div>
+  </main>
+  <footer>Sítio Frutíferas • Registre as aplicações e mantenha os dados de segurança conferidos.</footer>
 </body>
 </html>
