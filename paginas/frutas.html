@@ -1,57 +1,70 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#236b36">
-<title>🌱 Minhas Frutas — Sítio Frutíferas</title>
-<link rel="manifest" href="../manifest.json">
-<link rel="stylesheet" href="../css/estilo.css">
-<script defer src="../js/app.js"></script>
-<script defer src="../js/frutas.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#236b36">
+  <title>Minhas Frutas — Sítio Frutíferas</title>
+  <link rel="manifest" href="../manifest.json">
+  <link rel="stylesheet" href="../css/estilo.css">
+  <script defer src="../js/app.js"></script>
+  <script defer src="../js/frutas.js"></script>
 </head>
 <body>
-<header><div class="head">
-<a href="../index.html">← Voltar</a>
-<h1>🌱 Minhas Frutas</h1><span>🌿 Sítio Frutíferas</span>
-</div></header>
-<main class="wrap">
-<nav id="nav" class="nav" aria-label="Navegação"></nav>
-<section class="card">
-<h2>Cadastrar ou editar cultura</h2>
-<form id="formFruta">
-<input type="hidden" id="id">
-<label for="nome">Nome da fruta/cultura *</label>
-<input id="nome" required maxlength="100" placeholder="Ex.: Limoeiro, variedade Tahiti">
-<label for="variedade">Variedade</label>
-<input id="variedade" maxlength="100">
-<div class="two">
-<div><label for="quantidade">Quantidade de plantas</label><input id="quantidade" type="number" min="0" step="1"></div>
-<div><label for="idade">Idade aproximada</label><input id="idade" placeholder="Ex.: 2 anos"></div>
-</div>
-<label for="talhao">Talhão/local</label>
-<input id="talhao" placeholder="Ex.: Talhão A">
-<label for="fase">Fase atual</label>
-<select id="fase">
-<option value="">Selecione...</option>
-<option>Muda</option><option>Crescimento</option>
-<option>Floração</option><option>Frutificação</option>
-<option>Colheita</option><option>Pós-colheita</option>
-</select>
-<label for="obs">Observações</label>
-<textarea id="obs" rows="3"></textarea>
-<div class="actions">
-<button type="submit">Salvar cultura</button>
-<button type="button" class="secondary" id="limpar">Limpar</button>
-</div>
-</form>
-</section>
-<section class="card">
-<h2>Minhas culturas</h2>
-<input id="filtro" placeholder="Pesquisar por nome ou talhão">
-<div id="lista"></div>
-</section>
-</main>
-<footer>Sítio Frutíferas • Registre observações e confirme recomendações técnicas antes de aplicar produtos.</footer>
+  <header>
+    <div class="head">
+      <a href="../index.html">← Voltar</a>
+      <h1>🌱 Minhas Frutas</h1>
+      <span>🌿 Sítio Frutíferas</span>
+    </div>
+  </header>
+  <main class="wrap">
+    <nav id="nav" class="nav" aria-label="Navegação"></nav>
+    <section class="card">
+      <h2>Cadastrar ou editar cultura</h2>
+      <form id="formFruta">
+        <input type="hidden" id="id">
+        <label for="nome">Nome da fruta/cultura *</label>
+        <input id="nome" required maxlength="100" placeholder="Ex.: Limoeiro, variedade Tahiti">
+        <label for="variedade">Variedade</label>
+        <input id="variedade" maxlength="100">
+        <div class="two">
+          <div>
+            <label for="quantidade">Quantidade de plantas</label>
+            <input id="quantidade" type="number" min="0" step="1">
+          </div>
+          <div>
+            <label for="idade">Idade aproximada</label>
+            <input id="idade" placeholder="Ex.: 2 anos">
+          </div>
+        </div>
+        <label for="talhao">Talhão/local</label>
+        <input id="talhao" placeholder="Ex.: Talhão A">
+        <label for="fase">Fase atual</label>
+        <select id="fase">
+          <option value="">Selecione...</option>
+          <option>Muda</option>
+          <option>Crescimento</option>
+          <option>Floração</option>
+          <option>Frutificação</option>
+          <option>Colheita</option>
+          <option>Pós-colheita</option>
+        </select>
+        <label for="obs">Observações</label>
+        <textarea id="obs" rows="3"></textarea>
+        <div class="actions">
+          <button type="submit">Salvar cultura</button>
+          <button type="button" class="secondary" id="limpar">Limpar</button>
+        </div>
+      </form>
+    </section>
+    <section class="card">
+      <h2>Minhas culturas e produtos por fruta</h2>
+      <p class="muted">As indicações pendentes ficam separadas das indicações confirmadas. Confira sempre a bula vigente do produto exato antes de qualquer aplicação.</p>
+      <input id="filtro" placeholder="Pesquisar por nome ou talhão">
+      <div id="lista"></div>
+    </section>
+  </main>
+  <footer>Sítio Frutíferas • Confirme recomendações técnicas antes de aplicar produtos.</footer>
 </body>
 </html>
