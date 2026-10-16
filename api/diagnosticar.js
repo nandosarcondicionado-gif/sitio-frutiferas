@@ -1,5 +1,5 @@
-// Análise visual via OpenAI.
-// Configure OPENAI_API_KEY no servidor da Vercel.
+import { IncomingForm } from 'formidable';
+import fs from 'node:fs/promises';
 
 export const config = {
   api: {
@@ -7,42 +7,50 @@ export const config = {
   }
 };
 
-import { IncomingForm } from 'formidable';
-import fs from 'node:fs/promises';
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({
-      error: 'Método não permitido'
-    });
+    res.setHeader('Allow', 'POST');
+    return res.status(405).json({ error: 'Método não permitido.' });
   }
 
-  if (!process.env.OPENAI_API_KEY) {
+  const apiKey = process.env.OPENAI_API_KEY;
+
+  if (!apiKey) {
     return res.status(503).json({
-      error: 'OPENAI_API_KEY não configurada no servidor.'
+      error: 'O serviço de análise por imagem ainda não foi configurado no servidor.'
     });
   }
 
   try {
     const form = new IncomingForm({
       maxFileSize: 12 * 1024 * 1024,
+      maxFiles: 1,
+      allowEmptyFiles: false,
       keepExtensions: true
     });
 
     const [fields, files] = await new Promise((resolve, reject) => {
-      form.parse(req, (error, fields, files) => {
-        if (error) reject(error);
-        else resolve([fields, files]);
+      form.parse(req, (error, parsedFields, parsedFiles) => {
+        if (error) return reject(error);
+        resolve([parsedFields, parsedFiles]);
       });
     });
 
-    const file = Array.isArray(files.image)
+    const uploaded = Array.isArray(files.image)
       ? files.image[0]
       : files.image;
 
-    if (!file) {
+    if (!uploaded) {
       return res.status(400).json({
         error: 'Envie uma imagem no campo image.'
+      });
+    }
+
+    const mime = uploaded.mimetype || '';
+
+    if (!mime.startsWith('image/')) {
+      return res.status(400).json({
+        error: 'O arquivo precisa ser uma imagem.'
       });
     }
 
@@ -58,50 +66,36 @@ export default async function handler(req, res) {
       context = {};
     }
 
-    const bytes = await fs.readFile(file.filepath);
-    const mime = file.mimetype || 'image/jpeg';
-
-    if (!mime.startsWith('image/')) {
-      return res.status(400).json({
-        error: 'O arquivo precisa ser uma imagem.'
-      });
-    }
-
+    const bytes = await fs.readFile(uploaded.filepath);
     const dataUrl =
       'data:' + mime + ';base64,' + bytes.toString('base64');
 
     const prompt = `
 Você é um assistente de triagem agrícola.
 
-Examine a imagem e o contexto fornecido.
-Não afirme certeza nem recomende nomes comerciais,
-doses ou misturas de defensivos.
+Analise a imagem e o contexto fornecido. Responda em português do Brasil.
+Não declare um diagnóstico como certeza. Separe observações visíveis de
+hipóteses. Não indique nomes comerciais, doses, misturas ou aplicação de
+defensivos. Se a imagem não permitir conclusão, diga isso.
 
-Diferencie sinais visíveis de inferências.
-Se a foto não permitir conclusão, diga isso.
-
-Responda somente JSON válido neste formato:
+Retorne somente JSON válido neste formato:
 {
   "diagnosis": {
     "summary": "resumo em português",
-    "confidence": "baixa|moderada|alta",
-    "possibilities": [
-      {
-        "name": "hipótese",
-        "reason": "evidência e limitações"
-      }
-    ],
+    "confidence": "baixa, moderada ou alta",
     "observations": ["sinais realmente visíveis"],
+    "possibilities": [
+      {"name": "hipótese", "reason": "evidências e limitações"}
+    ],
     "next_steps": ["passos seguros para investigar"],
     "urgent_review": false
   }
 }
 
-Inclua no máximo 4 hipóteses.
-Prefira investigação, manejo cultural e avaliação profissional.
-Não prescreva pesticidas.
+Inclua no máximo quatro hipóteses. Prefira investigação, manejo cultural
+seguro e avaliação profissional. Não prescreva pesticidas.
 
-Contexto fornecido pelo usuário:
+Contexto informado:
 ${JSON.stringify(context)}
 `;
 
@@ -110,28 +104,23 @@ ${JSON.stringify(context)}
       {
         method: 'POST',
         headers: {
-          Authorization: 'Bearer ' + process.env.OPENAI_API_KEY,
+          Authorization: 'Bearer ' + apiKey,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           model: process.env.OPENAI_VISION_MODEL || 'gpt-4o-mini',
           temperature: 0.2,
-          response_format: {
-            type: 'json_object'
-          },
+          response_format: { type: 'json_object' },
           messages: [
             {
               role: 'system',
               content:
-                'Responda em português do Brasil. Você não substitui um agrônomo. Não prescreva pesticidas.'
+                'Responda em português do Brasil. Você auxilia na triagem, não substitui um agrônomo. Não prescreva defensivos.'
             },
             {
               role: 'user',
               content: [
-                {
-                  type: 'text',
-                  text: prompt
-                },
+                { type: 'text', text: prompt },
                 {
                   type: 'image_url',
                   image_url: {
@@ -142,35 +131,51 @@ ${JSON.stringify(context)}
               ]
             }
           ],
-          max_tokens: 1000
+          max_tokens: 1200
         })
       }
     );
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
-      return res.status(response.status).json({
-        error: 'O serviço de análise de imagem recusou a solicitação.'
+      console.error('Erro do serviço de análise:', response.status);
+
+      return res.status(502).json({
+        error: 'O serviço de análise recusou a solicitação. Confira a configuração da API.'
       });
     }
 
-    const content = data.choices?.[0]?.message?.content;
+    const content = data?.choices?.[0]?.message?.content;
 
     if (!content) {
       return res.status(502).json({
-        error: 'A análise não retornou um resultado válido.'
+        error: 'O serviço de análise não retornou um resultado válido.'
       });
     }
 
-    return res.status(200).json(JSON.parse(content));
+    let result;
 
+    try {
+      result = JSON.parse(content);
+    } catch {
+      return res.status(502).json({
+        error: 'O resultado recebido não estava em formato válido.'
+      });
+    }
+
+    if (!result || !result.diagnosis) {
+      return res.status(502).json({
+        error: 'A resposta não contém os dados esperados da análise.'
+      });
+    }
+
+    return res.status(200).json(result);
   } catch (error) {
+    console.error('Erro na análise da imagem:', error);
+
     return res.status(500).json({
-      error: 'Falha ao analisar a imagem.',
-      detail: process.env.NODE_ENV === 'development'
-        ? String(error)
-        : undefined
+      error: 'Falha ao analisar a imagem. Tente novamente.'
     });
   }
 }
