@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const $ = id => document.getElementById(id);
   const fileInputs = ['camera', 'galeria'];
 
-  let file = null;
-  let previewData = '';
+  let selectedFile = null;
+  let photoForHistory = '';
   let lastResult = null;
 
   Sitio.renderFruitSelects();
@@ -13,32 +13,74 @@ document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(location.search);
   if (params.get('fruta')) $('fruta').value = params.get('fruta');
 
-  function setFile(selectedFile) {
-    if (!selectedFile) return;
+  function compressForHistory(file) {
+    return new Promise(resolve => {
+      const reader = new FileReader();
 
-    if (!selectedFile.type.startsWith('image/')) {
+      reader.onerror = () => resolve('');
+
+      reader.onload = () => {
+        const image = new Image();
+
+        image.onerror = () => resolve('');
+        image.onload = () => {
+          const maxSide = 1000;
+          const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+          const canvas = document.createElement('canvas');
+
+          canvas.width = Math.max(1, Math.round(image.width * scale));
+          canvas.height = Math.max(1, Math.round(image.height * scale));
+
+          const context = canvas.getContext('2d');
+          if (!context) {
+            resolve('');
+            return;
+          }
+
+          context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+          try {
+            resolve(canvas.toDataURL('image/jpeg', 0.68));
+          } catch {
+            resolve('');
+          }
+        };
+
+        image.src = reader.result;
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function setFile(file) {
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
       Sitio.flash('Escolha um arquivo de imagem.', 'error');
       return;
     }
 
-    if (selectedFile.size > 12 * 1024 * 1024) {
-      Sitio.flash('A imagem deve ter no máximo 12 MB.', 'error');
+    if (file.size > 12 * 1024 * 1024) {
+      Sitio.flash('A imagem original deve ter no máximo 12 MB.', 'error');
       return;
     }
 
-    file = selectedFile;
+    selectedFile = file;
+    photoForHistory = '';
+    lastResult = null;
+    $('resultado').hidden = true;
 
-    const url = URL.createObjectURL(selectedFile);
-    $('preview').src = url;
+    const previewUrl = URL.createObjectURL(file);
+    const oldUrl = $('preview').dataset.objectUrl;
+
+    if (oldUrl) URL.revokeObjectURL(oldUrl);
+
+    $('preview').dataset.objectUrl = previewUrl;
+    $('preview').src = previewUrl;
     $('preview').hidden = false;
 
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      previewData = reader.result;
-    };
-
-    reader.readAsDataURL(selectedFile);
+    photoForHistory = await compressForHistory(file);
   }
 
   fileInputs.forEach(id => {
@@ -47,61 +89,60 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  $('limparFoto').onclick = () => {
-    file = null;
-    previewData = '';
+  $('limparFoto').addEventListener('click', () => {
+    selectedFile = null;
+    photoForHistory = '';
+    lastResult = null;
 
-    fileInputs.forEach(id => {
-      $(id).value = '';
-    });
+    fileInputs.forEach(id => { $(id).value = ''; });
 
-    $('preview').hidden = true;
+    const oldUrl = $('preview').dataset.objectUrl;
+    if (oldUrl) URL.revokeObjectURL(oldUrl);
+
+    $('preview').dataset.objectUrl = '';
     $('preview').removeAttribute('src');
-  };
+    $('preview').hidden = true;
+    $('resultado').hidden = true;
+    $('status').textContent = '';
+  });
 
   function localTriage() {
-    const symptoms = $('sintomas').value.toLowerCase();
+    const symptoms = $('sintomas').value.toLocaleLowerCase('pt-BR');
     const hypotheses = [];
 
     if (/pó branco|branco.*folha|oídio/.test(symptoms)) {
       hypotheses.push(
-        'Possibilidade de oídio ou outro crescimento superficial; ' +
-        'confira se o sinal pode ser removido suavemente e se aparece em outras folhas.'
+        'Pode ser oídio ou outro crescimento superficial. Observe se aparece em outras folhas e registre fotos nítidas.'
       );
     }
 
     if (/amarel|clorose|folha amarela/.test(symptoms)) {
       hypotheses.push(
-        'Amarelecimento pode estar associado a nutrição, irrigação, raízes ' +
-        'ou pragas; observe se ocorre em folhas novas ou antigas.'
+        'O amarelecimento pode estar associado a nutrição, irrigação, raízes, pragas ou doenças. Observe se atinge folhas novas ou antigas.'
       );
     }
 
     if (/mancha|ponto escuro|lesão/.test(symptoms)) {
       hypotheses.push(
-        'Manchas podem ter causas fúngicas, bacterianas, ambientais ou por ' +
-        'fitotoxicidade; formato, borda e distribuição ajudam a diferenciar.'
+        'Manchas podem ter causas infecciosas, ambientais ou estar relacionadas a fitotoxicidade. Formato, borda e distribuição ajudam na investigação.'
       );
     }
 
     if (/furo|mastig|comid|inseto|lagarta|pulg|cochonilha|ácaro/.test(symptoms)) {
       hypotheses.push(
-        'Investigue pragas: observe o verso das folhas, brotos e presença ' +
-        'de insetos, teias, melada ou fezes.'
+        'Investigue possíveis pragas observando o verso das folhas, brotos, ovos, teias, melada ou fezes.'
       );
     }
 
     if (/murch|seca|caindo|queda/.test(symptoms)) {
       hypotheses.push(
-        'Murcha e queda podem ocorrer por estresse hídrico, danos nas raízes, ' +
-        'pragas ou doenças vasculares. Confira a umidade do solo sem encharcar.'
+        'Murcha e queda podem ocorrer por estresse hídrico, danos nas raízes, pragas ou doenças. Confira a umidade do solo e a drenagem.'
       );
     }
 
     if (!hypotheses.length) {
       hypotheses.push(
-        'As informações ainda são insuficientes para listar uma hipótese específica. ' +
-        'Fotografe a planta inteira, o detalhe do sintoma e, se possível, o verso da folha.'
+        'As informações ainda são insuficientes para levantar uma hipótese específica. Fotografe a planta inteira, o detalhe do sintoma e, se possível, o verso da folha.'
       );
     }
 
@@ -110,19 +151,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderResult(result) {
     lastResult = result;
-
     $('resultado').hidden = false;
     $('resultText').innerHTML = result.html;
-
-    $('salvarDiagnostico').disabled = false;
-
-    $('resultado').scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    });
+    $('resultado').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  $('analisar').onclick = async () => {
+  $('analisar').addEventListener('click', async () => {
     if (!$('sintomas').value.trim()) {
       Sitio.flash('Descreva os sintomas antes de analisar.', 'error');
       return;
@@ -130,9 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const button = $('analisar');
     button.disabled = true;
-
-    $('status').innerHTML =
-      '<p class="notice">Analisando os dados…</p>';
+    $('status').innerHTML = '<p class="notice">Analisando os dados…</p>';
 
     try {
       const fruit = Sitio.fruits().find(item =>
@@ -141,9 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
       );
 
       const context = {
-        culture: fruit?.nome ||
-          $('fruta').selectedOptions[0]?.text ||
-          'Não informada',
+        culture: fruit?.nome || $('fruta').selectedOptions[0]?.text || 'Não informada',
         variety: fruit?.variedade || '',
         part: $('parte').value,
         symptoms: $('sintomas').value.trim(),
@@ -154,39 +184,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let species = null;
       let vision = null;
+      let speciesError = '';
+      let visionError = '';
 
-      if (file) {
+      if (selectedFile) {
         try {
-          const form = new FormData();
-          form.append('image', file);
-          form.append('context', JSON.stringify(context));
+          const formData = new FormData();
+          formData.append('image', selectedFile);
+          formData.append('context', JSON.stringify(context));
 
           const response = await fetch('/api/diagnosticar', {
             method: 'POST',
-            body: form
+            body: formData
           });
 
+          const data = await response.json().catch(() => ({}));
+
           if (response.ok) {
-            vision = await response.json();
+            vision = data;
+          } else {
+            visionError = data.error || 'A análise de imagem não está disponível.';
           }
-        } catch (error) {
-          console.warn('Análise visual indisponível:', error);
+        } catch {
+          visionError = 'Não foi possível conectar ao serviço de análise.';
         }
 
         try {
-          const form = new FormData();
-          form.append('image', file);
+          const formData = new FormData();
+          formData.append('image', selectedFile);
 
           const response = await fetch('/api/identificar', {
             method: 'POST',
-            body: form
+            body: formData
           });
 
+          const data = await response.json().catch(() => ({}));
+
           if (response.ok) {
-            species = await response.json();
+            species = data;
+          } else {
+            speciesError = data.error || 'A identificação botânica não está disponível.';
           }
-        } catch (error) {
-          console.warn('Identificação botânica indisponível:', error);
+        } catch {
+          speciesError = 'Não foi possível conectar ao serviço de identificação.';
         }
       }
 
@@ -194,80 +234,65 @@ document.addEventListener('DOMContentLoaded', () => {
       let html = '';
 
       if (species?.results?.length) {
-        html += '<h3>Possíveis espécies (PlantNet)</h3><ul>';
+        html += '<h3>Possíveis espécies</h3><ul>';
 
         html += species.results.slice(0, 3).map(item => {
-          const name =
-            item.species?.commonNames?.[0] ||
+          const commonName = item.species?.commonNames?.[0] ||
             item.species?.scientificNameWithoutAuthor ||
             'Espécie não identificada';
 
-          const scientific =
-            item.species?.scientificNameWithoutAuthor ||
+          const scientificName = item.species?.scientificNameWithoutAuthor ||
             'Não informado';
 
           const score = Math.round((item.score || 0) * 100);
 
-          return `<li>
-            <strong>${Sitio.esc(name)}</strong> —
-            nome científico: ${Sitio.esc(scientific)};
-            correspondência ${score}%
-          </li>`;
+          return `<li><strong>${Sitio.esc(commonName)}</strong> — nome científico: ${Sitio.esc(scientificName)}; correspondência estimada: ${score}%</li>`;
         }).join('');
 
         html += '</ul>';
+      } else if (selectedFile) {
+        html += `<h3>Identificação da planta</h3><p>${Sitio.esc(speciesError || 'Não foi possível identificar a espécie. Confira a configuração do serviço e tente novamente.')}</p>`;
       } else {
-        html += `
-          <h3>Identificação da planta</h3>
-          <p>Não foi possível consultar o serviço de identificação.
-          Confira a configuração do servidor e tente novamente.
-          A espécie não será adivinhada.</p>
-        `;
+        html += '<h3>Identificação da planta</h3><p>Nenhuma foto foi enviada. A análise abaixo usa apenas os sintomas descritos.</p>';
       }
 
       if (vision?.diagnosis) {
         const diagnosis = vision.diagnosis;
 
-        html += `
-          <h3>Análise visual assistida</h3>
-          <p>${Sitio.esc(diagnosis.summary || '')}</p>
-          <p><strong>Confiança estimada:</strong>
-          ${Sitio.esc(diagnosis.confidence || 'indeterminada')}</p>
-        `;
+        html += `<h3>Análise visual assistida</h3><p>${Sitio.esc(diagnosis.summary || '')}</p>`;
+        html += `<p><strong>Confiança estimada:</strong> ${Sitio.esc(diagnosis.confidence || 'indeterminada')}</p>`;
 
-        if (diagnosis.possibilities?.length) {
-          html += '<ul>' + diagnosis.possibilities.map(item => `
-            <li><strong>${Sitio.esc(item.name)}</strong>:
-            ${Sitio.esc(item.reason || '')}</li>
-          `).join('') + '</ul>';
+        if (Array.isArray(diagnosis.observations) && diagnosis.observations.length) {
+          html += '<h4>Observações visuais</h4><ul>';
+          html += diagnosis.observations.map(value => `<li>${Sitio.esc(value)}</li>`).join('');
+          html += '</ul>';
         }
 
-        if (diagnosis.next_steps?.length) {
-          html += '<h4>Próximos passos</h4><ul>' +
-            diagnosis.next_steps.map(step =>
-              `<li>${Sitio.esc(step)}</li>`
-            ).join('') +
-            '</ul>';
+        if (Array.isArray(diagnosis.possibilities) && diagnosis.possibilities.length) {
+          html += '<h4>Possibilidades a investigar</h4><ul>';
+          html += diagnosis.possibilities.map(item =>
+            `<li><strong>${Sitio.esc(item.name || 'Hipótese')}</strong>: ${Sitio.esc(item.reason || '')}</li>`
+          ).join('');
+          html += '</ul>';
+        }
+
+        if (Array.isArray(diagnosis.next_steps) && diagnosis.next_steps.length) {
+          html += '<h4>Próximos passos</h4><ul>';
+          html += diagnosis.next_steps.map(value => `<li>${Sitio.esc(value)}</li>`).join('');
+          html += '</ul>';
         }
       } else {
-        html += '<h3>Hipóteses iniciais a verificar</h3><ul>' +
-          hypotheses.map(item =>
-            `<li>${Sitio.esc(item)}</li>`
-          ).join('') +
-          '</ul>';
-
-        html += `
-          <p>O diagnóstico automático por imagem não está disponível
-          até configurar a API de análise no servidor. Esta lista é
-          uma triagem baseada no texto informado, não uma leitura da foto.</p>
-        `;
+        html += '<h3>Hipóteses iniciais a verificar</h3><ul>';
+        html += hypotheses.map(value => `<li>${Sitio.esc(value)}</li>`).join('');
+        html += '</ul>';
+        html += `<p>${Sitio.esc(visionError || 'A triagem textual não equivale a um diagnóstico por imagem.')}</p>`;
       }
 
       html += `
         <div class="notice">
-          <strong>Segurança:</strong> não aplique defensivo com base
-          somente neste resultado. Confirme o diagnóstico e a autorização
-          do produto para a cultura e finalidade, seguindo a bula e a orientação técnica.
+          <strong>Segurança:</strong> não aplique defensivo com base somente neste resultado.
+          Confirme o diagnóstico e a autorização do produto para a cultura e finalidade,
+          seguindo a bula e a orientação técnica.
         </div>
       `;
 
@@ -276,34 +301,45 @@ document.addEventListener('DOMContentLoaded', () => {
         context,
         species,
         vision,
-        photo: previewData
+        photo: photoForHistory
       });
 
-    } finally {
       $('status').textContent = '';
+    } catch (error) {
+      console.error(error);
+      Sitio.flash('Ocorreu um erro ao analisar os dados. Tente novamente.', 'error');
+    } finally {
       button.disabled = false;
     }
-  };
+  });
 
-  $('salvarDiagnostico').onclick = () => {
+  $('salvarDiagnostico').addEventListener('click', () => {
     if (!lastResult) return;
 
-    const all = Sitio.diagnoses();
+    try {
+      const records = Sitio.diagnoses();
 
-    all.unshift({
-      id: Sitio.id(),
-      date: Sitio.dateNow(),
-      culture: lastResult.context.culture,
-      context: lastResult.context,
-      html: lastResult.html,
-      photo: lastResult.photo || '',
-      species: lastResult.species || null,
-      vision: lastResult.vision || null
-    });
+      records.unshift({
+        id: Sitio.id(),
+        date: Sitio.dateNow(),
+        culture: lastResult.context.culture,
+        context: lastResult.context,
+        html: lastResult.html,
+        photo: lastResult.photo || '',
+        species: lastResult.species || null,
+        vision: lastResult.vision || null
+      });
 
-    Sitio.set('diagnosticos', all);
+      Sitio.set('diagnosticos', records);
+      Sitio.flash('Triagem salva no histórico.');
 
-    Sitio.flash('Diagnóstico/triagem salvo no histórico.');
-    $('salvarDiagnostico').disabled = true;
-  };
+      $('salvarDiagnostico').disabled = true;
+    } catch (error) {
+      console.error(error);
+      Sitio.flash(
+        'Não foi possível salvar. O armazenamento do navegador pode estar cheio; remova fotos antigas ou exporte um backup.',
+        'error'
+      );
+    }
+  });
 });
