@@ -16,12 +16,18 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const apps = Sitio.apps();
+    const cultureSelect = $('fruta');
+    if (!cultureSelect.value) {
+      Sitio.flash('Selecione a cultura.', 'error');
+      return;
+    }
 
-    apps.unshift({
+    const records = Sitio.apps();
+
+    records.unshift({
       id: Sitio.id(),
-      fruta: $('fruta').selectedOptions[0].text,
-      frutaId: $('fruta').value,
+      fruta: cultureSelect.selectedOptions[0].text,
+      frutaId: cultureSelect.value,
       produto: $('produto').value.trim(),
       quantidade: $('qtd').value,
       unidade: $('unidade').value,
@@ -34,10 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
       createdAt: new Date().toISOString()
     });
 
-    Sitio.set('aplicacoes', apps);
+    Sitio.set('aplicacoes', records);
     event.target.reset();
     $('data').value = Sitio.dateNow();
-
     Sitio.flash('Registro salvo no histórico deste navegador.');
   });
 });
