@@ -1,50 +1,52 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#236b36">
-<title>📋 Histórico — Sítio Frutíferas</title>
-<link rel="manifest" href="../manifest.json">
-<link rel="stylesheet" href="../css/estilo.css">
-<script defer src="../js/app.js"></script>
-<script defer src="../js/historico.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#236b36">
+  <title>Histórico — Sítio Frutíferas</title>
+  <link rel="manifest" href="../manifest.json">
+  <link rel="stylesheet" href="../css/estilo.css">
+  <script defer src="../js/app.js"></script>
+  <script defer src="../js/historico.js"></script>
 </head>
 <body>
-<header><div class="head">
-<a href="../index.html">← Voltar</a>
-<h1>📋 Histórico</h1>
-<span>🌿 Sítio Frutíferas</span>
-</div></header>
-<main class="wrap">
-<nav id="nav" class="nav" aria-label="Navegação"></nav>
-<section class="card">
-<h2>Histórico do pomar</h2>
-<div class="two">
-<div>
-<label for="tipo">Tipo de registro</label>
-<select id="tipo">
-<option value="todos">Todos</option>
-<option value="aplicacoes">Aplicações</option>
-<option value="diagnosticos">Fotos e diagnósticos</option>
-</select>
-</div>
-<div>
-<label for="filtro">Pesquisar</label>
-<input id="filtro" placeholder="Cultura, produto ou sintoma">
-</div>
-</div>
-<div class="actions">
-<button id="backup">Exportar backup completo</button>
-<label class="button secondary" for="restore">Restaurar backup JSON</label>
-<input id="restore" type="file" accept="application/json" hidden>
-</div>
-<div id="lista"></div>
-</section>
-<div class="notice">
-Os registros e as fotos são guardados neste navegador. Limpar os dados do navegador ou trocar de aparelho pode apagá-los; exporte backups regularmente.
-</div>
-</main>
-<footer>Sítio Frutíferas • Registre observações e confirme recomendações técnicas antes de aplicar produtos.</footer>
+  <header>
+    <div class="head">
+      <a href="../index.html">← Voltar</a>
+      <h1>📋 Histórico</h1>
+      <span>🌿 Sítio Frutíferas</span>
+    </div>
+  </header>
+  <main class="wrap">
+    <nav id="nav" class="nav" aria-label="Navegação"></nav>
+    <section class="card">
+      <h2>Histórico do pomar</h2>
+      <div class="two">
+        <div>
+          <label for="tipo">Tipo de registro</label>
+          <select id="tipo">
+            <option value="todos">Todos</option>
+            <option value="aplicacoes">Aplicações</option>
+            <option value="diagnosticos">Fotos e diagnósticos</option>
+          </select>
+        </div>
+        <div>
+          <label for="filtro">Pesquisar</label>
+          <input id="filtro" placeholder="Cultura, produto ou sintoma">
+        </div>
+      </div>
+      <div class="actions">
+        <button id="backup">Exportar backup completo</button>
+        <label class="button secondary" for="restore">Restaurar backup JSON</label>
+        <input id="restore" type="file" accept="application/json" hidden>
+      </div>
+      <div id="lista"></div>
+    </section>
+    <div class="notice">
+      Os registros ficam neste navegador. Limpar os dados do navegador ou trocar de aparelho pode apagá-los. Exporte backups regularmente.
+    </div>
+  </main>
+  <footer>Sítio Frutíferas</footer>
 </body>
 </html>
