@@ -4,41 +4,95 @@ document.addEventListener('DOMContentLoaded', () => {
   const $ = id => document.getElementById(id);
   const form = $('formFruta');
 
-  function clear() {
+  function clearForm() {
     form.reset();
     $('id').value = '';
   }
 
-  function render() {
-    const query = $('filtro').value.toLowerCase();
+  function normalize(value) {
+    return String(value || '')
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLocaleLowerCase('pt-BR')
+      .trim();
+  }
 
-    const list = Sitio.fruits().filter(f =>
-      (f.nome + ' ' + (f.talhao || '') + ' ' +
-       (f.variedade || '')).toLowerCase().includes(query)
+  function productBlock(product, fruitName) {
+    const status = product.statusIndicacao || 'Pendente de conferência';
+
+    return `
+      <article class="item">
+        <h4>${Sitio.esc(product.nome)}</h4>
+        <p><strong>Cultura:</strong> ${Sitio.esc(fruitName)}</p>
+        <p><strong>Finalidade/alvo:</strong> ${Sitio.esc(product.alvo || 'Conferir na documentação')}</p>
+        <p><strong>Dose:</strong> ${Sitio.esc(product.dose || 'Ainda não preenchida')}</p>
+        <p><strong>Modo de aplicação:</strong> ${Sitio.esc(product.modoAplicacao || 'Ainda não preenchido')}</p>
+        <p><strong>Situação:</strong> ${Sitio.esc(status)}</p>
+        ${product.fonte ? `<p><a href="${Sitio.esc(product.fonte)}" target="_blank" rel="noopener">Consultar fonte</a></p>` : ''}
+        <div class="actions">
+          <a class="button secondary" href="defensivos.html?edit=${encodeURIComponent(product.id)}">Editar indicação</a>
+        </div>
+      </article>
+    `;
+  }
+
+  function render() {
+    const query = $('filtro').value.toLocaleLowerCase('pt-BR');
+
+    const list = Sitio.fruits().filter(fruit =>
+      [
+        fruit.nome,
+        fruit.talhao,
+        fruit.variedade,
+        fruit.fase
+      ].join(' ').toLocaleLowerCase('pt-BR').includes(query)
     );
 
     $('lista').innerHTML = list.length
-      ? list.map(f => `
-        <article class="item">
-          <h3>${Sitio.esc(f.nome)}
-            ${f.variedade ? '— ' + Sitio.esc(f.variedade) : ''}
-          </h3>
-          <div class="muted">
-            ${Sitio.esc(f.talhao || 'Sem talhão')} •
-            ${Sitio.esc(f.quantidade || 'Quantidade não informada')} plantas •
-            ${Sitio.esc(f.fase || 'Fase não informada')}
-          </div>
-          <p>${Sitio.esc(f.obs || 'Sem observações')}</p>
-          <div class="actions">
-            <button class="secondary" data-edit="${Sitio.esc(f.id)}">Editar</button>
-            <a class="button secondary"
-               href="busca.html?fruta=${encodeURIComponent(f.id)}">
-              Fotografar/diagnosticar
-            </a>
-            <button class="danger" data-del="${Sitio.esc(f.id)}">Excluir</button>
-          </div>
-        </article>
-      `).join('')
+      ? list.map(fruit => {
+          const associated = Sitio.productsForFruit(fruit.nome);
+
+          // Somente o status explícito de conferência da bula vigente
+          // é considerado confirmado pelo usuário.
+          const confirmed = associated.filter(product =>
+            product.statusIndicacao === 'Confirmado após conferência da bula vigente'
+          );
+
+          const pending = associated.filter(product => !confirmed.includes(product));
+
+          return `
+            <article class="item">
+              <h3>${Sitio.esc(fruit.nome)} ${fruit.variedade ? '— ' + Sitio.esc(fruit.variedade) : ''}</h3>
+              <div class="muted">
+                ${Sitio.esc(fruit.talhao || 'Sem talhão')} •
+                ${Sitio.esc(fruit.quantidade || 'Quantidade não informada')} plantas •
+                ${Sitio.esc(fruit.fase || 'Fase não informada')}
+              </div>
+              <p><strong>Idade:</strong> ${Sitio.esc(fruit.idade || 'Não informada')}</p>
+              <p>${Sitio.esc(fruit.obs || 'Sem observações')}</p>
+
+              <h4>Indicações confirmadas no cadastro</h4>
+              ${
+                confirmed.length
+                  ? confirmed.map(product => productBlock(product, fruit.nome)).join('')
+                  : '<p class="empty">Nenhum produto foi marcado como confirmado para esta cultura. Isso não significa que não existam produtos registrados; significa que o cadastro ainda não tem uma indicação conferida.</p>'
+              }
+
+              ${
+                pending.length
+                  ? `<h4>Indicações pendentes de conferência</h4>${pending.map(product => productBlock(product, fruit.nome)).join('')}`
+                  : ''
+              }
+
+              <div class="actions">
+                <button class="secondary" data-edit="${Sitio.esc(fruit.id)}">Editar cultura</button>
+                <a class="button secondary" href="busca.html?fruta=${encodeURIComponent(fruit.id)}">Fotografar/diagnosticar</a>
+                <a class="button secondary" href="defensivos.html">Ver produtos</a>
+                <button class="danger" data-del="${Sitio.esc(fruit.id)}">Excluir</button>
+              </div>
+            </article>
+          `;
+        }).join('')
       : '<p class="empty">Nenhuma cultura encontrada.</p>';
   }
 
@@ -46,38 +100,38 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
 
     const list = Sitio.fruits();
-
     const obj = {
       id: $('id').value || Sitio.id(),
       nome: $('nome').value.trim(),
       variedade: $('variedade').value.trim(),
       quantidade: $('quantidade').value,
-      talhao: $('talhao').value.trim(),
       idade: $('idade').value.trim(),
+      talhao: $('talhao').value.trim(),
       fase: $('fase').value,
       obs: $('obs').value.trim()
     };
 
-    if (!obj.nome) return;
+    if (!obj.nome) {
+      Sitio.flash('Informe o nome da cultura.', 'error');
+      return;
+    }
 
-    const index = list.findIndex(
-      item => String(item.id) === String(obj.id)
-    );
+    const existingIndex = list.findIndex(item => String(item.id) === String(obj.id));
 
-    if (index >= 0) {
-      list[index] = obj;
+    if (existingIndex >= 0) {
+      list[existingIndex] = obj;
     } else {
       list.push(obj);
     }
 
     Sitio.set('frutas', list);
-    clear();
+    clearForm();
     render();
     Sitio.flash('Cultura salva com sucesso.');
   });
 
-  $('limpar').onclick = clear;
-  $('filtro').oninput = render;
+  $('limpar').addEventListener('click', clearForm);
+  $('filtro').addEventListener('input', render);
 
   $('lista').addEventListener('click', event => {
     const button = event.target.closest('button');
@@ -85,15 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const list = Sitio.fruits();
 
-    const index = list.findIndex(item =>
-      String(item.id) === button.dataset.edit ||
-      String(item.id) === button.dataset.del
-    );
-
-    if (index < 0) return;
-
     if (button.dataset.edit) {
-      const fruit = list[index];
+      const fruit = list.find(item => String(item.id) === button.dataset.edit);
+      if (!fruit) return;
 
       Object.keys(fruit).forEach(key => {
         if ($(key)) $(key).value = fruit[key] ?? '';
@@ -101,10 +149,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       $('id').value = fruit.id;
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
 
-    } else if (confirm('Excluir esta cultura? Os registros históricos não serão apagados.')) {
-      list.splice(index, 1);
-      Sitio.set('frutas', list);
+    if (button.dataset.del) {
+      if (!confirm('Excluir esta cultura? Os registros históricos não serão apagados.')) return;
+
+      const updated = list.filter(item => String(item.id) !== button.dataset.del);
+      Sitio.set('frutas', updated);
       render();
       Sitio.flash('Cultura excluída.');
     }
