@@ -1,212 +1,350 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   Sitio.nav();
+  Sitio.seedCatalog();
 
   const $ = id => document.getElementById(id);
   const form = $('formFruta');
 
-  function normalizar(texto) {
-    return String(texto || '')
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .trim();
-  }
+  const norm = s => String(s || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLocaleLowerCase('pt-BR')
+    .trim();
 
-  function numero(campo) {
-    const valor = String($(campo).value || '').replace(',', '.');
-    return Number(valor);
-  }
+  const val = (obj, key, fallback = '') =>
+    obj && obj[key] != null ? obj[key] : fallback;
 
-  // CONVERSOR: dose em mL por volume de água.
-  $('convCalcular').addEventListener('click', () => {
-    const dose = numero('convDose');
-    const base = numero('convBase');
-    const alvo = numero('convAlvo');
-    const resultado = $('convResultado');
-
-    if (
-      !Number.isFinite(dose) ||
-      !Number.isFinite(base) ||
-      !Number.isFinite(alvo) ||
-      dose < 0 ||
-      base <= 0 ||
-      alvo <= 0 ||
-      $('convDose').value.trim() === '' ||
-      $('convBase').value.trim() === '' ||
-      $('convAlvo').value.trim() === ''
-    ) {
-      resultado.textContent =
-        'Preencha a dose em mL e os dois volumes de água com valores válidos.';
-      return;
-    }
-
-    const calculado = dose * alvo / base;
-
-    const formatado = calculado.toLocaleString('pt-BR', {
-      maximumFractionDigits: 6
-    });
-
-    resultado.innerHTML =
-      '<strong>Resultado matemático: ' +
-      formatado +
-      ' mL de produto para ' +
-      alvo.toLocaleString('pt-BR') +
-      ' litros de água.</strong>';
-  });
-
-  $('convLimpar').addEventListener('click', () => {
-    $('convDose').value = '';
-    $('convBase').value = '';
-    $('convAlvo').value = '';
-    $('convResultado').textContent =
-      'Informe os valores para calcular a proporção.';
-  });
-
-  // CADASTRO DAS FRUTAS
-  function clear() {
+  function clearForm() {
     form.reset();
     $('id').value = '';
   }
 
-  function fruitUseText(produto, fruta) {
-    const culturas = String(produto.cultura || '')
-      .split(';')
-      .map(item => item.trim())
-      .filter(Boolean);
+  // Junta os produtos do catálogo e do estoque.
+  // Se o mesmo produto estiver nos dois, não duplica na seleção.
+  function availableProducts() {
+    const catalog = Sitio.products().filter(p => p && p.nome);
+    const stock = Sitio.stock().filter(p => p && p.nome);
+    const byName = new Map();
 
-    const nomeFruta = normalizar(fruta);
-
-    const encontrada = culturas.find(item => {
-      const cultura = normalizar(item);
-
-      if (nomeFruta === 'limao') {
-        return cultura.startsWith('limao') ||
-               cultura.startsWith('citros');
-      }
-
-      return cultura.startsWith(nomeFruta);
+    catalog.forEach(p => {
+      byName.set(norm(p.nome), {
+        ref: 'p:' + String(p.id),
+        id: String(p.id),
+        source: 'catalog',
+        nome: p.nome,
+        categoria: p.categoria || '',
+        ingrediente: p.ingrediente || '',
+        alvo: p.alvo || '',
+        dose: p.dose || '',
+        modoAplicacao: p.modoAplicacao || '',
+        statusIndicacao:
+          p.statusIndicacao || 'Pendente de conferência',
+        registro: p.registro || '',
+        fonte: p.fonte || '',
+        obs: p.obs || '',
+        estoqueQtd: null,
+        estoqueUnidade: ''
+      });
     });
 
-    return encontrada || fruta;
+    stock.forEach(s => {
+      const key = norm(s.nome);
+      const existing = byName.get(key);
+
+      if (existing) {
+        existing.estoqueQtd = s.qtd ?? s.quantidade ?? null;
+        existing.estoqueUnidade = s.unidade || '';
+      } else {
+        byName.set(key, {
+          ref: 's:' + String(s.id),
+          id: String(s.id),
+          source: 'stock',
+          nome: s.nome,
+          categoria: s.categoria || '',
+          ingrediente: s.ingrediente || '',
+          alvo: '',
+          dose: '',
+          modoAplicacao: '',
+          statusIndicacao: 'Pendente de conferência',
+          registro: '',
+          fonte: '',
+          obs: s.obs || '',
+          estoqueQtd: s.qtd ?? s.quantidade ?? null,
+          estoqueUnidade: s.unidade || ''
+        });
+      }
+    });
+
+    return [...byName.values()].sort(
+      (a, b) => a.nome.localeCompare(b.nome, 'pt-BR')
+    );
   }
 
-  function productBlock(produto, fruta) {
-    const status = produto.statusIndicacao ||
-      'Pendente de conferência';
+  // Mantém as associações que já existiam no catálogo.
+  function autoAssociations(fruit) {
+    return Sitio.productsForFruit(fruit.nome).map(p => ({
+      ref: 'p:' + String(p.id),
+      productId: String(p.id),
+      productName: p.nome,
+      categoria: p.categoria || '',
+      ingrediente: p.ingrediente || '',
+      alvo: p.alvo || '',
+      dose: p.dose || '',
+      modoAplicacao: p.modoAplicacao || '',
+      statusIndicacao:
+        p.statusIndicacao || 'Pendente de conferência',
+      registro: p.registro || '',
+      fonte: p.fonte || '',
+      obs: p.obs || '',
+      _auto: true
+    }));
+  }
 
-    const dose = produto.dose ||
-      'Em branco — preencher depois de conferir a bula ou ficha técnica';
+  // Junta associações salvas e associações antigas do catálogo.
+  function associations(fruit) {
+    const saved = Array.isArray(fruit.produtosAssociados)
+      ? fruit.produtosAssociados
+      : [];
 
-    const modo = produto.modoAplicacao ||
-      'Em branco — preencher conforme o rótulo ou a bula';
+    const result = [...saved];
+
+    const seen = new Set(saved.map(a =>
+      a.ref ||
+      (a.productId
+        ? 'p:' + a.productId
+        : 'name:' + norm(a.productName))
+    ));
+
+    autoAssociations(fruit).forEach(a => {
+      if (!seen.has(a.ref)) result.push(a);
+    });
+
+    return result;
+  }
+
+  function optionList(fruit) {
+    const chosen = new Set(
+      associations(fruit).map(a =>
+        a.ref ||
+        (a.productId
+          ? 'p:' + a.productId
+          : 'name:' + norm(a.productName))
+      )
+    );
+
+    const options = availableProducts().filter(
+      p => !chosen.has(p.ref)
+    );
+
+    return '<option value="">Selecione um produto do catálogo ou estoque...</option>' +
+      options.map(p =>
+        `<option value="${Sitio.esc(p.ref)}">${
+          Sitio.esc(p.nome)
+        }${
+          p.source === 'stock'
+            ? ' — somente no estoque'
+            : ''
+        }</option>`
+      ).join('');
+  }
+
+  function productBlock(a, fruit) {
+    const ref = a.ref ||
+      (a.productId
+        ? 'p:' + a.productId
+        : 'name:' + norm(a.productName));
+
+    const isAuto = !!a._auto;
+
+    const inventory = availableProducts().find(p =>
+      p.ref === ref ||
+      (a.productId && p.id === String(a.productId)) ||
+      norm(p.nome) === norm(a.productName)
+    );
+
+    const name =
+      a.productName || inventory?.nome || 'Produto sem nome';
+
+    const stockLabel =
+      inventory && inventory.estoqueQtd !== null
+        ? `<p class="muted">
+             <strong>Estoque:</strong>
+             ${Sitio.esc(inventory.estoqueQtd)}
+             ${Sitio.esc(inventory.estoqueUnidade || '')}
+           </p>`
+        : '';
 
     return `
-      <article class="item">
-        <h4>${Sitio.esc(produto.nome || 'Produto sem nome')}</h4>
+      <article class="item product-association"
+        data-fruit-id="${Sitio.esc(fruit.id)}"
+        data-assoc-ref="${Sitio.esc(ref)}">
 
-        <p>
-          <strong>Cultura relacionada:</strong>
-          ${Sitio.esc(fruitUseText(produto, fruta))}
-        </p>
+        <h4>
+          ${Sitio.esc(name)}
+          ${isAuto
+            ? '<span class="pill">Associação existente</span>'
+            : ''}
+        </h4>
 
-        <p>
-          <strong>Para que serve:</strong>
-          ${Sitio.esc(produto.alvo || 'Finalidade a confirmar no rótulo')}
-        </p>
+        ${stockLabel}
 
-        <p>
-          <strong>Dose:</strong>
-          ${Sitio.esc(dose)}
-        </p>
+        <label>Finalidade / praga / doença</label>
+        <textarea data-assoc-field="alvo" rows="2"
+          placeholder="Preencha quando confirmar">${Sitio.esc(
+            val(a, 'alvo')
+          )}</textarea>
 
-        <p>
-          <strong>Modo de aplicação:</strong>
-          ${Sitio.esc(modo)}
-        </p>
+        <div class="two">
+          <div>
+            <label>Dose conforme rótulo/bula</label>
+            <textarea data-assoc-field="dose" rows="2"
+              placeholder="Deixe em branco se não confirmou">${Sitio.esc(
+                val(a, 'dose')
+              )}</textarea>
+          </div>
 
-        <p>
-          <strong>Situação:</strong>
-          ${Sitio.esc(status)}
-        </p>
+          <div>
+            <label>Modo / época / intervalo</label>
+            <textarea data-assoc-field="modoAplicacao" rows="2"
+              placeholder="Informação de aplicação">${Sitio.esc(
+                val(a, 'modoAplicacao')
+              )}</textarea>
+          </div>
+        </div>
 
-        ${
-          produto.fonte
-            ? `<p><a href="${Sitio.esc(produto.fonte)}"
-                target="_blank" rel="noopener">Consultar fonte</a></p>`
-            : ''
-        }
+        <div class="two">
+          <div>
+            <label>Situação da informação</label>
+            <select data-assoc-field="statusIndicacao">
+              ${[
+                'Pendente de conferência',
+                'Confirmado na bula consultada; conferir versão vigente',
+                'Confirmado após conferência da bula vigente',
+                'Uso nutricional — conferir rótulo/ficha técnica',
+                'Não usar nesta cultura até confirmar autorização'
+              ].map(s => `
+                <option ${
+                  val(a, 'statusIndicacao', 'Pendente de conferência') === s
+                    ? 'selected'
+                    : ''
+                }>${Sitio.esc(s)}</option>
+              `).join('')}
+            </select>
+          </div>
+
+          <div>
+            <label>Link da bula / fonte</label>
+            <input data-assoc-field="fonte" type="url"
+              value="${Sitio.esc(val(a, 'fonte'))}"
+              placeholder="https://...">
+          </div>
+        </div>
+
+        <label>Observações</label>
+        <textarea data-assoc-field="obs" rows="2"
+          placeholder="Notas para esta fruta">${Sitio.esc(
+            val(a, 'obs')
+          )}</textarea>
 
         <div class="actions">
-          <a class="button secondary"
-             href="defensivos.html?edit=${encodeURIComponent(produto.id)}">
-            Editar produto e dose
-          </a>
+          <button type="button"
+            data-save-association="${Sitio.esc(ref)}">
+            Salvar alterações
+          </button>
+
+          <button type="button" class="danger"
+            data-remove-association="${Sitio.esc(ref)}">
+            Desassociar da fruta
+          </button>
         </div>
+
+        <p class="muted">
+          A associação não altera nem exclui o cadastro original.
+          Confirme a autorização e a dose na bula vigente antes de aplicar.
+        </p>
       </article>
     `;
   }
 
   function render() {
-    const busca = normalizar($('filtro').value);
+    const q = norm($('filtro').value);
 
-    const frutas = Sitio.fruits().filter(fruta =>
-      normalizar([
-        fruta.nome,
-        fruta.variedade,
-        fruta.talhao
-      ].join(' ')).includes(busca)
+    const list = Sitio.fruits().filter(f =>
+      norm([f.nome, f.talhao, f.variedade].join(' ')).includes(q)
     );
 
-    $('lista').innerHTML = frutas.length
-      ? frutas.map(fruta => {
-          const produtos = Sitio.productsForFruit(fruta.nome);
+    $('lista').innerHTML = list.length
+      ? list.map(f => {
+          const assoc = associations(f);
 
           return `
-            <article class="item">
+            <article class="item fruit-item">
               <h3>
-                ${Sitio.esc(fruta.nome)}
-                ${fruta.variedade
-                  ? ' — ' + Sitio.esc(fruta.variedade)
+                ${Sitio.esc(f.nome)}
+                ${f.variedade
+                  ? ' — ' + Sitio.esc(f.variedade)
                   : ''}
               </h3>
 
-              <p class="muted">
-                ${Sitio.esc(fruta.talhao || 'Sem talhão')}
-                • ${Sitio.esc(fruta.quantidade || 'Quantidade não informada')}
+              <div class="muted">
+                ${Sitio.esc(f.talhao || 'Sem talhão')}
+                • ${Sitio.esc(f.quantidade || 'Quantidade não informada')}
                 plantas
-                • ${Sitio.esc(fruta.fase || 'Fase não informada')}
-              </p>
+                • ${Sitio.esc(f.fase || 'Fase não informada')}
+              </div>
 
-              <p>${Sitio.esc(fruta.obs || 'Sem observações')}</p>
+              <p>${Sitio.esc(f.obs || 'Sem observações')}</p>
 
-              <h4>Produtos relacionados a esta fruta</h4>
+              <h4>Produtos desta fruta</h4>
 
               ${
-                produtos.length
-                  ? produtos.map(produto =>
-                      productBlock(produto, fruta.nome)
-                    ).join('')
-                  : `
-                    <p class="empty">
-                      Ainda não há produtos associados a esta cultura
-                      no catálogo. Abra “Ver produtos” para conferir
-                      e cadastrar as associações necessárias.
-                    </p>
-                  `
+                assoc.length
+                  ? assoc.map(a => productBlock(a, f)).join('')
+                  : '<p class="empty">Nenhum produto associado ainda. Escolha um produto do catálogo ou do estoque abaixo.</p>'
               }
 
+              <section class="card add-product-box">
+                <h4>➕ Adicionar produto a ${Sitio.esc(f.nome)}</h4>
+
+                <label>Produto do catálogo ou estoque</label>
+
+                <select data-product-select="${Sitio.esc(f.id)}">
+                  ${optionList(f)}
+                </select>
+
+                <div class="actions">
+                  <button type="button"
+                    data-add-product="${Sitio.esc(f.id)}">
+                    Adicionar à fruta
+                  </button>
+                </div>
+
+                <p class="muted">
+                  A lista reúne os produtos de “Produtos e defensivos”
+                  e os itens que existem somente no “Estoque”.
+                  Cadastre o produto e atualize esta página para ele aparecer.
+                </p>
+              </section>
+
               <div class="actions">
-                <button class="secondary" data-edit="${Sitio.esc(fruta.id)}">
+                <button type="button" class="secondary"
+                  data-edit-fruit="${Sitio.esc(f.id)}">
                   Editar cultura
                 </button>
 
-                <a class="button secondary" href="defensivos.html">
-                  Ver produtos
+                <a class="button secondary"
+                  href="busca.html?fruta=${encodeURIComponent(f.id)}">
+                  Fotografar/diagnosticar
                 </a>
 
-                <button class="danger" data-del="${Sitio.esc(fruta.id)}">
-                  Excluir
+                <a class="button secondary" href="defensivos.html">
+                  Produtos e defensivos
+                </a>
+
+                <button type="button" class="danger"
+                  data-delete-fruit="${Sitio.esc(f.id)}">
+                  Excluir cultura
                 </button>
               </div>
             </article>
@@ -215,13 +353,95 @@ document.addEventListener('DOMContentLoaded', () => {
       : '<p class="empty">Nenhuma cultura encontrada.</p>';
   }
 
-  form.addEventListener('submit', event => {
-    event.preventDefault();
+  function findFruit(id) {
+    return Sitio.fruits().find(
+      f => String(f.id) === String(id)
+    );
+  }
 
-    const lista = Sitio.fruits();
+  function saveAssociationFromCard(card, ref) {
+    const fruitId = card.dataset.fruitId;
+    const all = Sitio.fruits();
+    const index = all.findIndex(
+      f => String(f.id) === String(fruitId)
+    );
 
-    const objeto = {
-      id: $('id').value || Sitio.id(),
+    if (index < 0) return;
+
+    const fruit = all[index];
+
+    const existing = associations(fruit).find(a =>
+      (a.ref ||
+        (a.productId
+          ? 'p:' + a.productId
+          : 'name:' + norm(a.productName))) === ref
+    );
+
+    if (!existing) return;
+
+    const product = availableProducts().find(p => p.ref === ref);
+
+    const updated = {
+      ref,
+      productId: product?.source === 'catalog'
+        ? product.id
+        : (existing.productId || ''),
+      stockId: product?.source === 'stock'
+        ? product.id
+        : (existing.stockId || ''),
+      productName: product?.nome || existing.productName || '',
+      categoria: product?.categoria || existing.categoria || '',
+      ingrediente: product?.ingrediente || existing.ingrediente || '',
+      alvo: existing.alvo || '',
+      dose: existing.dose || '',
+      modoAplicacao: existing.modoAplicacao || '',
+      statusIndicacao:
+        existing.statusIndicacao || 'Pendente de conferência',
+      fonte: existing.fonte || '',
+      obs: existing.obs || '',
+      registro: existing.registro || ''
+    };
+
+    card.querySelectorAll('[data-assoc-field]').forEach(input => {
+      updated[input.dataset.assocField] = input.value.trim();
+    });
+
+    const saved = Array.isArray(fruit.produtosAssociados)
+      ? [...fruit.produtosAssociados]
+      : [];
+
+    const pos = saved.findIndex(a =>
+      (a.ref ||
+        (a.productId
+          ? 'p:' + a.productId
+          : 'name:' + norm(a.productName))) === ref
+    );
+
+    if (pos >= 0) saved[pos] = updated;
+    else saved.push(updated);
+
+    all[index] = {
+      ...fruit,
+      produtosAssociados: saved
+    };
+
+    Sitio.set('frutas', all);
+    Sitio.flash('Informações do produto salvas para esta fruta.');
+    render();
+  }
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const list = Sitio.fruits();
+    const id = $('id').value || Sitio.id();
+    const previous = list.find(
+      f => String(f.id) === String(id)
+    ) || {};
+
+    const obj = {
+      ...previous,
+      id,
       nome: $('nome').value.trim(),
       variedade: $('variedade').value.trim(),
       quantidade: $('quantidade').value,
@@ -231,59 +451,197 @@ document.addEventListener('DOMContentLoaded', () => {
       obs: $('obs').value.trim()
     };
 
-    if (!objeto.nome) return;
+    if (!obj.nome) return;
 
-    const indice = lista.findIndex(
-      item => String(item.id) === String(objeto.id)
+    const index = list.findIndex(
+      f => String(f.id) === String(id)
     );
 
-    if (indice >= 0) {
-      lista[indice] = { ...lista[indice], ...objeto };
-    } else {
-      lista.push(objeto);
-    }
+    if (index >= 0) list[index] = obj;
+    else list.push(obj);
 
-    Sitio.set('frutas', lista);
-    clear();
+    Sitio.set('frutas', list);
+    clearForm();
     render();
     Sitio.flash('Cultura salva com sucesso.');
   });
 
-  $('limpar').addEventListener('click', clear);
-  $('filtro').addEventListener('input', render);
+  $('limpar').onclick = clearForm;
+  $('filtro').oninput = render;
 
-  $('lista').addEventListener('click', event => {
-    const botao = event.target.closest('button');
-    if (!botao) return;
+  $('lista').addEventListener('click', e => {
+    const button = e.target.closest('button');
+    if (!button) return;
 
-    const lista = Sitio.fruits();
-
-    if (botao.dataset.edit) {
-      const fruta = lista.find(
-        item => String(item.id) === String(botao.dataset.edit)
+    // Adicionar produto do catálogo ou do estoque à fruta.
+    if (button.dataset.addProduct) {
+      const fruit = findFruit(button.dataset.addProduct);
+      const select = [...$('lista').querySelectorAll(
+        '[data-product-select]'
+      )].find(el =>
+        el.dataset.productSelect === button.dataset.addProduct
       );
 
-      if (!fruta) return;
+      const ref = select?.value;
 
-      Object.keys(fruta).forEach(chave => {
-        if ($(chave)) $(chave).value = fruta[chave] ?? '';
+      if (!fruit || !ref) {
+        Sitio.flash('Selecione um produto primeiro.', 'error');
+        return;
+      }
+
+      const product = availableProducts().find(p => p.ref === ref);
+
+      if (!product) {
+        Sitio.flash(
+          'Produto não encontrado. Atualize a página e tente novamente.',
+          'error'
+        );
+        return;
+      }
+
+      const all = Sitio.fruits();
+      const index = all.findIndex(
+        f => String(f.id) === String(fruit.id)
+      );
+
+      const saved = Array.isArray(all[index].produtosAssociados)
+        ? [...all[index].produtosAssociados]
+        : [];
+
+      const already = associations(all[index]).some(a =>
+        (a.ref ||
+          (a.productId
+            ? 'p:' + a.productId
+            : 'name:' + norm(a.productName))) === ref
+      );
+
+      if (already) {
+        Sitio.flash('Esse produto já está associado a esta fruta.', 'error');
+        return;
+      }
+
+      saved.push({
+        ref,
+        productId: product.source === 'catalog' ? product.id : '',
+        stockId: product.source === 'stock' ? product.id : '',
+        productName: product.nome,
+        categoria: product.categoria || '',
+        ingrediente: product.ingrediente || '',
+        alvo: product.alvo || '',
+        dose: product.dose || '',
+        modoAplicacao: product.modoAplicacao || '',
+        statusIndicacao:
+          product.statusIndicacao || 'Pendente de conferência',
+        registro: product.registro || '',
+        fonte: product.fonte || '',
+        obs: product.obs || ''
       });
 
-      $('id').value = fruta.id;
+      all[index] = {
+        ...all[index],
+        produtosAssociados: saved
+      };
+
+      Sitio.set('frutas', all);
+      render();
+      Sitio.flash('Produto associado à fruta.');
+      return;
+    }
+
+    // Salvar edição dos dados específicos daquela fruta.
+    if (button.dataset.saveAssociation) {
+      const card = button.closest('.product-association');
+      if (card) {
+        saveAssociationFromCard(
+          card,
+          button.dataset.saveAssociation
+        );
+      }
+      return;
+    }
+
+    // Desassociar sem apagar o produto do catálogo ou estoque.
+    if (button.dataset.removeAssociation) {
+      const card = button.closest('.product-association');
+      if (!card) return;
+
+      const fruitId = card.dataset.fruitId;
+      const ref = button.dataset.removeAssociation;
+      const all = Sitio.fruits();
+
+      const index = all.findIndex(
+        f => String(f.id) === String(fruitId)
+      );
+
+      if (index < 0) return;
+
+      const saved = Array.isArray(all[index].produtosAssociados)
+        ? [...all[index].produtosAssociados]
+        : [];
+
+      const hasSaved = saved.some(a =>
+        (a.ref ||
+          (a.productId
+            ? 'p:' + a.productId
+            : 'name:' + norm(a.productName))) === ref
+      );
+
+      if (!hasSaved) {
+        Sitio.flash(
+          'Esta associação vem do cadastro antigo. Para removê-la, edite as culturas no cadastro do produto.',
+          'error'
+        );
+        return;
+      }
+
+      if (!confirm(
+        'Desassociar este produto desta fruta? Ele continuará no catálogo e no estoque.'
+      )) return;
+
+      all[index] = {
+        ...all[index],
+        produtosAssociados: saved.filter(a =>
+          (a.ref ||
+            (a.productId
+              ? 'p:' + a.productId
+              : 'name:' + norm(a.productName))) !== ref
+        )
+      };
+
+      Sitio.set('frutas', all);
+      render();
+      Sitio.flash('Produto desassociado.');
+      return;
+    }
+
+    // Editar os dados da fruta.
+    if (button.dataset.editFruit) {
+      const fruit = findFruit(button.dataset.editFruit);
+      if (!fruit) return;
+
+      Object.keys(fruit).forEach(k => {
+        if ($(k)) $(k).value = fruit[k] ?? '';
+      });
+
+      $('id').value = fruit.id;
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
-    if (botao.dataset.del) {
-      const indice = lista.findIndex(
-        item => String(item.id) === String(botao.dataset.del)
+    // Excluir somente o cadastro da fruta.
+    if (button.dataset.deleteFruit) {
+      const list = Sitio.fruits();
+      const index = list.findIndex(
+        f => String(f.id) === String(button.dataset.deleteFruit)
       );
 
-      if (indice < 0) return;
+      if (index < 0) return;
 
-      if (confirm('Excluir esta cultura?')) {
-        lista.splice(indice, 1);
-        Sitio.set('frutas', lista);
+      if (confirm(
+        'Excluir esta cultura? Os registros históricos não serão apagados.'
+      )) {
+        list.splice(index, 1);
+        Sitio.set('frutas', list);
         render();
         Sitio.flash('Cultura excluída.');
       }
