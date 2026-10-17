@@ -36,33 +36,45 @@ document.addEventListener('DOMContentLoaded', () => {
     return '_' + Math.random().toString(36).substr(2, 9);
   }
 
-  // Lista completa de todos os produtos disponíveis para adicionar às frutas
+  // Banco de dados com finalidades e alvos padrão para cada produto
+  const detalhesProdutosPadrao = {
+    'FLORAFORTE-D': { alvo: 'Pegamento de frutos, florada e prevenção de rachaduras', dose: '100 a 200 mL / 100L de água', modoAplicacao: 'Foliar no pré e pós-florescimento' },
+    'EXPERTGROW': { alvo: 'Bioestimulante contra estresses hídricos e térmicos', dose: '50 a 100 mL / 100L de água', modoAplicacao: 'Pulverização foliar na pré-florada' },
+    'SUPREME AGRO — ÓLEO MINERAL': { alvo: 'Combate a cochonilhas, ácaros e ovos de pragas por asfixia', dose: '0.5 a 1.0 Litro / 100L de água', modoAplicacao: 'Poda de inverno ou final da tarde (evitar sol forte)' },
+    'PÉROLA': { alvo: 'Adjuvante espalhante adesivo para melhor absorção', dose: '30 a 60 mL / 100L de água', modoAplicacao: 'Adicionar à calda de pulverização' },
+    'GLUTAMIN K LIBRE': { alvo: 'Enchimento, ganho de tamanho e elevação do açúcar (Brix)', dose: '150 a 300 mL / 100L de água', modoAplicacao: 'Foliar do início do fruto até a maturação' },
+    'CRYSTAL LAYLAA': { alvo: 'Estimulação do sistema radicular e microbiologia', dose: '100 a 200 mL / 100L de água', modoAplicacao: 'Via foliar ou fertirrigação' },
+    'FORTGREEN CaBDry': { alvo: 'Prevenção de podridão estilar e queda de flores', dose: '100 a 200 g / 100L de água', modoAplicacao: 'Foliar na pré e pós-florada' },
+    'AZIMUT SC': { alvo: 'Combate ferrugem, oídio, pinta-preta e podridões', dose: '50 a 100 mL / 100L de água', modoAplicacao: 'Preventivo ou nos primeiros sintomas nas folhas' },
+    'GALIL SC': { alvo: 'Combate psíllidos, pulgões, cochonilhas e tripes', dose: '20 a 40 mL / 100L de água', modoAplicacao: 'Foliar ao detectar pragas ou brotação nova' },
+    'DECIS 25 EC': { alvo: 'Combate rápida lagartas, mosca-das-frutas e besouros', dose: '30 a 50 mL / 100L de água', modoAplicacao: 'Pulverização foliar direta ao notar a praga' },
+    'BELT': { alvo: 'Controle seletivo de lagartas de difícil controle', dose: '7 a 10 mL / 100L de água', modoAplicacao: 'Foliar no início da eclosão de lagartas' },
+    'PRIORI XTRA': { alvo: 'Fungicida para ferrugens, oídios e antracnose', dose: '30 a 50 mL / 100L de água', modoAplicacao: 'Preventivo na fase vegetativa/florada' },
+    'BULLDOCK 125 SC': { alvo: 'Combate mosca-das-frutas, percevejos e tripes', dose: '10 a 20 mL / 100L de água', modoAplicacao: 'Pulverizar na fase de frutificação' },
+    'ARTYS (Cletodim)': { alvo: 'Herbicida seletivo para eliminar capins e gramíneas', dose: '45 a 100 mL / 100L de água', modoAplicacao: 'Aplicação dirigida nas entrelinhas (longe das folhas)' },
+    'FRENO 240 EC': { alvo: 'Manejo de capins e gramíneas nas entrelinhas', dose: '45 a 100 mL / 100L de água', modoAplicacao: 'Pulverização direcionada no mato jovem' },
+    'HUMIC FLOWER': { alvo: 'Condicionador de solo e enraizamento profundo', dose: '200 a 300 mL / 100L de água', modoAplicacao: 'Rega no pé ou fertirrigação' },
+    'HERBAMOV': { alvo: 'Herbicida total não-seletivo para limpeza de entrelinhas', dose: '150 a 300 mL / 100L de água', modoAplicacao: 'Estritamente dirigido no mato (nunca atingir as frutíferas)' }
+  };
+
   function listaTodosProdutos() {
-    return [
-      'FLORAFORTE-D',
-      'EXPERTGROW',
-      'SUPREME AGRO — ÓLEO MINERAL',
-      'PÉROLA',
-      'GLUTAMIN K LIBRE',
-      'CRYSTAL LAYLAA',
-      'FORTGREEN CaBDry',
-      'AZIMUT SC',
-      'GALIL SC',
-      'DECIS 25 EC',
-      'BELT',
-      'PRIORI XTRA',
-      'BULLDOCK 125 SC',
-      'ARTYS (Cletodim)',
-      'FRENO 240 EC',
-      'HUMIC FLOWER',
-      'HERBAMOV'
-    ];
+    return Object.keys(detalhesProdutosPadrao);
   }
 
-  // Garante que as 9 frutas do sítio já nasçam com seus produtos recomendados
+  // Garante que as 9 frutas já venham com seus produtos recomendados e explicações
   function seedFrutiferasObrigatorio() {
     let currentFruits = getFrutasStorage();
     if (currentFruits && currentFruits.length > 0) return;
+
+    const criarProd = (nome) => {
+      const info = detalhesProdutosPadrao[nome] || {};
+      return {
+        productName: nome,
+        alvo: info.alvo || '',
+        dose: info.dose || '',
+        modoAplicacao: info.modoAplicacao || ''
+      };
+    };
 
     const frutasIniciais = [
       {
@@ -74,10 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
         fase: 'Frutificação',
         obs: 'Atenção para poda de inverno, moscas-das-frutas e ferrugem.',
         produtosAssociados: [
-          { productName: 'FLORAFORTE-D', alvo: 'Pegamento de frutos e florada', dose: '100 a 200 mL / 100L', modoAplicacao: 'Foliar no pré e pós-florescimento' },
-          { productName: 'SUPREME AGRO — ÓLEO MINERAL', alvo: 'Cochonilhas e ovos de pragas', dose: '0.5 a 1.0 L / 100L', modoAplicacao: 'Poda de inverno (evitar sol forte)' },
-          { productName: 'DECIS 25 EC', alvo: 'Mosca-das-frutas e lagartas', dose: '30 a 50 mL / 100L', modoAplicacao: 'Pulverização foliar direta' },
-          { productName: 'AZIMUT SC', alvo: 'Ferrugem e podridão-parda', dose: '50 a 100 mL / 100L', modoAplicacao: 'Preventivo nas folhas' }
+          criarProd('FLORAFORTE-D'),
+          criarProd('SUPREME AGRO — ÓLEO MINERAL'),
+          criarProd('DECIS 25 EC'),
+          criarProd('AZIMUT SC')
         ]
       },
       {
@@ -89,9 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
         fase: 'Frutificação',
         obs: 'Monitorar moscas-das-frutas e ferrugem.',
         produtosAssociados: [
-          { productName: 'DECIS 25 EC', alvo: 'Mosca-das-frutas', dose: '30 a 50 mL / 100L', modoAplicacao: 'Pulverização na copa' },
-          { productName: 'BULLDOCK 125 SC', alvo: 'Percevejos e moscas', dose: '10 a 20 mL / 100L', modoAplicacao: 'Fase de frutificação' },
-          { productName: 'FORTGREEN CaBDry', alvo: 'Firmeza dos frutos', dose: '100 a 200 g / 100L', modoAplicacao: 'Foliar no crescimento' }
+          criarProd('DECIS 25 EC'),
+          criarProd('BULLDOCK 125 SC'),
+          criarProd('FORTGREEN CaBDry')
         ]
       },
       {
@@ -103,9 +115,9 @@ document.addEventListener('DOMContentLoaded', () => {
         fase: 'Crescimento',
         obs: 'Cuidado com o psíllido do citros.',
         produtosAssociados: [
-          { productName: 'GALIL SC', alvo: 'Psíllido e cochonilhas', dose: '20 a 40 mL / 100L', modoAplicacao: 'Fluxo de brotação' },
-          { productName: 'SUPREME AGRO — ÓLEO MINERAL', alvo: 'Ácaros e cochonilhas', dose: '0.5 a 1.0 L / 100L', modoAplicacao: 'Final da tarde' },
-          { productName: 'GLUTAMIN K LIBRE', alvo: 'Enchimento de frutos', dose: '150 a 300 mL / 100L', modoAplicacao: 'Foliar' }
+          criarProd('GALIL SC'),
+          criarProd('SUPREME AGRO — ÓLEO MINERAL'),
+          criarProd('GLUTAMIN K LIBRE')
         ]
       },
       {
@@ -117,9 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
         fase: 'Floração',
         obs: 'Cuidado com herbicidas nas proximidades!',
         produtosAssociados: [
-          { productName: 'EXPERTGROW', alvo: 'Bioestimulante e florada', dose: '50 a 100 mL / 100L', modoAplicacao: 'Pré-florada' },
-          { productName: 'BELT', alvo: 'Lagartas', dose: '7 a 10 mL / 100L', modoAplicacao: 'Início de infestação' },
-          { productName: 'FORTGREEN CaBDry', alvo: 'Firmeza pós-colheita', dose: '100 a 200 g / 100L', modoAplicacao: 'Foliar quinzenal' }
+          criarProd('EXPERTGROW'),
+          criarProd('BELT'),
+          criarProd('FORTGREEN CaBDry')
         ]
       },
       {
@@ -131,8 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
         fase: 'Floração',
         obs: 'Atenção para Antracnose.',
         produtosAssociados: [
-          { productName: 'PRIORI XTRA', alvo: 'Antracnose e Oídio', dose: '30 a 50 mL / 100L', modoAplicacao: 'Preventivo no florescimento' },
-          { productName: 'GLUTAMIN K LIBRE', alvo: 'Adoçamento e cor', dose: '150 a 300 mL / 100L', modoAplicacao: 'Desenvolvimento' }
+          criarProd('PRIORI XTRA'),
+          criarProd('GLUTAMIN K LIBRE')
         ]
       },
       {
@@ -144,8 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
         fase: 'Crescimento',
         obs: 'Evitar herbicida total nas folhas.',
         produtosAssociados: [
-          { productName: 'HUMIC FLOWER', alvo: 'Enraizamento', dose: '200 a 300 mL / 100L', modoAplicacao: 'Rega no pé' },
-          { productName: 'FLORAFORTE-D', alvo: 'Formação da fruta', dose: '100 a 200 mL / 100L', modoAplicacao: 'Foliar no olho' }
+          criarProd('HUMIC FLOWER'),
+          criarProd('FLORAFORTE-D')
         ]
       },
       {
@@ -157,8 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
         fase: 'Repouso',
         obs: 'Tratamento de inverno.',
         produtosAssociados: [
-          { productName: 'SUPREME AGRO — ÓLEO MINERAL', alvo: 'Ovos de pragas', dose: '0.5 a 1.0 L / 100L', modoAplicacao: 'Poda de inverno' },
-          { productName: 'AZIMUT SC', alvo: 'Sarna e manchas', dose: '50 a 100 mL / 100L', modoAplicacao: 'Brotação' }
+          criarProd('SUPREME AGRO — ÓLEO MINERAL'),
+          criarProd('AZIMUT SC')
         ]
       },
       {
@@ -170,8 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
         fase: 'Crescimento',
         obs: 'Monitorar moscas-das-frutas.',
         produtosAssociados: [
-          { productName: 'DECIS 25 EC', alvo: 'Mosca-das-frutas', dose: '30 a 50 mL / 100L', modoAplicacao: 'Frutificação' },
-          { productName: 'GLUTAMIN K LIBRE', alvo: 'Tamanho e firmeza', dose: '150 a 300 mL / 100L', modoAplicacao: 'Foliar' }
+          criarProd('DECIS 25 EC'),
+          criarProd('GLUTAMIN K LIBRE')
         ]
       },
       {
@@ -183,7 +195,8 @@ document.addEventListener('DOMContentLoaded', () => {
         fase: 'Floração',
         obs: 'Prevenção de queda de frutos.',
         produtosAssociados: [
-          { productName: 'FLORAFORTE-D', alvo: 'Fixação de flores', dose: '100 a 200 mL / 100L', modoAplicacao: 'Pré-florada' }
+          criarProd('FLORAFORTE-D'),
+          criarProd('EXPERTGROW')
         ]
       }
     ];
@@ -334,7 +347,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // Eventos de clique globais
   document.addEventListener('click', e => {
     const fruitCard = e.target.closest('[data-open-modal]');
     if (fruitCard) {
@@ -391,11 +403,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (fruitIndex < 0) return;
 
       if (!list[fruitIndex].produtosAssociados) list[fruitIndex].produtosAssociados = [];
+      
+      // Puxa automaticamente a finalidade padrão se existir
+      const infoPadrao = detalhesProdutosPadrao[nomeProd] || {};
       list[fruitIndex].produtosAssociados.push({
         productName: nomeProd,
-        alvo: '',
-        dose: '',
-        modoAplicacao: ''
+        alvo: infoPadrao.alvo || '',
+        dose: infoPadrao.dose || '',
+        modoAplicacao: infoPadrao.modoAplicacao || ''
       });
 
       salvarFrutasAtuais(list);
@@ -437,7 +452,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (!confirm('Remover este produto da fruta?')) return;
       let list = getFrutasAtuais();
-      let fruitIndex = list.findIndex(f => String(f.id) === String(fruitId));
+      let fruitIndex = list.reset ? -1 : list.findIndex(f => String(f.id) === String(fruitId));
+      if (fruitIndex < 0) {
+        fruitIndex = list.findIndex(f => String(f.id) === String(fruitId));
+      }
       if (fruitIndex < 0) return;
 
       list[fruitIndex].produtosAssociados = (list[fruitIndex].produtosAssociados || []).filter(p => p.productName !== prodName);
