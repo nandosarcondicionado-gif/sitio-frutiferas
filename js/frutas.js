@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Tenta inicializar as funções globais do app se existirem
   try { if (typeof Sitio !== 'undefined' && Sitio.nav) Sitio.nav(); } catch (e) {}
   try { if (typeof Sitio !== 'undefined' && Sitio.seedCatalog) Sitio.seedCatalog(); } catch (e) {}
 
@@ -20,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if ($('id'))$('id').value = '';
   }
 
-  // Funções de manipulação do LocalStorage seguras
   function getFrutasStorage() {
     try {
       const data = localStorage.getItem('sitio_frutas') || localStorage.getItem('frutas');
@@ -37,12 +35,34 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {}
   }
 
-  // Garantir ID único seguro
   function gerarId() {
     return '_' + Math.random().toString(36).substr(2, 9);
   }
 
-  // Cadastra as frutas padrão se estiver vazio
+  // Lista de produtos disponíveis no sistema para vincular às frutas
+  function availableProductsCatalog() {
+    return [
+      { nome: 'FLORAFORTE-D', categoria: 'Nutrição / Cálcio e Boro' },
+      { nome: 'EXPERTGROW', categoria: 'Bioestimulante' },
+      { nome: 'SUPREME AGRO — ÓLEO MINERAL', categoria: 'Adjuvante / Inseticida' },
+      { nome: 'PÉROLA', categoria: 'Adjuvante / Espalhante' },
+      { nome: 'GLUTAMIN K LIBRE', categoria: 'Potássio e Aminoácidos' },
+      { nome: 'CRYSTAL LAYLAA', categoria: 'Biofertilizante' },
+      { nome: 'FORTGREEN CaBDry', categoria: 'Cálcio e Boro em Pó' },
+      { nome: 'AZIMUT SC', categoria: 'Fungicida' },
+      { nome: 'GALIL SC', categoria: 'Inseticida' },
+      { nome: 'DECIS 25 EC', categoria: 'Inseticida' },
+      { nome: 'BELT', categoria: 'Inseticida' },
+      { nome: 'PRIORI XTRA', categoria: 'Fungicida' },
+      { nome: 'BULLDOCK 125 SC', categoria: 'Inseticida' },
+      { nome: 'ARTYS (Cletodim)', categoria: 'Herbicida' },
+      { nome: 'FRENO 240 EC', categoria: 'Herbicida' },
+      { nome: 'HUMIC FLOWER', categoria: 'Condicionador de Solo' },
+      { nome: 'HERBAMOV', categoria: 'Herbicida Total' }
+    ];
+  }
+
+  // Cadastra as frutas padrão com seus respectivos produtos recomendados se estiver vazio
   function seedFrutiferasObrigatorio() {
     let currentFruits = getFrutasStorage();
     if (currentFruits && currentFruits.length > 0) return;
@@ -177,7 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
   seedFrutiferasObrigatorio();
 
   function getFrutasAtuais() {
-    // Compatibilidade com o objeto Sitio se existir, senão usa o localStorage direto
     if (typeof Sitio !== 'undefined' && Sitio.fruits && typeof Sitio.fruits === 'function') {
       const f = Sitio.fruits();
       if (f && f.length > 0) return f;
@@ -265,6 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!fruit) return;
 
     const assoc = fruit.produtosAssociados || [];
+    const catProducts = availableProductsForSelect(fruit);
     let modalContainer = $('fruitModalContainer');
 
     if (!modalContainer) {
@@ -290,11 +310,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;">
 
-          <h3 style="color: #1b5e20;">📦 Produtos e Dosagens</h3>
+          <h3 style="color: #1b5e20;">📦 Produtos, Dosagens e Manejos</h3>
           ${assoc.length ? assoc.map(a => productBlock(a, fruit)).join('') : '<p class="empty">Nenhum produto associado.</p>'}
 
-          <div class="actions" style="margin-top: 25px; display: flex; gap: 10px;">
-            <button type="button" class="danger" data-delete-fruit="${escapeHtml(fruit.id)}">Excluir Cultura</button>
+          <section class="card add-product-box" style="background: #f9f9f9; border: 1px dashed #236b36; margin-top: 20px; padding: 15px;" data-fruit-id="${fruit.id}">
+            <h4 style="margin-top: 0;">➕ Adicionar Produto à Fruta</h4>
+            <select id="selectNovoProduto" style="width: 100%; padding: 8px; margin-top: 5px;">
+              <option value="">Selecione um produto...</option>
+              ${catProducts.map(p => `<option value="${escapeHtml(p.nome)}">${escapeHtml(p.nome)} (${escapeHtml(p.categoria)})</option>`).join('')}
+            </select>
+            <div class="actions" style="margin-top: 12px;">
+              <button type="button" data-add-assoc="${fruit.id}">Vincular Produto</button>
+            </div>
+          </section>
+
+          <div class="actions" style="margin-top: 25px; display: flex; gap: 10px; justify-content: space-between;">
+            <div>
+              <button type="button" class="secondary" data-edit-fruit="${escapeHtml(fruit.id)}">✏️ Editar Cultura</button>
+              <button type="button" class="danger" data-delete-fruit="${escapeHtml(fruit.id)}">🗑️ Excluir Cultura</button>
+            </div>
           </div>
         </div>
       </div>
@@ -304,6 +338,11 @@ document.addEventListener('DOMContentLoaded', () => {
     modalContainer.querySelector('.modal-backdrop').onclick = (e) => {
       if (e.target === modalContainer.querySelector('.modal-backdrop')) { modalContainer.innerHTML = ''; }
     };
+  }
+
+  function availableProductsForSelect(fruit) {
+    const jaTem = new Set((fruit.produtosAssociados || []).map(p => p.productName));
+    return availableProductsCatalog().filter(p => !jaTem.has(p.nome));
   }
 
   // Eventos de clique globais
@@ -325,6 +364,57 @@ document.addEventListener('DOMContentLoaded', () => {
       const modal = $('fruitModalContainer');
       if (modal) modal.innerHTML = '';
       if (typeof Sitio !== 'undefined' && Sitio.flash) Sitio.flash('Cultura excluída.');
+      return;
+    }
+
+    // Botão para Editar Cultura (joga os dados para o formulário no topo)
+    if (button.dataset.editFruit) {
+      const fruitId = button.dataset.editFruit;
+      const fruit = getFrutasAtuais().find(f => String(f.id) === String(fruitId));
+      if (!fruit) return;
+
+      if ($('id'))$('id').value = fruit.id;
+      if ($('nome'))$('nome').value = fruit.nome || '';
+      if ($('variedade'))$('variedade').value = fruit.variedade || '';
+      if ($('quantidade'))$('quantidade').value = fruit.quantidade || '';
+      if ($('talhao'))$('talhao').value = fruit.talhao || '';
+      if ($('idade'))$('idade').value = fruit.idade || '';
+      if ($('fase'))$('fase').value = fruit.fase || '';
+      if ($('obs'))$('obs').value = fruit.obs || '';
+
+      const modal = $('fruitModalContainer');
+      if (modal) modal.innerHTML = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (typeof Sitio !== 'undefined' && Sitio.flash) Sitio.flash('Modo de edição ativado no formulário acima.');
+      return;
+    }
+
+    // Adicionar novo produto selecionado à fruta
+    if (button.dataset.addAssoc) {
+      const fruitId = button.dataset.addAssoc;
+      const select = $('selectNovoProduto');
+      const nomeProd = select ? select.value : '';
+      if (!nomeProd) {
+        alert('Selecione um produto.');
+        return;
+      }
+
+      let list = getFrutasAtuais();
+      let fruitIndex = list.findIndex(f => String(f.id) === String(fruitId));
+      if (fruitIndex < 0) return;
+
+      if (!list[fruitIndex].produtosAssociados) list[fruitIndex].produtosAssociados = [];
+      list[fruitIndex].produtosAssociados.push({
+        productName: nomeProd,
+        alvo: '',
+        dose: '',
+        modoAplicacao: ''
+      });
+
+      salvarFrutasAtuais(list);
+      render();
+      openFruitModal(fruitId);
+      if (typeof Sitio !== 'undefined' && Sitio.flash) Sitio.flash('Produto adicionado!');
       return;
     }
 
@@ -411,6 +501,5 @@ document.addEventListener('DOMContentLoaded', () => {
   if ($('limpar')) {$('limpar').onclick = clearForm;
   }
 
-  // Renderiza imediatamente ao carregar
   render();
 });
