@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="pt-BR">
 <head>
@@ -11,60 +12,119 @@
   <script defer src="../js/frutas.js"></script>
 </head>
 <body>
-  <header>
-    <div class="head">
-      <a href="../index.html">← Voltar</a>
-      <h1>🌱 Minhas Frutas</h1>
-      <span>🌿 Sítio Frutíferas</span>
+<header>
+  <div class="head">
+    <a href="../index.html">← Voltar</a>
+    <h1>🌱 Minhas Frutas</h1>
+    <span>🌿 Sítio Frutíferas</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav id="nav" class="nav" aria-label="Navegação"></nav>
+
+  <section class="card">
+    <h2>🧮 Conversor de dosagem</h2>
+    <p>Informe a quantidade de produto, a água de referência e o volume de água que deseja preparar.</p>
+
+    <div class="two">
+      <div>
+        <label for="convDose">Quantidade de produto (mL)</label>
+        <input id="convDose" type="number" min="0" step="any" placeholder="Ex.: 10">
+      </div>
+
+      <div>
+        <label for="convBase">Água de referência (litros)</label>
+        <input id="convBase" type="number" min="0.001" step="any" placeholder="Ex.: 200">
+      </div>
     </div>
-  </header>
-  <main class="wrap">
-    <nav id="nav" class="nav" aria-label="Navegação"></nav>
-    <section class="card">
-      <h2>Cadastrar ou editar cultura</h2>
-      <form id="formFruta">
-        <input type="hidden" id="id">
-        <label for="nome">Nome da fruta/cultura *</label>
-        <input id="nome" required maxlength="100" placeholder="Ex.: Limoeiro, variedade Tahiti">
-        <label for="variedade">Variedade</label>
-        <input id="variedade" maxlength="100">
-        <div class="two">
-          <div>
-            <label for="quantidade">Quantidade de plantas</label>
-            <input id="quantidade" type="number" min="0" step="1">
-          </div>
-          <div>
-            <label for="idade">Idade aproximada</label>
-            <input id="idade" placeholder="Ex.: 2 anos">
-          </div>
+
+    <label for="convAlvo">Quantos litros de água você vai preparar?</label>
+    <input id="convAlvo" type="number" min="0.001" step="any" placeholder="Ex.: 20">
+
+    <div class="actions">
+      <button type="button" id="convCalcular">Calcular quantidade</button>
+      <button type="button" class="secondary" id="convLimpar">Limpar</button>
+    </div>
+
+    <div id="convResultado" class="notice" aria-live="polite">
+      Exemplo: 10 mL para 200 L correspondem matematicamente a 1 mL para 20 L.
+    </div>
+
+    <p class="muted">
+      O conversor faz somente a proporção matemática. Use a quantidade calculada
+      apenas se a dose original for apropriada para a cultura, o produto e o modo
+      de aplicação. Doses por hectare não podem ser convertidas apenas pela
+      quantidade de água.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Cadastrar ou editar cultura</h2>
+
+    <form id="formFruta">
+      <input type="hidden" id="id">
+
+      <label for="nome">Nome da fruta/cultura *</label>
+      <input id="nome" required maxlength="100" placeholder="Ex.: Limão">
+
+      <label for="variedade">Variedade</label>
+      <input id="variedade" maxlength="100">
+
+      <div class="two">
+        <div>
+          <label for="quantidade">Quantidade de plantas</label>
+          <input id="quantidade" type="number" min="0" step="1">
         </div>
-        <label for="talhao">Talhão/local</label>
-        <input id="talhao" placeholder="Ex.: Talhão A">
-        <label for="fase">Fase atual</label>
-        <select id="fase">
-          <option value="">Selecione...</option>
-          <option>Muda</option>
-          <option>Crescimento</option>
-          <option>Floração</option>
-          <option>Frutificação</option>
-          <option>Colheita</option>
-          <option>Pós-colheita</option>
-        </select>
-        <label for="obs">Observações</label>
-        <textarea id="obs" rows="3"></textarea>
-        <div class="actions">
-          <button type="submit">Salvar cultura</button>
-          <button type="button" class="secondary" id="limpar">Limpar</button>
+
+        <div>
+          <label for="idade">Idade aproximada</label>
+          <input id="idade" placeholder="Ex.: 2 anos">
         </div>
-      </form>
-    </section>
-    <section class="card">
-      <h2>Minhas culturas e produtos por fruta</h2>
-      <p class="muted">As indicações pendentes ficam separadas das indicações confirmadas. Confira sempre a bula vigente do produto exato antes de qualquer aplicação.</p>
-      <input id="filtro" placeholder="Pesquisar por nome ou talhão">
-      <div id="lista"></div>
-    </section>
-  </main>
-  <footer>Sítio Frutíferas • Confirme recomendações técnicas antes de aplicar produtos.</footer>
+      </div>
+
+      <label for="talhao">Talhão/local</label>
+      <input id="talhao" placeholder="Ex.: Talhão A">
+
+      <label for="fase">Fase atual</label>
+      <select id="fase">
+        <option value="">Selecione...</option>
+        <option>Muda</option>
+        <option>Crescimento</option>
+        <option>Floração</option>
+        <option>Frutificação</option>
+        <option>Colheita</option>
+        <option>Pós-colheita</option>
+      </select>
+
+      <label for="obs">Observações</label>
+      <textarea id="obs" rows="3"></textarea>
+
+      <div class="actions">
+        <button type="submit">Salvar cultura</button>
+        <button type="button" class="secondary" id="limpar">Limpar formulário</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>🍑 Minhas frutas e produtos relacionados</h2>
+    <p class="muted">
+      Confira a finalidade, a cultura e a situação de cada produto.
+      Você pode editar as informações e preencher as doses depois.
+    </p>
+
+    <input id="filtro" placeholder="Pesquisar fruta ou talhão">
+    <div id="lista"></div>
+  </section>
+
+  <div class="notice">
+    <strong>Atenção:</strong> produtos sem indicação confirmada devem permanecer
+    pendentes até a conferência do rótulo ou da bula da formulação exata.
+    Não use doses estimadas.
+  </div>
+</main>
+
+<footer>Sítio Frutíferas • Controle do pomar</footer>
 </body>
 </html>
