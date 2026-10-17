@@ -5,109 +5,130 @@ document.addEventListener('DOMContentLoaded', () => {
   const $ = id => document.getElementById(id);
   const form = $('formFruta');
 
-  const normalizar = texto =>
-    String(texto || '')
+  function normalizar(texto) {
+    return String(texto || '')
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
-      .toLocaleLowerCase('pt-BR')
+      .toLowerCase()
       .trim();
+  }
 
+  function numero(campo) {
+    const valor = String($(campo).value || '').replace(',', '.');
+    return Number(valor);
+  }
+
+  // CONVERSOR: dose em mL por volume de água.
+  $('convCalcular').addEventListener('click', () => {
+    const dose = numero('convDose');
+    const base = numero('convBase');
+    const alvo = numero('convAlvo');
+    const resultado = $('convResultado');
+
+    if (
+      !Number.isFinite(dose) ||
+      !Number.isFinite(base) ||
+      !Number.isFinite(alvo) ||
+      dose < 0 ||
+      base <= 0 ||
+      alvo <= 0 ||
+      $('convDose').value.trim() === '' ||
+      $('convBase').value.trim() === '' ||
+      $('convAlvo').value.trim() === ''
+    ) {
+      resultado.textContent =
+        'Preencha a dose em mL e os dois volumes de água com valores válidos.';
+      return;
+    }
+
+    const calculado = dose * alvo / base;
+
+    const formatado = calculado.toLocaleString('pt-BR', {
+      maximumFractionDigits: 6
+    });
+
+    resultado.innerHTML =
+      '<strong>Resultado matemático: ' +
+      formatado +
+      ' mL de produto para ' +
+      alvo.toLocaleString('pt-BR') +
+      ' litros de água.</strong>';
+  });
+
+  $('convLimpar').addEventListener('click', () => {
+    $('convDose').value = '';
+    $('convBase').value = '';
+    $('convAlvo').value = '';
+    $('convResultado').textContent =
+      'Informe os valores para calcular a proporção.';
+  });
+
+  // CADASTRO DAS FRUTAS
   function clear() {
     form.reset();
     $('id').value = '';
   }
 
-  function culturaCorrespondente(produto, nomeFruta) {
+  function fruitUseText(produto, fruta) {
     const culturas = String(produto.cultura || '')
       .split(';')
       .map(item => item.trim())
       .filter(Boolean);
 
-    const fruta = normalizar(nomeFruta);
+    const nomeFruta = normalizar(fruta);
 
-    return culturas.find(item => {
+    const encontrada = culturas.find(item => {
       const cultura = normalizar(item);
 
-      if (fruta === 'limao') {
+      if (nomeFruta === 'limao') {
         return cultura.startsWith('limao') ||
                cultura.startsWith('citros');
       }
 
-      if (fruta === 'pessego') {
-        return cultura.startsWith('pessego') ||
-               cultura.startsWith('pessegueiro');
-      }
+      return cultura.startsWith(nomeFruta);
+    });
 
-      if (fruta === 'maca') {
-        return cultura.startsWith('maca');
-      }
-
-      if (fruta === 'caqui') {
-        return cultura.startsWith('caqui');
-      }
-
-      return cultura.startsWith(fruta);
-    }) || '';
+    return encontrada || fruta;
   }
 
-  function statusProduto(produto) {
-    const status = normalizar(produto.statusIndicacao);
+  function productBlock(produto, fruta) {
+    const status = produto.statusIndicacao ||
+      'Pendente de conferência';
 
-    if (status.startsWith('confirmado na bula vigente')) {
-      return 'vigente';
-    }
+    const dose = produto.dose ||
+      'Em branco — preencher depois de conferir a bula ou ficha técnica';
 
-    if (status.startsWith('confirmado na bula consultada')) {
-      return 'documentado';
-    }
-
-    return 'pendente';
-  }
-
-  function blocoProduto(produto, fruta, situacao) {
-    const cultura = culturaCorrespondente(produto, fruta);
-    const status = statusProduto(produto);
-
-    let aviso = '';
-
-    if (situacao === 'vigente') {
-      aviso = 'Indicação marcada como confirmada na bula vigente. Confira a embalagem e as condições de uso antes de aplicar.';
-    } else if (situacao === 'documentado') {
-      aviso = 'Há uma indicação documentada em fonte consultada, mas é necessário conferir a bula vigente antes de aplicar.';
-    } else {
-      aviso = 'Ainda não está confirmado que esta indicação seja autorizada para esta fruta e este alvo. Não use como recomendação de aplicação.';
-    }
+    const modo = produto.modoAplicacao ||
+      'Em branco — preencher conforme o rótulo ou a bula';
 
     return `
       <article class="item">
         <h4>${Sitio.esc(produto.nome || 'Produto sem nome')}</h4>
 
         <p>
-          <strong>Cultura:</strong>
-          ${Sitio.esc(cultura || fruta)}
+          <strong>Cultura relacionada:</strong>
+          ${Sitio.esc(fruitUseText(produto, fruta))}
         </p>
 
         <p>
-          <strong>Finalidade ou alvo:</strong>
-          ${Sitio.esc(produto.alvo || 'Ainda não confirmado')}
+          <strong>Para que serve:</strong>
+          ${Sitio.esc(produto.alvo || 'Finalidade a confirmar no rótulo')}
         </p>
 
         <p>
-          <strong>Dose cadastrada:</strong>
-          ${Sitio.esc(produto.dose || 'Não confirmada — consultar a bula')}
+          <strong>Dose:</strong>
+          ${Sitio.esc(dose)}
         </p>
 
         <p>
           <strong>Modo de aplicação:</strong>
-          ${Sitio.esc(produto.modoAplicacao || 'Não confirmado — consultar a bula')}
+          ${Sitio.esc(modo)}
         </p>
 
         <p>
           <strong>Situação:</strong>
-          ${Sitio.esc(produto.statusIndicacao || 'Pendente de conferência')}
+          ${Sitio.esc(status)}
         </p>
-
-        <p class="notice">${Sitio.esc(aviso)}</p>
 
         ${
           produto.fonte
@@ -119,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="actions">
           <a class="button secondary"
              href="defensivos.html?edit=${encodeURIComponent(produto.id)}">
-            Editar produto
+            Editar produto e dose
           </a>
         </div>
       </article>
@@ -129,28 +150,17 @@ document.addEventListener('DOMContentLoaded', () => {
   function render() {
     const busca = normalizar($('filtro').value);
 
-    const frutas = Sitio.fruits().filter(fruta => {
-      const texto = normalizar([
+    const frutas = Sitio.fruits().filter(fruta =>
+      normalizar([
         fruta.nome,
         fruta.variedade,
         fruta.talhao
-      ].join(' '));
-
-      return texto.includes(busca);
-    });
+      ].join(' ')).includes(busca)
+    );
 
     $('lista').innerHTML = frutas.length
       ? frutas.map(fruta => {
           const produtos = Sitio.productsForFruit(fruta.nome);
-
-          const documentados = produtos.filter(produto =>
-            statusProduto(produto) === 'vigente' ||
-            statusProduto(produto) === 'documentado'
-          );
-
-          const pendentes = produtos.filter(produto =>
-            statusProduto(produto) === 'pendente'
-          );
 
           return `
             <article class="item">
@@ -170,25 +180,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
               <p>${Sitio.esc(fruta.obs || 'Sem observações')}</p>
 
-              <h4>Indicações documentadas — conferir a bula vigente</h4>
+              <h4>Produtos relacionados a esta fruta</h4>
 
               ${
-                documentados.length
-                  ? documentados.map(produto =>
-                      blocoProduto(produto, fruta.nome, statusProduto(produto))
+                produtos.length
+                  ? produtos.map(produto =>
+                      productBlock(produto, fruta.nome)
                     ).join('')
-                  : '<p class="empty">Nenhum produto do catálogo tem indicação confirmada na bula vigente para esta fruta.</p>'
-              }
-
-              ${
-                pendentes.length
-                  ? `
-                    <h4>Produtos que precisam de conferência</h4>
-                    ${pendentes.map(produto =>
-                      blocoProduto(produto, fruta.nome, 'pendente')
-                    ).join('')}
+                  : `
+                    <p class="empty">
+                      Ainda não há produtos associados a esta cultura
+                      no catálogo. Abra “Ver produtos” para conferir
+                      e cadastrar as associações necessárias.
+                    </p>
                   `
-                  : ''
               }
 
               <div class="actions">
@@ -196,13 +201,8 @@ document.addEventListener('DOMContentLoaded', () => {
                   Editar cultura
                 </button>
 
-                <a class="button secondary"
-                   href="busca.html?fruta=${encodeURIComponent(fruta.id)}">
-                  Fotografar/diagnosticar
-                </a>
-
                 <a class="button secondary" href="defensivos.html">
-                  Ver os 17 produtos
+                  Ver produtos
                 </a>
 
                 <button class="danger" data-del="${Sitio.esc(fruta.id)}">
@@ -219,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
 
     const lista = Sitio.fruits();
+
     const objeto = {
       id: $('id').value || Sitio.id(),
       nome: $('nome').value.trim(),
@@ -280,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (indice < 0) return;
 
-      if (confirm('Excluir esta cultura? Os registros históricos não serão apagados.')) {
+      if (confirm('Excluir esta cultura?')) {
         lista.splice(indice, 1);
         Sitio.set('frutas', lista);
         render();
