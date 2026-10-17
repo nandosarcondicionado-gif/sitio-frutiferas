@@ -11,9 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     .toLocaleLowerCase('pt-BR')
     .trim();
 
-  const val = (obj, key, fallback = '') =>
-    obj && obj[key] != null ? obj[key] : fallback;
-
   function clearForm() {
     if (form) form.reset();
     if ($('id'))$('id').value = '';
@@ -39,30 +36,30 @@ document.addEventListener('DOMContentLoaded', () => {
     return '_' + Math.random().toString(36).substr(2, 9);
   }
 
-  // Lista de produtos disponíveis no sistema para vincular às frutas
-  function availableProductsCatalog() {
+  // Lista completa de todos os produtos disponíveis para adicionar às frutas
+  function listaTodosProdutos() {
     return [
-      { nome: 'FLORAFORTE-D', categoria: 'Nutrição / Cálcio e Boro' },
-      { nome: 'EXPERTGROW', categoria: 'Bioestimulante' },
-      { nome: 'SUPREME AGRO — ÓLEO MINERAL', categoria: 'Adjuvante / Inseticida' },
-      { nome: 'PÉROLA', categoria: 'Adjuvante / Espalhante' },
-      { nome: 'GLUTAMIN K LIBRE', categoria: 'Potássio e Aminoácidos' },
-      { nome: 'CRYSTAL LAYLAA', categoria: 'Biofertilizante' },
-      { nome: 'FORTGREEN CaBDry', categoria: 'Cálcio e Boro em Pó' },
-      { nome: 'AZIMUT SC', categoria: 'Fungicida' },
-      { nome: 'GALIL SC', categoria: 'Inseticida' },
-      { nome: 'DECIS 25 EC', categoria: 'Inseticida' },
-      { nome: 'BELT', categoria: 'Inseticida' },
-      { nome: 'PRIORI XTRA', categoria: 'Fungicida' },
-      { nome: 'BULLDOCK 125 SC', categoria: 'Inseticida' },
-      { nome: 'ARTYS (Cletodim)', categoria: 'Herbicida' },
-      { nome: 'FRENO 240 EC', categoria: 'Herbicida' },
-      { nome: 'HUMIC FLOWER', categoria: 'Condicionador de Solo' },
-      { nome: 'HERBAMOV', categoria: 'Herbicida Total' }
+      'FLORAFORTE-D',
+      'EXPERTGROW',
+      'SUPREME AGRO — ÓLEO MINERAL',
+      'PÉROLA',
+      'GLUTAMIN K LIBRE',
+      'CRYSTAL LAYLAA',
+      'FORTGREEN CaBDry',
+      'AZIMUT SC',
+      'GALIL SC',
+      'DECIS 25 EC',
+      'BELT',
+      'PRIORI XTRA',
+      'BULLDOCK 125 SC',
+      'ARTYS (Cletodim)',
+      'FRENO 240 EC',
+      'HUMIC FLOWER',
+      'HERBAMOV'
     ];
   }
 
-  // Cadastra as frutas padrão com seus respectivos produtos recomendados se estiver vazio
+  // Garante que as 9 frutas do sítio já nasçam com seus produtos recomendados
   function seedFrutiferasObrigatorio() {
     let currentFruits = getFrutasStorage();
     if (currentFruits && currentFruits.length > 0) return;
@@ -197,10 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
   seedFrutiferasObrigatorio();
 
   function getFrutasAtuais() {
-    if (typeof Sitio !== 'undefined' && Sitio.fruits && typeof Sitio.fruits === 'function') {
-      const f = Sitio.fruits();
-      if (f && f.length > 0) return f;
-    }
     return getFrutasStorage() || [];
   }
 
@@ -284,9 +277,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!fruit) return;
 
     const assoc = fruit.produtosAssociados || [];
-    const catProducts = availableProductsForSelect(fruit);
-    let modalContainer = $('fruitModalContainer');
+    const jaTem = new Set(assoc.map(p => p.productName));
+    const produtosDisponiveis = listaTodosProdutos().filter(p => !jaTem.has(p));
 
+    let modalContainer = $('fruitModalContainer');
     if (!modalContainer) {
       modalContainer = document.createElement('div');
       modalContainer.id = 'fruitModalContainer';
@@ -316,8 +310,8 @@ document.addEventListener('DOMContentLoaded', () => {
           <section class="card add-product-box" style="background: #f9f9f9; border: 1px dashed #236b36; margin-top: 20px; padding: 15px;" data-fruit-id="${fruit.id}">
             <h4 style="margin-top: 0;">➕ Adicionar Produto à Fruta</h4>
             <select id="selectNovoProduto" style="width: 100%; padding: 8px; margin-top: 5px;">
-              <option value="">Selecione um produto...</option>
-              ${catProducts.map(p => `<option value="${escapeHtml(p.nome)}">${escapeHtml(p.nome)} (${escapeHtml(p.categoria)})</option>`).join('')}
+              <option value="">Selecione um produto da lista...</option>
+              ${produtosDisponiveis.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('')}
             </select>
             <div class="actions" style="margin-top: 12px;">
               <button type="button" data-add-assoc="${fruit.id}">Vincular Produto</button>
@@ -338,11 +332,6 @@ document.addEventListener('DOMContentLoaded', () => {
     modalContainer.querySelector('.modal-backdrop').onclick = (e) => {
       if (e.target === modalContainer.querySelector('.modal-backdrop')) { modalContainer.innerHTML = ''; }
     };
-  }
-
-  function availableProductsForSelect(fruit) {
-    const jaTem = new Set((fruit.produtosAssociados || []).map(p => p.productName));
-    return availableProductsCatalog().filter(p => !jaTem.has(p.nome));
   }
 
   // Eventos de clique globais
@@ -367,7 +356,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Botão para Editar Cultura (joga os dados para o formulário no topo)
     if (button.dataset.editFruit) {
       const fruitId = button.dataset.editFruit;
       const fruit = getFrutasAtuais().find(f => String(f.id) === String(fruitId));
@@ -389,7 +377,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Adicionar novo produto selecionado à fruta
     if (button.dataset.addAssoc) {
       const fruitId = button.dataset.addAssoc;
       const select = $('selectNovoProduto');
