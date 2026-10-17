@@ -1,314 +1,277 @@
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   Sitio.nav();
 
-  const $ = (id) => document.getElementById(id);
-  const form = $("formFruta");
-
-  function normalizar(texto) {
-    return String(texto || "")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLocaleLowerCase("pt-BR")
-      .trim();
-  }
+  const $ = id => document.getElementById(id);
+  const form = $('formFruta');
 
   function limparFormulario() {
     form.reset();
-    $("id").value = "";
+    $('id').value = '';
   }
 
-  // Reconhece variações dos nomes das nove culturas.
-  function nomesDaCultura(nome) {
-    const n = normalizar(nome);
-
-    if (n.includes("pessego")) return ["pessego", "pessegueiro"];
-    if (n.includes("morango")) return ["morango", "morangueiro"];
-    if (n.includes("abacaxi")) return ["abacaxi", "abacaxizeiro"];
-    if (n.includes("limao")) return ["limao", "limoeiro", "citros"];
-    if (n.includes("lichia")) return ["lichia", "lichieira"];
-    if (n.includes("maca")) return ["maca", "macieira"];
-    if (n.includes("caqui")) return ["caqui", "caquizeiro"];
-    if (n.includes("manga")) return ["manga", "mangueira"];
-    if (n.includes("goiaba")) return ["goiaba", "goiabeira"];
-
-    return [n];
+  function normalizar(texto) {
+    return String(texto || '')
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLocaleLowerCase('pt-BR')
+      .trim();
   }
 
-  // Só associa um produto quando o campo de cultura contém
-  // uma indicação correspondente. Campo vazio não significa autorizado.
-  function produtoAssociado(produto, fruta) {
-    const cultura = normalizar(produto.cultura);
-    if (!cultura) return false;
+  function textoDaCultura(produto, nomeFruta) {
+    const cultura = String(produto.cultura || '').trim();
 
-    const nomes = nomesDaCultura(fruta.nome);
-
-    return cultura
-      .split(";")
-      .some((indicacao) => {
-        const texto = normalizar(indicacao);
-
-        return nomes.some((nome) => {
-          if (!nome) return false;
-
-          if (nome === "citros") {
-            return (
-              normalizar(fruta.nome).includes("limao") &&
-              texto.includes("citros")
-            );
-          }
-
-          return texto.includes(nome);
-        });
-      });
-  }
-
-  function mostrarProdutos(fruta) {
-    const produtos = Sitio.products().filter((produto) =>
-      produtoAssociado(produto, fruta)
-    );
-
-    if (!produtos.length) {
-      return `
-        <section class="notice">
-          <strong>Produtos desta cultura</strong>
-          <p>
-            Ainda não há produtos associados a esta fruta no cadastro.
-            Consulte a bula oficial antes de cadastrar uma indicação.
-          </p>
-          <a class="button secondary" href="defensivos.html">
-            Abrir catálogo de produtos
-          </a>
-        </section>
-      `;
+    if (!cultura) {
+      return 'Associação pendente — conferir se este produto pode ser usado nesta cultura.';
     }
 
+    const partes = cultura.split(';').map(x => x.trim());
+    const fruta = normalizar(nomeFruta);
+
+    const encontrada = partes.find(parte => {
+      const p = normalizar(parte);
+
+      return p.includes(fruta) ||
+        (fruta === 'limao' && p.includes('citros'));
+    });
+
+    return encontrada || cultura;
+  }
+
+  function indicacaoConfirmada(produto) {
+    return normalizar(produto.statusIndicacao) ===
+      'confirmado apos conferencia da bula vigente';
+  }
+
+  function blocoProduto(produto, nomeFruta) {
+    const culturaTexto = textoDaCultura(produto, nomeFruta);
+    const status = produto.statusIndicacao || 'Pendente de conferência';
+
     return `
-      <section class="card">
-        <h4>🧪 Produtos associados a ${Sitio.esc(fruta.nome)}</h4>
-        <p class="muted">
-          Confira a situação de cada indicação. Uma associação cadastrada
-          não substitui a confirmação da bula vigente.
+      <article class="item">
+        <h4>${Sitio.esc(produto.nome)}</h4>
+
+        <p>
+          <strong>Cultura/associação:</strong>
+          ${Sitio.esc(culturaTexto)}
         </p>
 
-        ${produtos.map((produto) => {
-          const status =
-            produto.statusIndicacao || "Pendente de conferência";
+        <p>
+          <strong>Categoria:</strong>
+          ${Sitio.esc(produto.categoria || 'A confirmar')}
+        </p>
 
-          const confirmado =
-            normalizar(status).includes("confirmado apos conferencia") ||
-            normalizar(status).includes("confirmado na bula consultada");
+        <p>
+          <strong>Composição:</strong>
+          ${Sitio.esc(produto.ingrediente || 'Conferir no rótulo')}
+        </p>
 
-          return `
-            <article class="item">
-              <h4>${Sitio.esc(produto.nome)}</h4>
+        <p>
+          <strong>Finalidade/alvo:</strong>
+          ${Sitio.esc(produto.alvo || 'Ainda não preenchido')}
+        </p>
 
-              <p>
-                <strong>Categoria:</strong>
-                ${Sitio.esc(produto.categoria || "A confirmar")}
-              </p>
+        <p>
+          <strong>Dose:</strong>
+          ${Sitio.esc(produto.dose || 'Ainda não preenchida')}
+        </p>
 
-              <p>
-                <strong>Finalidade ou alvo:</strong>
-                ${Sitio.esc(produto.alvo || "A confirmar na bula")}
-              </p>
+        <p>
+          <strong>Modo de aplicação:</strong>
+          ${Sitio.esc(produto.modoAplicacao || 'Ainda não preenchido')}
+        </p>
 
-              <p>
-                <strong>Cultura cadastrada:</strong>
-                ${Sitio.esc(produto.cultura || "Não informada")}
-              </p>
+        <p>
+          <strong>Situação:</strong>
+          ${Sitio.esc(status)}
+        </p>
 
-              <p>
-                <strong>Dose:</strong>
-                ${Sitio.esc(produto.dose || "Ainda não confirmada")}
-              </p>
+        ${
+          produto.registro
+            ? `<p><strong>Registro/referência:</strong> ${Sitio.esc(produto.registro)}</p>`
+            : ''
+        }
 
-              <p>
-                <strong>Modo de aplicação:</strong>
-                ${Sitio.esc(
-                  produto.modoAplicacao || "Ainda não informado"
-                )}
-              </p>
+        ${
+          produto.fonte
+            ? `<p><a href="${Sitio.esc(produto.fonte)}" target="_blank" rel="noopener">Consultar fonte</a></p>`
+            : ''
+        }
 
-              <p>
-                <strong>Situação:</strong>
-                ${Sitio.esc(status)}
-              </p>
-
-              ${
-                produto.registro
-                  ? `<p><strong>Registro/referência:</strong>
-                      ${Sitio.esc(produto.registro)}</p>`
-                  : ""
-              }
-
-              ${
-                produto.fonte
-                  ? `<p><a href="${Sitio.esc(produto.fonte)}"
-                      target="_blank" rel="noopener">
-                      Consultar fonte cadastrada
-                    </a></p>`
-                  : ""
-              }
-
-              ${
-                confirmado
-                  ? `<p class="success notice">
-                      A indicação está marcada como confirmada no cadastro.
-                      Confira a bula vigente antes de aplicar.
-                    </p>`
-                  : `<p class="notice">
-                      Indicação pendente de confirmação. Não use a dose
-                      como recomendação até conferir a bula vigente.
-                    </p>`
-              }
-
-              <div class="actions">
-                <a class="button secondary"
-                   href="defensivos.html?edit=${encodeURIComponent(
-                     produto.id || produto.nome
-                   )}">
-                  Editar produto e indicação
-                </a>
-              </div>
-            </article>
-          `;
-        }).join("")}
-      </section>
+        <div class="actions">
+          <a
+            class="button secondary"
+            href="defensivos.html?edit=${encodeURIComponent(produto.id)}"
+          >Editar dose e indicação</a>
+        </div>
+      </article>
     `;
   }
 
   function renderizar() {
-    const busca = normalizar($("filtro").value);
+    const filtro = normalizar($('filtro').value);
 
-    const frutas = Sitio.fruits().filter((fruta) =>
-      normalizar(
-        [
-          fruta.nome,
-          fruta.variedade,
-          fruta.talhao,
-          fruta.fase
-        ].join(" ")
-      ).includes(busca)
-    );
+    const culturas = Sitio.fruits().filter(fruta => {
+      const texto = normalizar([
+        fruta.nome,
+        fruta.variedade,
+        fruta.talhao,
+        fruta.fase
+      ].join(' '));
 
-    $("lista").innerHTML = frutas.length
-      ? frutas.map((fruta) => `
-          <article class="item">
-            <h3>
-              ${Sitio.esc(fruta.nome)}
-              ${fruta.variedade
-                ? " — " + Sitio.esc(fruta.variedade)
-                : ""}
-            </h3>
+      return texto.includes(filtro);
+    });
 
-            <div class="muted">
-              ${Sitio.esc(fruta.talhao || "Sem talhão")}
-              • ${Sitio.esc(fruta.quantidade || "Quantidade não informada")}
-              plantas
-              • ${Sitio.esc(fruta.fase || "Fase não informada")}
-            </div>
+    $('lista').innerHTML = culturas.length
+      ? culturas.map(fruta => {
+          const produtos = Sitio.productsForFruit(fruta.nome);
 
-            <p>${Sitio.esc(fruta.obs || "Sem observações")}</p>
+          const confirmados = produtos.filter(indicacaoConfirmada);
+          const pendentes = produtos.filter(p => !indicacaoConfirmada(p));
 
-            <div class="actions">
-              <button type="button" class="secondary"
-                data-edit="${Sitio.esc(fruta.id)}">
-                Editar cultura
-              </button>
+          return `
+            <article class="item">
+              <h3>
+                ${Sitio.esc(fruta.nome)}
+                ${fruta.variedade ? ' — ' + Sitio.esc(fruta.variedade) : ''}
+              </h3>
 
-              <a class="button secondary"
-                href="busca.html?fruta=${encodeURIComponent(fruta.id)}">
-                Fotografar / diagnosticar
-              </a>
+              <div class="muted">
+                ${Sitio.esc(fruta.talhao || 'Sem talhão')}
+                • ${Sitio.esc(fruta.quantidade || 'Quantidade não informada')} plantas
+                • ${Sitio.esc(fruta.fase || 'Fase não informada')}
+              </div>
 
-              <button type="button" class="danger"
-                data-del="${Sitio.esc(fruta.id)}">
-                Excluir cultura
-              </button>
-            </div>
+              <p>
+                <strong>Idade:</strong>
+                ${Sitio.esc(fruta.idade || 'Não informada')}
+              </p>
 
-            ${mostrarProdutos(fruta)}
-          </article>
-        `).join("")
+              <p>
+                <strong>Observações:</strong>
+                ${Sitio.esc(fruta.obs || 'Nenhuma')}
+              </p>
+
+              <h4>Produtos com indicação confirmada</h4>
+
+              ${
+                confirmados.length
+                  ? confirmados.map(p => blocoProduto(p, fruta.nome)).join('')
+                  : `<p class="empty">Nenhum produto desta lista foi marcado como confirmado após conferência da bula vigente para esta cultura. Isso não significa que não existam produtos autorizados.</p>`
+              }
+
+              <h4>Produtos pendentes de associação ou conferência</h4>
+
+              ${
+                pendentes.length
+                  ? pendentes.map(p => blocoProduto(p, fruta.nome)).join('')
+                  : '<p class="muted">Nenhum produto pendente nesta lista.</p>'
+              }
+
+              <div class="actions">
+                <button
+                  type="button"
+                  class="secondary"
+                  data-edit="${Sitio.esc(fruta.id)}"
+                >Editar cultura</button>
+
+                <a
+                  class="button secondary"
+                  href="busca.html?fruta=${encodeURIComponent(fruta.id)}"
+                >Fotografar/diagnosticar</a>
+
+                <a
+                  class="button secondary"
+                  href="defensivos.html"
+                >Ver os 17 produtos</a>
+
+                <button
+                  type="button"
+                  class="danger"
+                  data-del="${Sitio.esc(fruta.id)}"
+                >Excluir</button>
+              </div>
+            </article>
+          `;
+        }).join('')
       : '<p class="empty">Nenhuma cultura encontrada.</p>';
   }
 
-  form.addEventListener("submit", (evento) => {
-    evento.preventDefault();
+  form.addEventListener('submit', e => {
+    e.preventDefault();
 
-    const frutas = Sitio.fruits();
+    const lista = Sitio.fruits();
 
     const fruta = {
-      id: $("id").value || Sitio.id(),
-      nome: $("nome").value.trim(),
-      variedade: $("variedade").value.trim(),
-      quantidade: $("quantidade").value,
-      talhao: $("talhao").value.trim(),
-      idade: $("idade").value.trim(),
-      fase: $("fase").value,
-      obs: $("obs").value.trim()
+      id: $('id').value || Sitio.id(),
+      nome: $('nome').value.trim(),
+      variedade: $('variedade').value.trim(),
+      quantidade: $('quantidade').value,
+      talhao: $('talhao').value.trim(),
+      idade: $('idade').value.trim(),
+      fase: $('fase').value,
+      obs: $('obs').value.trim()
     };
 
-    if (!fruta.nome) {
-      Sitio.flash("Informe o nome da cultura.", "error");
-      return;
-    }
+    if (!fruta.nome) return;
 
-    const indice = frutas.findIndex(
-      (item) => String(item.id) === String(fruta.id)
+    const indice = lista.findIndex(
+      item => String(item.id) === String(fruta.id)
     );
 
     if (indice >= 0) {
-      frutas[indice] = fruta;
+      lista[indice] = fruta;
     } else {
-      frutas.push(fruta);
+      lista.push(fruta);
     }
 
-    Sitio.set("frutas", frutas);
+    Sitio.set('frutas', lista);
     limparFormulario();
     renderizar();
-    Sitio.flash("Cultura salva com sucesso.");
+    Sitio.flash('Cultura salva com sucesso.');
   });
 
-  $("lista").addEventListener("click", (evento) => {
-    const editar = evento.target.closest("[data-edit]");
-    const excluir = evento.target.closest("[data-del]");
+  $('limpar').addEventListener('click', limparFormulario);
+  $('filtro').addEventListener('input', renderizar);
 
-    if (editar) {
-      const fruta = Sitio.fruits().find(
-        (item) => String(item.id) === String(editar.dataset.edit)
-      );
+  $('lista').addEventListener('click', e => {
+    const botao = e.target.closest('button');
 
-      if (!fruta) return;
+    if (!botao) return;
 
-      $("id").value = fruta.id;
-      $("nome").value = fruta.nome || "";
-      $("variedade").value = fruta.variedade || "";
-      $("quantidade").value = fruta.quantidade || "";
-      $("talhao").value = fruta.talhao || "";
-      $("idade").value = fruta.idade || "";
-      $("fase").value = fruta.fase || "";
-      $("obs").value = fruta.obs || "";
+    const lista = Sitio.fruits();
 
-      form.scrollIntoView({ behavior: "smooth", block: "start" });
+    const indice = lista.findIndex(
+      item =>
+        String(item.id) === String(botao.dataset.edit) ||
+        String(item.id) === String(botao.dataset.del)
+    );
+
+    if (indice < 0) return;
+
+    if (botao.dataset.edit) {
+      const fruta = lista[indice];
+
+      Object.keys(fruta).forEach(chave => {
+        if ($(chave)) {
+          $(chave).value = fruta[chave] ?? '';
+        }
+      });
+
+      $('id').value = fruta.id;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
 
-    if (excluir) {
-      if (!confirm("Deseja excluir esta cultura?")) return;
-
-      const frutas = Sitio.fruits().filter(
-        (item) => String(item.id) !== String(excluir.dataset.del)
-      );
-
-      Sitio.set("frutas", frutas);
+    if (botao.dataset.del && confirm(
+      'Excluir esta cultura? Os registros históricos não serão apagados.'
+    )) {
+      lista.splice(indice, 1);
+      Sitio.set('frutas', lista);
       renderizar();
-      Sitio.flash("Cultura excluída.");
+      Sitio.flash('Cultura excluída.');
     }
   });
-
-  $("limpar").addEventListener("click", limparFormulario);
-  $("filtro").addEventListener("input", renderizar);
 
   renderizar();
 });
