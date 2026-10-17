@@ -1,166 +1,314 @@
-document.addEventListener('DOMContentLoaded', () => {
+
+document.addEventListener("DOMContentLoaded", () => {
   Sitio.nav();
 
-  const $ = id => document.getElementById(id);
-  const form = $('formFruta');
+  const $ = (id) => document.getElementById(id);
+  const form = $("formFruta");
 
-  function clearForm() {
-    form.reset();
-    $('id').value = '';
-  }
-
-  function normalize(value) {
-    return String(value || '')
-      .normalize('NFD')
-      .replace(/\p{Diacritic}/gu, '')
-      .toLocaleLowerCase('pt-BR')
+  function normalizar(texto) {
+    return String(texto || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLocaleLowerCase("pt-BR")
       .trim();
   }
 
-  function productBlock(product, fruitName) {
-    const status = product.statusIndicacao || 'Pendente de conferência';
-
-    return `
-      <article class="item">
-        <h4>${Sitio.esc(product.nome)}</h4>
-        <p><strong>Cultura:</strong> ${Sitio.esc(fruitName)}</p>
-        <p><strong>Finalidade/alvo:</strong> ${Sitio.esc(product.alvo || 'Conferir na documentação')}</p>
-        <p><strong>Dose:</strong> ${Sitio.esc(product.dose || 'Ainda não preenchida')}</p>
-        <p><strong>Modo de aplicação:</strong> ${Sitio.esc(product.modoAplicacao || 'Ainda não preenchido')}</p>
-        <p><strong>Situação:</strong> ${Sitio.esc(status)}</p>
-        ${product.fonte ? `<p><a href="${Sitio.esc(product.fonte)}" target="_blank" rel="noopener">Consultar fonte</a></p>` : ''}
-        <div class="actions">
-          <a class="button secondary" href="defensivos.html?edit=${encodeURIComponent(product.id)}">Editar indicação</a>
-        </div>
-      </article>
-    `;
+  function limparFormulario() {
+    form.reset();
+    $("id").value = "";
   }
 
-  function render() {
-    const query = $('filtro').value.toLocaleLowerCase('pt-BR');
+  // Reconhece variações dos nomes das nove culturas.
+  function nomesDaCultura(nome) {
+    const n = normalizar(nome);
 
-    const list = Sitio.fruits().filter(fruit =>
-      [
-        fruit.nome,
-        fruit.talhao,
-        fruit.variedade,
-        fruit.fase
-      ].join(' ').toLocaleLowerCase('pt-BR').includes(query)
+    if (n.includes("pessego")) return ["pessego", "pessegueiro"];
+    if (n.includes("morango")) return ["morango", "morangueiro"];
+    if (n.includes("abacaxi")) return ["abacaxi", "abacaxizeiro"];
+    if (n.includes("limao")) return ["limao", "limoeiro", "citros"];
+    if (n.includes("lichia")) return ["lichia", "lichieira"];
+    if (n.includes("maca")) return ["maca", "macieira"];
+    if (n.includes("caqui")) return ["caqui", "caquizeiro"];
+    if (n.includes("manga")) return ["manga", "mangueira"];
+    if (n.includes("goiaba")) return ["goiaba", "goiabeira"];
+
+    return [n];
+  }
+
+  // Só associa um produto quando o campo de cultura contém
+  // uma indicação correspondente. Campo vazio não significa autorizado.
+  function produtoAssociado(produto, fruta) {
+    const cultura = normalizar(produto.cultura);
+    if (!cultura) return false;
+
+    const nomes = nomesDaCultura(fruta.nome);
+
+    return cultura
+      .split(";")
+      .some((indicacao) => {
+        const texto = normalizar(indicacao);
+
+        return nomes.some((nome) => {
+          if (!nome) return false;
+
+          if (nome === "citros") {
+            return (
+              normalizar(fruta.nome).includes("limao") &&
+              texto.includes("citros")
+            );
+          }
+
+          return texto.includes(nome);
+        });
+      });
+  }
+
+  function mostrarProdutos(fruta) {
+    const produtos = Sitio.products().filter((produto) =>
+      produtoAssociado(produto, fruta)
     );
 
-    $('lista').innerHTML = list.length
-      ? list.map(fruit => {
-          const associated = Sitio.productsForFruit(fruit.nome);
+    if (!produtos.length) {
+      return `
+        <section class="notice">
+          <strong>Produtos desta cultura</strong>
+          <p>
+            Ainda não há produtos associados a esta fruta no cadastro.
+            Consulte a bula oficial antes de cadastrar uma indicação.
+          </p>
+          <a class="button secondary" href="defensivos.html">
+            Abrir catálogo de produtos
+          </a>
+        </section>
+      `;
+    }
 
-          // Somente o status explícito de conferência da bula vigente
-          // é considerado confirmado pelo usuário.
-          const confirmed = associated.filter(product =>
-            product.statusIndicacao === 'Confirmado após conferência da bula vigente'
-          );
+    return `
+      <section class="card">
+        <h4>🧪 Produtos associados a ${Sitio.esc(fruta.nome)}</h4>
+        <p class="muted">
+          Confira a situação de cada indicação. Uma associação cadastrada
+          não substitui a confirmação da bula vigente.
+        </p>
 
-          const pending = associated.filter(product => !confirmed.includes(product));
+        ${produtos.map((produto) => {
+          const status =
+            produto.statusIndicacao || "Pendente de conferência";
+
+          const confirmado =
+            normalizar(status).includes("confirmado apos conferencia") ||
+            normalizar(status).includes("confirmado na bula consultada");
 
           return `
             <article class="item">
-              <h3>${Sitio.esc(fruit.nome)} ${fruit.variedade ? '— ' + Sitio.esc(fruit.variedade) : ''}</h3>
-              <div class="muted">
-                ${Sitio.esc(fruit.talhao || 'Sem talhão')} •
-                ${Sitio.esc(fruit.quantidade || 'Quantidade não informada')} plantas •
-                ${Sitio.esc(fruit.fase || 'Fase não informada')}
-              </div>
-              <p><strong>Idade:</strong> ${Sitio.esc(fruit.idade || 'Não informada')}</p>
-              <p>${Sitio.esc(fruit.obs || 'Sem observações')}</p>
+              <h4>${Sitio.esc(produto.nome)}</h4>
 
-              <h4>Indicações confirmadas no cadastro</h4>
+              <p>
+                <strong>Categoria:</strong>
+                ${Sitio.esc(produto.categoria || "A confirmar")}
+              </p>
+
+              <p>
+                <strong>Finalidade ou alvo:</strong>
+                ${Sitio.esc(produto.alvo || "A confirmar na bula")}
+              </p>
+
+              <p>
+                <strong>Cultura cadastrada:</strong>
+                ${Sitio.esc(produto.cultura || "Não informada")}
+              </p>
+
+              <p>
+                <strong>Dose:</strong>
+                ${Sitio.esc(produto.dose || "Ainda não confirmada")}
+              </p>
+
+              <p>
+                <strong>Modo de aplicação:</strong>
+                ${Sitio.esc(
+                  produto.modoAplicacao || "Ainda não informado"
+                )}
+              </p>
+
+              <p>
+                <strong>Situação:</strong>
+                ${Sitio.esc(status)}
+              </p>
+
               ${
-                confirmed.length
-                  ? confirmed.map(product => productBlock(product, fruit.nome)).join('')
-                  : '<p class="empty">Nenhum produto foi marcado como confirmado para esta cultura. Isso não significa que não existam produtos registrados; significa que o cadastro ainda não tem uma indicação conferida.</p>'
+                produto.registro
+                  ? `<p><strong>Registro/referência:</strong>
+                      ${Sitio.esc(produto.registro)}</p>`
+                  : ""
               }
 
               ${
-                pending.length
-                  ? `<h4>Indicações pendentes de conferência</h4>${pending.map(product => productBlock(product, fruit.nome)).join('')}`
-                  : ''
+                produto.fonte
+                  ? `<p><a href="${Sitio.esc(produto.fonte)}"
+                      target="_blank" rel="noopener">
+                      Consultar fonte cadastrada
+                    </a></p>`
+                  : ""
+              }
+
+              ${
+                confirmado
+                  ? `<p class="success notice">
+                      A indicação está marcada como confirmada no cadastro.
+                      Confira a bula vigente antes de aplicar.
+                    </p>`
+                  : `<p class="notice">
+                      Indicação pendente de confirmação. Não use a dose
+                      como recomendação até conferir a bula vigente.
+                    </p>`
               }
 
               <div class="actions">
-                <button class="secondary" data-edit="${Sitio.esc(fruit.id)}">Editar cultura</button>
-                <a class="button secondary" href="busca.html?fruta=${encodeURIComponent(fruit.id)}">Fotografar/diagnosticar</a>
-                <a class="button secondary" href="defensivos.html">Ver produtos</a>
-                <button class="danger" data-del="${Sitio.esc(fruit.id)}">Excluir</button>
+                <a class="button secondary"
+                   href="defensivos.html?edit=${encodeURIComponent(
+                     produto.id || produto.nome
+                   )}">
+                  Editar produto e indicação
+                </a>
               </div>
             </article>
           `;
-        }).join('')
+        }).join("")}
+      </section>
+    `;
+  }
+
+  function renderizar() {
+    const busca = normalizar($("filtro").value);
+
+    const frutas = Sitio.fruits().filter((fruta) =>
+      normalizar(
+        [
+          fruta.nome,
+          fruta.variedade,
+          fruta.talhao,
+          fruta.fase
+        ].join(" ")
+      ).includes(busca)
+    );
+
+    $("lista").innerHTML = frutas.length
+      ? frutas.map((fruta) => `
+          <article class="item">
+            <h3>
+              ${Sitio.esc(fruta.nome)}
+              ${fruta.variedade
+                ? " — " + Sitio.esc(fruta.variedade)
+                : ""}
+            </h3>
+
+            <div class="muted">
+              ${Sitio.esc(fruta.talhao || "Sem talhão")}
+              • ${Sitio.esc(fruta.quantidade || "Quantidade não informada")}
+              plantas
+              • ${Sitio.esc(fruta.fase || "Fase não informada")}
+            </div>
+
+            <p>${Sitio.esc(fruta.obs || "Sem observações")}</p>
+
+            <div class="actions">
+              <button type="button" class="secondary"
+                data-edit="${Sitio.esc(fruta.id)}">
+                Editar cultura
+              </button>
+
+              <a class="button secondary"
+                href="busca.html?fruta=${encodeURIComponent(fruta.id)}">
+                Fotografar / diagnosticar
+              </a>
+
+              <button type="button" class="danger"
+                data-del="${Sitio.esc(fruta.id)}">
+                Excluir cultura
+              </button>
+            </div>
+
+            ${mostrarProdutos(fruta)}
+          </article>
+        `).join("")
       : '<p class="empty">Nenhuma cultura encontrada.</p>';
   }
 
-  form.addEventListener('submit', event => {
-    event.preventDefault();
+  form.addEventListener("submit", (evento) => {
+    evento.preventDefault();
 
-    const list = Sitio.fruits();
-    const obj = {
-      id: $('id').value || Sitio.id(),
-      nome: $('nome').value.trim(),
-      variedade: $('variedade').value.trim(),
-      quantidade: $('quantidade').value,
-      idade: $('idade').value.trim(),
-      talhao: $('talhao').value.trim(),
-      fase: $('fase').value,
-      obs: $('obs').value.trim()
+    const frutas = Sitio.fruits();
+
+    const fruta = {
+      id: $("id").value || Sitio.id(),
+      nome: $("nome").value.trim(),
+      variedade: $("variedade").value.trim(),
+      quantidade: $("quantidade").value,
+      talhao: $("talhao").value.trim(),
+      idade: $("idade").value.trim(),
+      fase: $("fase").value,
+      obs: $("obs").value.trim()
     };
 
-    if (!obj.nome) {
-      Sitio.flash('Informe o nome da cultura.', 'error');
+    if (!fruta.nome) {
+      Sitio.flash("Informe o nome da cultura.", "error");
       return;
     }
 
-    const existingIndex = list.findIndex(item => String(item.id) === String(obj.id));
+    const indice = frutas.findIndex(
+      (item) => String(item.id) === String(fruta.id)
+    );
 
-    if (existingIndex >= 0) {
-      list[existingIndex] = obj;
+    if (indice >= 0) {
+      frutas[indice] = fruta;
     } else {
-      list.push(obj);
+      frutas.push(fruta);
     }
 
-    Sitio.set('frutas', list);
-    clearForm();
-    render();
-    Sitio.flash('Cultura salva com sucesso.');
+    Sitio.set("frutas", frutas);
+    limparFormulario();
+    renderizar();
+    Sitio.flash("Cultura salva com sucesso.");
   });
 
-  $('limpar').addEventListener('click', clearForm);
-  $('filtro').addEventListener('input', render);
+  $("lista").addEventListener("click", (evento) => {
+    const editar = evento.target.closest("[data-edit]");
+    const excluir = evento.target.closest("[data-del]");
 
-  $('lista').addEventListener('click', event => {
-    const button = event.target.closest('button');
-    if (!button) return;
+    if (editar) {
+      const fruta = Sitio.fruits().find(
+        (item) => String(item.id) === String(editar.dataset.edit)
+      );
 
-    const list = Sitio.fruits();
+      if (!fruta) return;
 
-    if (button.dataset.edit) {
-      const fruit = list.find(item => String(item.id) === button.dataset.edit);
-      if (!fruit) return;
+      $("id").value = fruta.id;
+      $("nome").value = fruta.nome || "";
+      $("variedade").value = fruta.variedade || "";
+      $("quantidade").value = fruta.quantidade || "";
+      $("talhao").value = fruta.talhao || "";
+      $("idade").value = fruta.idade || "";
+      $("fase").value = fruta.fase || "";
+      $("obs").value = fruta.obs || "";
 
-      Object.keys(fruit).forEach(key => {
-        if ($(key)) $(key).value = fruit[key] ?? '';
-      });
-
-      $('id').value = fruit.id;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
+      form.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    if (button.dataset.del) {
-      if (!confirm('Excluir esta cultura? Os registros históricos não serão apagados.')) return;
+    if (excluir) {
+      if (!confirm("Deseja excluir esta cultura?")) return;
 
-      const updated = list.filter(item => String(item.id) !== button.dataset.del);
-      Sitio.set('frutas', updated);
-      render();
-      Sitio.flash('Cultura excluída.');
+      const frutas = Sitio.fruits().filter(
+        (item) => String(item.id) !== String(excluir.dataset.del)
+      );
+
+      Sitio.set("frutas", frutas);
+      renderizar();
+      Sitio.flash("Cultura excluída.");
     }
   });
 
-  render();
+  $("limpar").addEventListener("click", limparFormulario);
+  $("filtro").addEventListener("input", renderizar);
+
+  renderizar();
 });
